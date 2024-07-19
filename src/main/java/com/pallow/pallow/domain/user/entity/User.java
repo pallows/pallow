@@ -51,5 +51,4 @@ public class User extends TimeStamp {
 
     @Column(nullable = false)
     private String position;
-
 }

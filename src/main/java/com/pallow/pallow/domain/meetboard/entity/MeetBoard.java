@@ -1,6 +1,6 @@
 package com.pallow.pallow.domain.meetboard.entity;
 
-import com.pallow.pallow.global.enums.DeletedStatus;
+import com.pallow.pallow.global.enums.CommonStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,5 +26,5 @@ public class MeetBoard {
     private String position;
 
     @Column(nullable = false)
-    private DeletedStatus status;
+    private CommonStatus status;
 }
