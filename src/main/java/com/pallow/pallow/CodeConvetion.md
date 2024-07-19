@@ -1,5 +1,9 @@
 # Code Convention
 
+기본적으로 인텔리제이 기능을 통해 구글 컨벤션 적용
+
+코드 작성 후 커밋 전 alt + shift + t 로 코드 서식 재 지정
+
 ## Method 작성 방법
 
 * 생성 : create + entityName
