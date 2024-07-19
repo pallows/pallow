@@ -33,5 +33,5 @@
         return ResponseEntity(responseDto, "그룹 추가 성공");
     }
 
-### 5분 기록 보드
+### 5분 기록 보드 test pull request
 https://www.notion.so/teamsparta/5-eead60febc5b48d78e269efebb3fef50?pvs=25
