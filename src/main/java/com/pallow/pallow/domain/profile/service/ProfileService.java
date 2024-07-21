@@ -3,7 +3,6 @@ package com.pallow.pallow.domain.profile.service;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.domain.profile.repository.ProfileRepository;
-import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;

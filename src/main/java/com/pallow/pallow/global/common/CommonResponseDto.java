@@ -1,7 +1,6 @@
 package com.pallow.pallow.global.common;
 
 import com.pallow.pallow.global.enums.Message;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
