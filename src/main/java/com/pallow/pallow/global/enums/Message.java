@@ -10,7 +10,8 @@ public enum Message {
 
     PROFILE_READ_SUCCESS(HttpStatus.OK, "프로필을 조회하였습니다."),
     PROFILE_CREATE_SUCCESS(HttpStatus.OK, "프로필을 생성하였습니다."),
-    PROFILE_UPDATE_SUCCESS(HttpStatus.OK, "프로필을 수정하였습니다.");
+    PROFILE_UPDATE_SUCCESS(HttpStatus.OK, "프로필을 수정하였습니다."),
+    PROFILE_DELETE_SUCCESS(HttpStatus.OK, "프로필을 삭제하였습니다.");
 
     private final HttpStatus status;
     private final String message;

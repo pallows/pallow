@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,6 +75,14 @@ public class ProfileController {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_UPDATE_SUCCESS, responseDto));
 
+    }
+
+    @DeleteMapping
+    public ResponseEntity<CommonResponseDto> deleteProfile(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long userId) {
+        profileService.deleteProfile(userId, userDetails.getUser());
+        return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_DELETE_SUCCESS));
     }
 
 }
