@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,5 +32,22 @@ public class UserBoard extends TimeStamp {
 
     @Column(nullable = false)
     private String content;
+
+    @Column(nullable = false)
+    private String photo;
+
+    @Column(nullable = false)
+    private int likesCount;
+
+    @Builder
+    public UserBoard(Long id, User user, String title, String content, String photo, int likesCount) {
+        this.id = id;
+        this.user = user;
+        this.title = title;
+        this.content = content;
+        this.photo = photo;
+        this.likesCount = likesCount;
+    }
+
 
 }
