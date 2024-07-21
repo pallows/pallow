@@ -33,4 +33,11 @@ public class ProfileService {
         Profile profile = profileRepository.save(requestDto.toEntity(foundUser));
         return new ProfileResponseDto(profile);
     }
+
+    public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
+        Profile foundUser = profileRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_ID));
+        foundUser.update(requestDto);
+        return new ProfileResponseDto(foundUser);
+    }
 }

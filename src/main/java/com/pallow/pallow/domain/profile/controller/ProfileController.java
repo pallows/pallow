@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +30,7 @@ public class ProfileController {
      * 프로필 조회
      *
      * @param userId 유저아이디
-     * @return
+     * @return 조회 성공 메시지 + 조회 데이터
      */
     @GetMapping
     public ResponseEntity<CommonResponseDto> getProfile(
@@ -38,6 +39,13 @@ public class ProfileController {
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
     }
 
+    /**
+     * 프로필 생성
+     *
+     * @param requestDto  생성 데이터
+     * @param userDetails 유저 데이터
+     * @return 생성 성공 메시지 + 생성된 프로필 데이터
+     */
     @PostMapping
     public ResponseEntity<CommonResponseDto> createProfile(
             @RequestBody @Valid ProfileRequestDto requestDto,
@@ -46,6 +54,26 @@ public class ProfileController {
                 userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
+    }
+
+    /**
+     * 프로필 수정
+     *
+     * @param requestDto  수정 데이터
+     * @param userDetails 수정하는 유저 데이터
+     * @param userId      수정하려는 유저 데이터
+     * @return 수정 성공 메시지 + 수정된 프로필 데이터
+     */
+    @PatchMapping
+    public ResponseEntity<CommonResponseDto> updateProfile(
+            @RequestBody @Valid ProfileRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long userId) {
+        ProfileResponseDto responseDto = profileService.updateProfile(userId, requestDto,
+                userDetails.getUser());
+        return ResponseEntity.ok(
+                new CommonResponseDto(Message.PROFILE_UPDATE_SUCCESS, responseDto));
+
     }
 
 }

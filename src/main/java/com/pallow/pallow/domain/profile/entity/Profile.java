@@ -1,5 +1,6 @@
 package com.pallow.pallow.domain.profile.entity;
 
+import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.enums.Gender;
 import com.pallow.pallow.global.enums.Mbti;
@@ -55,4 +56,11 @@ public class Profile {
     }
 
 
+    public void update(ProfileRequestDto requestDto) {
+        this.content = requestDto.getContent();
+        this.birth = requestDto.getBirth();
+        this.gender = requestDto.getGender();
+        this.mbti = requestDto.getMbti();
+        this.hobby = requestDto.getHobby();
+    }
 }
