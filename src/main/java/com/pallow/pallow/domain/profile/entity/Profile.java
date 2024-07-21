@@ -13,9 +13,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Profile {
 
     @Id
@@ -46,7 +48,8 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, String birth, Gender gender, Mbti mbti, User createdby, String hobby) {
+    public Profile(String content, String birth, Gender gender, Mbti mbti, User createdby,
+            String hobby) {
         this.content = content;
         this.birth = birth;
         this.gender = gender;
@@ -54,7 +57,6 @@ public class Profile {
         this.hobby = hobby;
         this.user = createdby;
     }
-
 
     public void update(ProfileRequestDto requestDto) {
         this.content = requestDto.getContent();
