@@ -16,7 +16,8 @@ public enum Mbti {
     ESFJ("집정관"),
     ESTP("사업가"),
     ENFJ("선도자"),
-    ENTJ("통솔자");
+    ENTJ("통솔자"),
+    NONE("모름, 비밀");
 
     private String description;
 

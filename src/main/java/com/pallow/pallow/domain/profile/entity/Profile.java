@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -42,6 +43,16 @@ public class Profile {
     @OneToOne
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+
+    @Builder
+    public Profile(String content, String birth, Gender gender, Mbti mbti, User createdby, String hobby) {
+        this.content = content;
+        this.birth = birth;
+        this.gender = gender;
+        this.mbti = mbti;
+        this.hobby = hobby;
+        this.user = createdby;
+    }
 
 
 }

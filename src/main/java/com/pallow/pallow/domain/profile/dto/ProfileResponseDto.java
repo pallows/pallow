@@ -8,7 +8,6 @@ import lombok.Getter;
 @Getter
 public class ProfileResponseDto {
 
-    private Long id;
     private String content;
     private String birth;
     private Gender gender;
@@ -17,7 +16,6 @@ public class ProfileResponseDto {
     private String photo;
 
     public ProfileResponseDto(Profile foundUser) {
-        this.id = foundUser.getId();
         this.content = foundUser.getContent();
         this.birth = foundUser.getBirth();
         this.gender = foundUser.getGender();
