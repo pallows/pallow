@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,10 +59,20 @@ public class UserBoardCommentController {
             @RequestBody @Valid UserBoardCommentRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserBoardCommentResponseDto responseDto = userBoardCommentService.updateComment(userId,
-                userBoardId,commentId, userDetails.getUser(), requestDto);
+                userBoardId, commentId, userDetails.getUser(), requestDto);
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.COMMENT_UPDATE_SUCCESS, responseDto));
 
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<CommonResponseDto> deleteComment(
+            @PathVariable long userId,
+            @PathVariable long userBoardId,
+            @PathVariable long commentId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userBoardCommentService.deleteComment(commentId, userDetails.getUser());
+        return ResponseEntity.ok(new CommonResponseDto(Message.COMMNET_DELETE_SUCCESS));
     }
 
 }

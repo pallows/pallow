@@ -41,4 +41,8 @@ public class UserBoardCommentService {
         userBoardComment.update(requestDto);
         return new UserBoardCommentResponseDto(userBoardComment);
     }
+
+    public void deleteComment(long commentId, User user) {
+        userBoardCommentRepository.deleteById(commentId);
+    }
 }
