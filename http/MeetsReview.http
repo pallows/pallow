@@ -1,0 +1,29 @@
+### 리뷰생성
+POST http://localhost:8080/meets/2/review
+Content-Type: application/json
+
+{
+  "content": "content"
+}
+
+### 리뷰선택조회
+GET http://localhost:8080/meets/1/review/1
+Content-Type: application/json
+
+### 칼럼전체조회
+GET http://localhost:8080/meets/2/review
+Content-Type: application/json
+
+### 칼럼수정
+PATCH http://localhost:8080/meets/3/review/4
+Content-Type: application/json
+
+{
+  "content": "updated content"
+}
+
+### 칼럼삭제
+DELETE http://localhost:8080/meets/1/review/1
+Content-Type: application/json
+
+

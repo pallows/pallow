@@ -4,7 +4,6 @@ import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
 import com.pallow.pallow.domain.meets.dto.MeetsResponseDto;
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.meets.repository.MeetsRepository;
-import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
@@ -43,7 +42,7 @@ public class MeetsService {
     }
 
     public MeetsResponseDto getMeets(Long meetsId) {
-        Meets meets = findByMeetsId(meetsId);
+        Meets meets = findByMeetsIdAndStatus(meetsId);
 
         return new MeetsResponseDto(meets);
     }
@@ -57,7 +56,7 @@ public class MeetsService {
 
     @Transactional
     public MeetsResponseDto update(Long meetsId, MeetsRequestDto requestDto) {
-        Meets meets = findByMeetsId(meetsId);
+        Meets meets = findByMeetsIdAndStatus(meetsId);
 
         Meets updatedMeets = meets.update(requestDto);
 
@@ -66,11 +65,11 @@ public class MeetsService {
 
     @Transactional
     public void delete(Long meetsId) {
-        Meets meets = findByMeetsId(meetsId);
+        Meets meets = findByMeetsIdAndStatus(meetsId);
         meets.delete();
     }
 
-    private Meets findByMeetsId(Long meetsId) {
+    public Meets findByMeetsIdAndStatus(Long meetsId) {
         return meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
                 () -> new CustomException(ErrorType.NOT_FOUND_MEET_ID)
         );

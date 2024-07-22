@@ -1,6 +1,7 @@
 package com.pallow.pallow.domain.meets.entity;
 
 import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
+import com.pallow.pallow.domain.meetsreview.entity.MeetsReview;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.CommonStatus;
@@ -12,6 +13,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,10 +48,14 @@ public class Meets extends TimeStamp {
 //    @ManyToOne
 //    private User user;
 
+    @OneToMany(mappedBy = "meets")
+    private List<MeetsReview> reviews;
+
     @Builder
     public Meets(String title, String content, int memberCount, String position,
             CommonStatus status,
             User user) {
+
         this.title = title;
         this.content = content;
         this.memberCount = memberCount;

@@ -60,7 +60,10 @@ public enum ErrorType {
     NOT_FOUND_USER_ID(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
 
     // group(meets)
-    NOT_FOUND_MEET_ID(HttpStatus.NOT_FOUND, "그룹을 찾을 수 없습니다.");
+    NOT_FOUND_MEET_ID(HttpStatus.NOT_FOUND, "그룹을 찾을 수 없습니다."),
+
+    // MeetsReview
+    NOT_FOUND_REVIEW_ID(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다.");
 
     private final HttpStatus status;
 
