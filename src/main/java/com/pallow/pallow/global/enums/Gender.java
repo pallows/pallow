@@ -9,5 +9,7 @@ public enum Gender {
 
     private String gender;
 
-    Gender(String gender) {this.gender = gender;}
+    Gender(String gender) {
+        this.gender = gender;
+    }
 }
