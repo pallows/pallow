@@ -1,6 +1,7 @@
 package com.pallow.pallow.domain.userboard.entity;
 
 import com.pallow.pallow.domain.user.entity.User;
+import com.pallow.pallow.domain.userboard.dto.UserBoardRequestDto;
 import com.pallow.pallow.global.entity.TimeStamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,4 +51,9 @@ public class UserBoard extends TimeStamp {
     }
 
 
+    public void update(UserBoardRequestDto requestDto) {
+        this.content = requestDto.getContent();
+        this.photo = requestDto.getPhoto();
+        this.title = requestDto.getTitle();
+    }
 }

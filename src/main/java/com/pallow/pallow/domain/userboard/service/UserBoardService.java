@@ -40,4 +40,11 @@ public class UserBoardService {
         List<UserBoard> userBoards = userBoardRepository.findAllById(userId);
         return userBoards.stream().map(UserBoardResponseDto::new).toList();
     }
+
+    public UserBoardResponseDto updateUserBoard(long userId, long userBoardId, UserBoardRequestDto requestDto, User user) {
+        UserBoard userBoard = userBoardRepository.findById(userBoardId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD_ID));
+        userBoard.update(requestDto);
+        return new UserBoardResponseDto(userBoard);
+    }
 }
