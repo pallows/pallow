@@ -2,6 +2,7 @@ package com.pallow.pallow.domain.userboardcomment.entity;
 
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.userboard.entity.UserBoard;
+import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentRequestDto;
 import com.pallow.pallow.global.entity.TimeStamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,4 +50,7 @@ public class UserBoardComment extends TimeStamp {
     }
 
 
+    public void update(UserBoardCommentRequestDto requestDto) {
+        this.content = requestDto.getContent();
+    }
 }

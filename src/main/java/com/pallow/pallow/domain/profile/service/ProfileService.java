@@ -26,14 +26,14 @@ public class ProfileService {
 
     public ProfileResponseDto getProfile(Long userId) {
         Profile foundUser = profileRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_ID));
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
 
         return new ProfileResponseDto(foundUser);
     }
 
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user) {
         User foundUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_ID));
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         Profile profile = profileRepository.save(requestDto.toEntity(foundUser));
         return new ProfileResponseDto(profile);
     }
@@ -41,7 +41,7 @@ public class ProfileService {
     @Transactional
     public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
         Profile foundUser = profileRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_ID));
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         foundUser.update(requestDto);
         return new ProfileResponseDto(foundUser);
     }

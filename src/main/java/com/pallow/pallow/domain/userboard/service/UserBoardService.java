@@ -36,7 +36,7 @@ public class UserBoardService {
 
     public UserBoardResponseDto getBoard(long userId, long userBoardId, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD_ID));
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
         return new UserBoardResponseDto(userBoard);
     }
 
@@ -48,7 +48,7 @@ public class UserBoardService {
     public UserBoardResponseDto updateUserBoard(long userId, long userBoardId,
             UserBoardRequestDto requestDto, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD_ID));
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
         userBoard.update(requestDto);
         return new UserBoardResponseDto(userBoard);
     }

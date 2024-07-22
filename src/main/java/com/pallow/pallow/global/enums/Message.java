@@ -22,6 +22,7 @@ public enum Message {
 
     // COMMENT
     COMMENT_CREATE_SUCCESS(HttpStatus.OK, "댓글을 생성하였습니다."),
+    COMMENT_UPDATE_SUCCESS(HttpStatus.OK, "댓글을 수정하였습니다"),
     COMMENT_READ_SUCCESS(HttpStatus.OK, "댓글을 조회하였습니다.");
 
 

@@ -6,6 +6,8 @@ import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentRequestDto;
 import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentResponseDto;
 import com.pallow.pallow.domain.userboardcomment.entity.UserBoardComment;
 import com.pallow.pallow.domain.userboardcomment.repository.UserBoardCommentRepository;
+import com.pallow.pallow.global.enums.ErrorType;
+import com.pallow.pallow.global.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,5 +31,14 @@ public class UserBoardCommentService {
     public List<UserBoardCommentResponseDto> getComments(Long userId, Long userBoardId, User user) {
         List<UserBoardComment> comments = userBoardCommentRepository.findAllById(userBoardId);
         return comments.stream().map(UserBoardCommentResponseDto::new).toList();
+    }
+
+    public UserBoardCommentResponseDto updateComment(long userId, long userBoardId, long commentId,
+            User user, UserBoardCommentRequestDto requestDto) {
+        UserBoardComment userBoardComment = userBoardCommentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(
+                        ErrorType.NOT_FOUND_USER_BOARD_COMMENT));
+        userBoardComment.update(requestDto);
+        return new UserBoardCommentResponseDto(userBoardComment);
     }
 }

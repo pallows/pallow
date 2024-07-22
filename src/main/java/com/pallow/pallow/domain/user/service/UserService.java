@@ -17,7 +17,7 @@ public class UserService {
 
     public User findUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_ID));
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
     }
 
 
