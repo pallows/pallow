@@ -55,8 +55,12 @@ public enum ErrorType {
      *     NOT_EXIST_ALL_USERS(HttpStatus.BAD_REQUEST, "회원이 존재하지 않습니다.");
      */
 
+    // user
     DUPLICATE_ACCOUNT_ID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
-    NOT_FOUND_USER_ID(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다.");
+    NOT_FOUND_USER_ID(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
+
+    // group(meets)
+    NOT_FOUND_MEET_ID(HttpStatus.NOT_FOUND, "그룹을 찾을 수 없습니다.");
 
     private final HttpStatus status;
 

@@ -1,0 +1,31 @@
+### 그룹생성
+POST http://localhost:8080/meets/1
+Content-Type: application/json
+
+{
+  "title": "title 2",
+  "content": "content 2"
+}
+
+### 칼럼선택조회
+GET http://localhost:8080/meets/1
+Content-Type: application/json
+
+### 칼럼전체조회
+GET http://localhost:8080/meets
+Content-Type: application/json
+
+### 칼럼수정
+PATCH http://localhost:8080/meets/1
+Content-Type: application/json
+
+{
+  "title": "updated title",
+  "content": "updated content"
+}
+
+### 칼럼삭제
+DELETE http://localhost:8080/meets/1
+Content-Type: application/json
+
+
