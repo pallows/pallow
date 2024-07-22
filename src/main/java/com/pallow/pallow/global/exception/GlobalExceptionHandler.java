@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleCustomException(CustomException e) {
         e.printStackTrace();
         return ResponseEntity.status(e.getErrorType().getStatus())
-            .body(new ExceptionDto(e.getErrorType()));
+                .body(new ExceptionDto(e.getErrorType()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -25,7 +25,8 @@ public class GlobalExceptionHandler {
         StringBuilder builder = new StringBuilder();
 
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
-            builder.append(fieldError.getField()).append(":").append(fieldError.getDefaultMessage()).append("\n");
+            builder.append(fieldError.getField()).append(":").append(fieldError.getDefaultMessage())
+                    .append("\n");
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(builder.toString());

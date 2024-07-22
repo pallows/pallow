@@ -1,7 +1,6 @@
 package com.pallow.pallow.domain.userboardcomment.dto;
 
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.domain.userboard.entity.UserBoard;
 import com.pallow.pallow.domain.userboardcomment.entity.UserBoardComment;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

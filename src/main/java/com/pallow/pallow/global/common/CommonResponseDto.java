@@ -12,6 +12,7 @@ public class CommonResponseDto {
 
     /**
      * 단순히 성공메세지만 반환하고 싶을 때
+     *
      * @param message
      */
     public CommonResponseDto(Message message) {
@@ -21,6 +22,7 @@ public class CommonResponseDto {
 
     /**
      * 반환 값에 만들어진 데이터를 같이 반환하고 싶을 때
+     *
      * @param message
      * @param data
      */

@@ -41,7 +41,8 @@ public class UserBoard extends TimeStamp {
     private int likesCount;
 
     @Builder
-    public UserBoard(Long id, User user, String title, String content, String photo, int likesCount) {
+    public UserBoard(Long id, User user, String title, String content, String photo,
+            int likesCount) {
         this.id = id;
         this.user = user;
         this.title = title;

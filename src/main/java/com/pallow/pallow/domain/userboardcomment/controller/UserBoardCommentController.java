@@ -1,6 +1,5 @@
 package com.pallow.pallow.domain.userboardcomment.controller;
 
-import com.pallow.pallow.domain.userboard.dto.UserBoardResponseDto;
 import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentRequestDto;
 import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentResponseDto;
 import com.pallow.pallow.domain.userboardcomment.service.UserBoardCommentService;
@@ -12,7 +11,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
