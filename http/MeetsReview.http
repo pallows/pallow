@@ -11,7 +11,7 @@ GET http://localhost:8080/meets/1/review/1
 Content-Type: application/json
 
 ### 리뷰전체조회
-GET http://localhost:8080/meets/2/review
+GET http://localhost:8080/meets/1/review
 Content-Type: application/json
 
 ### 리뷰수정

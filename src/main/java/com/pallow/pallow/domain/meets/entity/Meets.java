@@ -1,9 +1,9 @@
 package com.pallow.pallow.domain.meets.entity;
 
+import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
 import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
 import com.pallow.pallow.domain.meetsreview.entity.MeetsReview;
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.CommonStatus;
 import jakarta.persistence.CascadeType;

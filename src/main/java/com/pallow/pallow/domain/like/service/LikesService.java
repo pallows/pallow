@@ -1,7 +1,6 @@
 package com.pallow.pallow.domain.like.service;
 
 import com.pallow.pallow.domain.like.dto.LikesRequestDto;
-import com.pallow.pallow.domain.like.dto.LikesResponseDto;
 import com.pallow.pallow.domain.like.entity.Likes;
 import com.pallow.pallow.domain.like.repository.LikesRepository;
 import com.pallow.pallow.domain.meetsreview.entity.MeetsReview;

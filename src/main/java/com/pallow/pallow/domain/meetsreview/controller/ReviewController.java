@@ -1,6 +1,5 @@
 package com.pallow.pallow.domain.meetsreview.controller;
 
-import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
 import com.pallow.pallow.domain.meetsreview.dto.ReviewRequestDto;
 import com.pallow.pallow.domain.meetsreview.service.ReviewService;
 import com.pallow.pallow.global.common.CommonResponseDto;

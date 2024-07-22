@@ -1,6 +1,5 @@
 package com.pallow.pallow.domain.meets.dto;
 
-import jakarta.persistence.Column;
 import lombok.Getter;
 
 @Getter

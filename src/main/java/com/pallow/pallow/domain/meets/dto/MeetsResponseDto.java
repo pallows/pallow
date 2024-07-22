@@ -2,8 +2,6 @@ package com.pallow.pallow.domain.meets.dto;
 
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.global.enums.CommonStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter

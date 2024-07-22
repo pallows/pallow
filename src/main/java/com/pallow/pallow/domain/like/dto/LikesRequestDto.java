@@ -1,7 +1,6 @@
 package com.pallow.pallow.domain.like.dto;
 
 import com.pallow.pallow.global.enums.ContentType;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter

@@ -31,9 +31,6 @@ public enum Message {
     ACCEPT_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 수락했습니다."),
     DECLINE_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 거절했습니다."),
 
-    // user
-    PROFILE_READ_SUCCESS(HttpStatus.OK, "프로필을 조회하였습니다."),
-
     // group(meets)
     MEET_CREATE_SUCCESS(HttpStatus.OK, "그룹을 생성하였습니다."),
     MEET_READ_SUCCESS(HttpStatus.OK, "그룹을 조회하였습니다."),

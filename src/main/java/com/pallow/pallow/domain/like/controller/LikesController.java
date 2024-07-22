@@ -1,12 +1,9 @@
 package com.pallow.pallow.domain.like.controller;
 
 import com.pallow.pallow.domain.like.dto.LikesRequestDto;
-import com.pallow.pallow.domain.like.entity.Likes;
 import com.pallow.pallow.domain.like.service.LikesService;
-import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +25,6 @@ public class LikesController {
             @RequestBody LikesRequestDto requestDto
     ) {
         likesService.createLike(review_id, requestDto);
-        return ResponseEntity.ok(new CommonResponseDto(Message.MEET_READ_SUCCESS));
+        return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_CREATE_SUCCESS));
     }
 }
