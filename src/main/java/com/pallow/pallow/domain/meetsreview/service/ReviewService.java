@@ -1,7 +1,6 @@
 package com.pallow.pallow.domain.meetsreview.service;
 
 import com.pallow.pallow.domain.meets.entity.Meets;
-import com.pallow.pallow.domain.meets.repository.MeetsRepository;
 import com.pallow.pallow.domain.meets.service.MeetsService;
 import com.pallow.pallow.domain.meetsreview.dto.ReviewRequestDto;
 import com.pallow.pallow.domain.meetsreview.dto.ReviewResponseDto;
@@ -27,6 +26,7 @@ public class ReviewService {
 
         MeetsReview meetsReview = MeetsReview.builder()
                 .content(requestDto.getContent())
+                .likesCount(0)
                 .meets(meets)
                 .build();
 
@@ -68,6 +68,12 @@ public class ReviewService {
         );
 
         return review;
+    }
+
+    public MeetsReview findById(Long contentId) {
+        return reviewRepository.findById(contentId).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_REVIEW_ID)
+        );
     }
 
 }

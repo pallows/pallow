@@ -24,18 +24,25 @@ public class MeetsReview extends TimeStamp {
 
     private String content;
 
+    private int likesCount;
+
     @ManyToOne
     @JoinColumn
     private Meets meets;
 
     @Builder
-    public MeetsReview(String content, Meets meets) {
+    public MeetsReview(String content, int likesCount, Meets meets) {
         this.content = content;
+        this.likesCount = likesCount;
         this.meets = meets;
     }
 
     public MeetsReview update(ReviewRequestDto requestDto) {
         this.content = requestDto.getContent();
         return this;
+    }
+
+    public void addLikesCount() {
+        this.likesCount++;
     }
 }
