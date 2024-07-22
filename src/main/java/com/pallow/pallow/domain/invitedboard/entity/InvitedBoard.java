@@ -25,11 +25,11 @@ public class InvitedBoard {
     private InviteStatus status = InviteStatus.WAITING;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meetId")
+    @JoinColumn(name = "meet_id")
     private Meets meets;
 
     public void acceptInvite() {
