@@ -9,6 +9,7 @@ import com.pallow.pallow.domain.userboard.entity.UserBoard;
 import com.pallow.pallow.domain.userboard.repository.UserBoardRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,5 +34,10 @@ public class UserBoardService {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD_ID));
         return new UserBoardResponseDto(userBoard);
+    }
+
+    public List<UserBoardResponseDto> getBoards(long userId, User user) {
+        List<UserBoard> userBoards = userBoardRepository.findAllById(userId);
+        return userBoards.stream().map(UserBoardResponseDto::new).toList();
     }
 }
