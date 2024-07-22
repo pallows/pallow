@@ -6,6 +6,7 @@ import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentRequestDto;
 import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentResponseDto;
 import com.pallow.pallow.domain.userboardcomment.entity.UserBoardComment;
 import com.pallow.pallow.domain.userboardcomment.repository.UserBoardCommentRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,5 +24,10 @@ public class UserBoardCommentService {
         User createdBy = userService.findUserById(user.getId());
         UserBoardComment comment = userBoardCommentRepository.save(requestDto.toEntity(createdBy));
         return new UserBoardCommentResponseDto(comment);
+    }
+
+    public List<UserBoardCommentResponseDto> getComments(Long userId, Long userBoardId, User user) {
+        List<UserBoardComment> comments = userBoardCommentRepository.findAllById(userBoardId);
+        return comments.stream().map(UserBoardCommentResponseDto::new).toList();
     }
 }

@@ -8,7 +8,6 @@ import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,7 +39,7 @@ public class UserBoardController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponseDto> getUserBoards(
+    public ResponseEntity<CommonResponseDto> getAllUserBoard(
             @PathVariable("userId") long userId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         List<UserBoardResponseDto> responseDtos = userBoardService.getBoards(userId,
