@@ -39,4 +39,12 @@ public class InvitedBoardController {
         return ResponseEntity.ok(new CommonResponseDto(Message.ACCEPT_APPLY_SUCCESS));
     }
 
+    @PostMapping("/decline")
+    public ResponseEntity<CommonResponseDto> declineApply(
+            @PathVariable("groupId") long groupId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        invitedBoardService.declineApply(groupId, userDetails.getUser());
+        return ResponseEntity.ok(new CommonResponseDto(Message.DECLINE_APPLY_SUCCESS));
+    }
+
 }

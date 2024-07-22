@@ -19,6 +19,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class InvitedBoardService {
 
+    /**
+     *  인증 인가 구현 후 초대를 수락/거절하는 유저가 본인 모임인지 확인하는 로직 추가 필요
+     */
+
     private final InvitedBoardRepository invitedBoardRepository;
     private final UserRepository userRepository;
     private final MeetsRepository meetsRepository;
@@ -49,8 +53,15 @@ public class InvitedBoardService {
 
     public void acceptApply(long groupId, User user) {
         InvitedBoard invitedBoard = invitedBoardRepository.findById(groupId)
-                .orElseThrow(()-> new CustomException(ErrorType.NOT_FOUND_APPLY));
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
 
         invitedBoard.acceptInvite();
+    }
+
+    public void declineApply(long groupId, User user) {
+        InvitedBoard invitedBoard = invitedBoardRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
+
+        invitedBoard.rejectInvite();
     }
 }
