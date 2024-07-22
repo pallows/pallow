@@ -31,4 +31,12 @@ public class InvitedBoardController {
         return ResponseEntity.ok(new CommonResponseDto(Message.APPLY_FOR_GROUP_SUCCESS));
     }
 
+    @PostMapping("/accept")
+    public ResponseEntity<CommonResponseDto> acceptApply(
+            @PathVariable("groupId") long groupId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        invitedBoardService.acceptApply(groupId, userDetails.getUser());
+        return ResponseEntity.ok(new CommonResponseDto(Message.ACCEPT_APPLY_SUCCESS));
+    }
+
 }

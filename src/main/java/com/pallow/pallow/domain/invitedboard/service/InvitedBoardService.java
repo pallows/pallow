@@ -9,6 +9,7 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+import com.pallow.pallow.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,5 +45,12 @@ public class InvitedBoardService {
     private void applyUserToGroup(User user, Meets meets) {
         InvitedBoard invitedBoard = InvitedBoard.builder().user(user).meets(meets).build();
         invitedBoardRepository.save(invitedBoard);
+    }
+
+    public void acceptApply(long groupId, User user) {
+        InvitedBoard invitedBoard = invitedBoardRepository.findById(groupId)
+                .orElseThrow(()-> new CustomException(ErrorType.NOT_FOUND_APPLY));
+
+        invitedBoard.acceptInvite();
     }
 }

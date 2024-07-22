@@ -27,7 +27,9 @@ public enum Message {
     COMMENT_READ_SUCCESS(HttpStatus.OK, "댓글을 조회하였습니다."),
 
     // INVITED BOARD
-    APPLY_FOR_GROUP_SUCCESS(HttpStatus.OK, "성공적으로 가입 신청을 보냈습니다.");
+    APPLY_FOR_GROUP_SUCCESS(HttpStatus.OK, "성공적으로 가입 신청을 보냈습니다."),
+    ACCEPT_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 수락했습니다."),
+    DECLINE_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 거절했습니다.");
 
 
     private final HttpStatus status;
