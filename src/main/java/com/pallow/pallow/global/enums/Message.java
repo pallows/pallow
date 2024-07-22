@@ -17,6 +17,7 @@ public enum Message {
     // USER BOARD
     USERBOARD_CREATE_SUCCESS(HttpStatus.OK, "유저 게시글을 생성하였습니다."),
     USERBOARD_UPDATE_SUCCESS(HttpStatus.OK, "유저 게시글을 수정하였습니다."),
+    USERBOARD_DELETE_SUCCESS(HttpStatus.OK, "유저 게시글을 삭제하였습니다."),
     USERBOARD_READ_SUCCESS(HttpStatus.OK, "유저 게시글을 조회하였습니다.");
 
 

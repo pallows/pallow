@@ -19,6 +19,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserBoardService {
 
+    /**
+     * TODO 인증인가 구현후 각 메서드에 권한 확인 로직 추가 필요
+     */
+
     private final UserRepository userRepository;
     private final UserService userService;
     private final UserBoardRepository userBoardRepository;
@@ -41,10 +45,15 @@ public class UserBoardService {
         return userBoards.stream().map(UserBoardResponseDto::new).toList();
     }
 
-    public UserBoardResponseDto updateUserBoard(long userId, long userBoardId, UserBoardRequestDto requestDto, User user) {
+    public UserBoardResponseDto updateUserBoard(long userId, long userBoardId,
+            UserBoardRequestDto requestDto, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD_ID));
         userBoard.update(requestDto);
         return new UserBoardResponseDto(userBoard);
+    }
+
+    public void deleteUserBoard(long userId, long userBoardId, User user) {
+        userBoardRepository.deleteById(userBoardId);
     }
 }

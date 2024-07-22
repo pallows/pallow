@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,6 +70,15 @@ public class UserBoardController {
                 requestDto, userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.USERBOARD_UPDATE_SUCCESS, responseDto));
+    }
+
+    @DeleteMapping("/{userBoardId}")
+    public ResponseEntity<CommonResponseDto> deleteUserBoard(
+            @PathVariable("userId") long userId,
+            @PathVariable("userBoardId") long userBoardId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userBoardService.deleteUserBoard(userId, userBoardId, userDetails.getUser());
+        return ResponseEntity.ok(new CommonResponseDto(Message.USERBOARD_DELETE_SUCCESS));
     }
 
 
