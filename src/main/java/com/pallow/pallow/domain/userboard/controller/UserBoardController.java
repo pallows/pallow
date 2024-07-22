@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,9 +28,21 @@ public class UserBoardController {
     public ResponseEntity<CommonResponseDto> createUserBoard(
             @PathVariable("userId") long userId,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-    @RequestBody @Valid UserBoardRequestDto requestDto) {
-        UserBoardResponseDto responseDto = userBoardService.createBoard(requestDto, userDetails.getUser(), userId);
-        return ResponseEntity.ok(new CommonResponseDto(Message.USERBOARD_CREATE_SUCCESS, responseDto));
+            @RequestBody @Valid UserBoardRequestDto requestDto) {
+        UserBoardResponseDto responseDto = userBoardService.createBoard(requestDto,
+                userDetails.getUser(), userId);
+        return ResponseEntity.ok(
+                new CommonResponseDto(Message.USERBOARD_CREATE_SUCCESS, responseDto));
+    }
+
+    @GetMapping("/{userBoardId}")
+    public ResponseEntity<CommonResponseDto> getUserBoard(
+            @PathVariable("userId") long userId,
+            @PathVariable("userBoardId") long userBoardId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        UserBoardResponseDto responseDto = userBoardService.getBoard(userId, userBoardId,
+                userDetails.getUser());
+        return ResponseEntity.ok(new CommonResponseDto(Message.USERBOARD_READ_SUCCESS, responseDto));
     }
 
 
