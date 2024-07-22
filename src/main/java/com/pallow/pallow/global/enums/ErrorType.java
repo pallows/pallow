@@ -47,7 +47,9 @@ public enum ErrorType {
     DUPLICATE_ACCOUNT_ID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     NOT_FOUND_USER_BOARD(HttpStatus.NOT_FOUND, "유저 게시글을 찾을 수 없습니다."),
-    NOT_FOUND_USER_BOARD_COMMENT(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다.");
+    NOT_FOUND_USER_BOARD_COMMENT(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
+    NOT_FOUND_GROUP(HttpStatus.NOT_FOUND, "해당 모임을 찾을 수 없습니다."),
+    ALREADY_APPLIED_GROUP(HttpStatus.CONFLICT, "이미 해당 모임에 참여 신청을 보냈습니다.");
 
     private final HttpStatus status;
 

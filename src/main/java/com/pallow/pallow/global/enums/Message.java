@@ -24,7 +24,10 @@ public enum Message {
     COMMENT_CREATE_SUCCESS(HttpStatus.OK, "댓글을 생성하였습니다."),
     COMMENT_UPDATE_SUCCESS(HttpStatus.OK, "댓글을 수정하였습니다"),
     COMMNET_DELETE_SUCCESS(HttpStatus.OK, "댓글을 삭제하였습니다."),
-    COMMENT_READ_SUCCESS(HttpStatus.OK, "댓글을 조회하였습니다.");
+    COMMENT_READ_SUCCESS(HttpStatus.OK, "댓글을 조회하였습니다."),
+
+    // INVITED BOARD
+    APPLY_FOR_GROUP_SUCCESS(HttpStatus.OK, "성공적으로 가입 신청을 보냈습니다.");
 
 
     private final HttpStatus status;
