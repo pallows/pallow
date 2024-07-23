@@ -4,8 +4,10 @@ import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
 import com.pallow.pallow.domain.meets.service.MeetsService;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
+import com.pallow.pallow.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -22,35 +24,71 @@ public class MeetsController {
 
     private final MeetsService meetsService;
 
+    /**
+     * 모임 생성
+     * @param user_id  유저 ID
+     * @param requestDto  생성 데이터 [title, content]
+     * @param userDetails 유저 데이터
+     * @return 생성 성공 메시지 + 생성된 리뷰 데이터
+     */
     @PostMapping("/{user_id}")
     public ResponseEntity<CommonResponseDto> createMeets(@PathVariable Long user_id,
-            @RequestBody MeetsRequestDto requestDto) {
+            @RequestBody MeetsRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
-                new CommonResponseDto(Message.MEET_CREATE_SUCCESS, meetsService.create(user_id, requestDto)));
+                new CommonResponseDto(Message.MEET_CREATE_SUCCESS,
+                        meetsService.create(user_id, requestDto, userDetails.getUser())));
     }
 
+    /**
+     * 모임 선택 조회
+     * @param meets_id  그룹 ID
+     * @return 생성 성공 메시지 + 그룹 데이터
+     */
     @GetMapping("/{meets_id}")
     public ResponseEntity<CommonResponseDto> getMeets(@PathVariable Long meets_id) {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_READ_SUCCESS, meetsService.getMeets(meets_id)));
     }
 
+    /**
+     * 모임 전체 조회
+     *
+     * @return 생성 성공 메시지 + 그룹 데이터
+     */
     @GetMapping()
     public ResponseEntity<CommonResponseDto> getAllMeets() {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_READ_SUCCESS, meetsService.getAllMeets()));
     }
 
+    /**
+     * 모임 업데이트
+     * @param meets_id  그룹 ID
+     * @param requestDto 변경할 데이터 [title, content]
+     * @param userDetails 유저 데이터
+     * @return 업데이트 성공 메시지 + 변경된 리뷰 데이터
+     */
     @PatchMapping("/{meets_id}")
-    public ResponseEntity<CommonResponseDto> updateMeets(@PathVariable Long meets_id, @RequestBody MeetsRequestDto requestDto) {
+    public ResponseEntity<CommonResponseDto> updateMeets(@PathVariable Long meets_id,
+            @RequestBody MeetsRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
-                new CommonResponseDto(Message.MEET_UPDATE_SUCCESS, meetsService.update(meets_id, requestDto))
+                new CommonResponseDto(Message.MEET_UPDATE_SUCCESS,
+                        meetsService.update(meets_id, requestDto, userDetails.getUser()))
         );
     }
 
+    /**
+     * 모임 삭제
+     * @param meets_id  그룹 ID
+     * @param userDetails 유저 데이터
+     * @return 삭제 성공 메시지
+     */
     @DeleteMapping("/{meets_id}")
-    public ResponseEntity<CommonResponseDto> deleteMeets(@PathVariable Long meets_id) {
-        meetsService.delete(meets_id);
+    public ResponseEntity<CommonResponseDto> deleteMeets(@PathVariable Long meets_id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        meetsService.delete(meets_id, userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_DELETE_SUCCESS)
         );

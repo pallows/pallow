@@ -70,7 +70,7 @@ public class Meets extends TimeStamp {
         this.memberCount = memberCount;
         this.position = position;
         this.status = status;
-//        this.user = user;
+        this.createdBy = user;
     }
 
     public Meets update(MeetsRequestDto requestDto) {
@@ -82,5 +82,4 @@ public class Meets extends TimeStamp {
     public void delete() {
         this.status = CommonStatus.DELETED;
     }
-
 }

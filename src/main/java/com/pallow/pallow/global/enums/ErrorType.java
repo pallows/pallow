@@ -51,18 +51,21 @@ public enum ErrorType {
     NOT_FOUND_USER_BOARD_COMMENT(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."),
 
     NOT_FOUND_GROUP(HttpStatus.NOT_FOUND, "해당 모임을 찾을 수 없습니다."),
+    NOT_FOUND_USER_IN_GROUP(HttpStatus.NOT_FOUND, "해당 모임에 유저를 찾을 수 없습니다."),
     ALREADY_APPLIED_GROUP(HttpStatus.CONFLICT, "이미 해당 모임에 참여 신청을 보냈습니다."),
     NOT_FOUND_APPLY(HttpStatus.NOT_FOUND, "해당 신청을 찾을 수 없습니다."),
-    NOT_FOUND_USER_ID(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
 
-    // group(meets)
-    NOT_FOUND_MEET_ID(HttpStatus.NOT_FOUND, "그룹을 찾을 수 없습니다."),
+    UNAPPROVED_USER(HttpStatus.LOCKED,"승인되지 않은 사용자입니다."),
+    NOT_AUTHORIZED_UPDATE(HttpStatus.LOCKED, "이 게시물을 수정할 권한이 없습니다."),
+    NOT_AUTHORIZED_DELETE(HttpStatus.LOCKED, "이 게시물을 삭제할 권한이 없습니다."),
 
     // MeetsReview
-    NOT_FOUND_REVIEW_ID(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
+    NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
+    INVALID_REVIEW_FOR_MEET(HttpStatus.UNAUTHORIZED, "해당 리뷰가 특정 모임에 유효하지 않다"),
 
     // Likes
-    DUPLICATE_LIKE(HttpStatus.LOCKED, "좋아요 중복 등록");
+    NOT_FOUND_LIKE(HttpStatus.NOT_FOUND, "좋아요를 찾을 수 없습니다??????????"),
+    DUPLICATE_LIKE(HttpStatus.LOCKED, "좋아요가 이미 등록되어 있습니다.");
 
     private final HttpStatus status;
 
