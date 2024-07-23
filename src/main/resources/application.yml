@@ -29,3 +29,14 @@ spring:
 jwt:
   secret:
     key: ${JWT_KEY};
+  access:
+    expiration : ${JWT_ACCESS_EXPIRED_TIME};
+  refresh:
+    expiration : ${JWT_REFRESH_EXPIRED_TIME};
+
+custom:
+  headers:
+    access: "Authorization";
+    refresh: "X-Refresh-Token";
+    authorization: "auth";
+    bearer: "Bearer ";

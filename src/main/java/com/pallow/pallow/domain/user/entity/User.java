@@ -17,6 +17,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Table(name = "User")
@@ -51,4 +53,19 @@ public class User extends TimeStamp {
 
     @Column(nullable = false)
     private String position;
+
+    // 유저 Soft Delete Entity 수정 있습니다.
+    @Column
+    private LocalDate deletedAt;
+
+    // 유저 create 수정 있습니다.
+    public static User createdUser(String username, String nickname, String email, String password, Role role) {
+        User user = new User();
+        user.username = username;
+        user.nickname = nickname;
+        user.password = password;
+        user.email = email;
+        user.userRole = role;
+        return user;
+    }
 }
