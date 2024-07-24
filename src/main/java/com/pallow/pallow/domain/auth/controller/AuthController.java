@@ -27,7 +27,7 @@ public class AuthController {
     public String login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         //응답할때, 토큰을 주기위해 매개변수로 HttpServletResponse 를 사용
         authService.login(loginRequestDto, response);
-        return null;
+        return "로그인완료";
     }
 
     //카카오 소셜 로그인

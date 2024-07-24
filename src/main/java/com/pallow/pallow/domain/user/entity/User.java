@@ -32,7 +32,7 @@ public class User extends TimeStamp {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "profileId", nullable = false)
+    @JoinColumn(name = "profileId") // 널러블 폴스
     private Profile profile;
 
     @Column(nullable = false, unique = true)
@@ -51,7 +51,7 @@ public class User extends TimeStamp {
     @Enumerated(EnumType.STRING)
     private Role userRole;
 
-    @Column(nullable = false)
+    @Column // 수정
     private String position;
 
     // 유저 Soft Delete Entity 수정 있습니다.
