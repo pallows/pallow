@@ -21,28 +21,41 @@ public class UserBoardCommentService {
     private final UserBoardCommentRepository userBoardCommentRepository;
     private final UserService userService;
 
-    public UserBoardCommentResponseDto createComment(Long userId, Long userBoardId, User user,
+    public UserBoardCommentResponseDto createComment(long userId, User user,
             UserBoardCommentRequestDto requestDto) {
         User createdBy = userService.findUserById(user.getId());
+        if (isSameIdAndUser(userId, user)) {
+            throw new CustomException(ErrorType.USER_MISMATCH_ID);
+        }
         UserBoardComment comment = userBoardCommentRepository.save(requestDto.toEntity(createdBy));
         return new UserBoardCommentResponseDto(comment);
     }
 
-    public List<UserBoardCommentResponseDto> getComments(Long userId, Long userBoardId, User user) {
+    public List<UserBoardCommentResponseDto> getComments(long userBoardId) {
         List<UserBoardComment> comments = userBoardCommentRepository.findAllById(userBoardId);
         return comments.stream().map(UserBoardCommentResponseDto::new).toList();
     }
 
-    public UserBoardCommentResponseDto updateComment(long userId, long userBoardId, long commentId,
+    public UserBoardCommentResponseDto updateComment(long userId, long commentId,
             User user, UserBoardCommentRequestDto requestDto) {
         UserBoardComment userBoardComment = userBoardCommentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(
                         ErrorType.NOT_FOUND_USER_BOARD_COMMENT));
+        if (isSameIdAndUser(userId, user)) {
+            throw new CustomException(ErrorType.USER_MISMATCH_ID);
+        }
         userBoardComment.update(requestDto);
         return new UserBoardCommentResponseDto(userBoardComment);
     }
 
     public void deleteComment(long commentId, User user) {
+        if (isSameIdAndUser(commentId, user)) {
+            throw new CustomException(ErrorType.USER_MISMATCH_ID);
+        }
         userBoardCommentRepository.deleteById(commentId);
+    }
+
+    private boolean isSameIdAndUser(long commentId, User user) {
+        return user.getId().equals(commentId);
     }
 }

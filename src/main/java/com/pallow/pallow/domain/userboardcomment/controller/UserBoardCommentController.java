@@ -34,30 +34,27 @@ public class UserBoardCommentController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody @Valid UserBoardCommentRequestDto requestDto) {
         UserBoardCommentResponseDto responseDto = userBoardCommentService.createComment(userId,
-                userBoardId, userDetails.getUser(), requestDto);
+                userDetails.getUser(), requestDto);
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.COMMENT_CREATE_SUCCESS, responseDto));
     }
 
     @GetMapping
     public ResponseEntity<CommonResponseDto> getAllComment(
-            @PathVariable long userId,
-            @PathVariable long userBoardId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<UserBoardCommentResponseDto> responseDtos = userBoardCommentService.getComments(userId,
-                userBoardId, userDetails.getUser());
+            @PathVariable long userBoardId) {
+        List<UserBoardCommentResponseDto> responseDtos = userBoardCommentService.getComments(
+                userBoardId);
         return ResponseEntity.ok(new CommonResponseDto(Message.COMMENT_READ_SUCCESS, responseDtos));
     }
 
     @PatchMapping("/{commentId}")
     public ResponseEntity<CommonResponseDto> updateComment(
             @PathVariable long userId,
-            @PathVariable long userBoardId,
             @PathVariable long commentId,
             @RequestBody @Valid UserBoardCommentRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserBoardCommentResponseDto responseDto = userBoardCommentService.updateComment(userId,
-                userBoardId, commentId, userDetails.getUser(), requestDto);
+                commentId, userDetails.getUser(), requestDto);
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.COMMENT_UPDATE_SUCCESS, responseDto));
 
