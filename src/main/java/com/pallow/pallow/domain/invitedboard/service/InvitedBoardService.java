@@ -80,7 +80,7 @@ public class InvitedBoardService {
         if (!isUserGroupCreator(groupId, user)) {
             throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
         }
-        List<InvitedBoardResponseDto> invitationList = invitedBoardRepository.findAllByStatus(user,
+        List<InvitedBoardResponseDto> invitationList = invitedBoardRepository.findAllByUserIdAndStatus(user,
                 InviteStatus.WAITING);
         return invitationList;
     }
