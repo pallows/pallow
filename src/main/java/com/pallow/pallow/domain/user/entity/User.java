@@ -16,6 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -35,7 +36,7 @@ public class User extends TimeStamp {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id", nullable = false)
+    @JoinColumn(name = "profile_id") // ,nullable = false
     private Profile profile;
 
     @Column(nullable = false, unique = true)
@@ -54,8 +55,23 @@ public class User extends TimeStamp {
     @Enumerated(EnumType.STRING)
     private Role userRole;
 
-    @Column(nullable = false)
+    @Column // (nullable = false)
     private String position;
+
+    // 유저 Soft Delete Entity 수정 있습니다.
+    @Column
+    private LocalDate deletedAt;
+
+    // 유저 create 수정 있습니다.
+    public static User createdUser(String username, String nickname, String email, String password, Role role) {
+        User user = new User();
+        user.username = username;
+        user.nickname = nickname;
+        user.password = password;
+        user.email = email;
+        user.userRole = role;
+        return user;
+    }
 
     @OneToMany(mappedBy = "createdBy", fetch =  FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
