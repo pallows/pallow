@@ -29,7 +29,22 @@ public enum Message {
     // INVITED BOARD
     APPLY_FOR_GROUP_SUCCESS(HttpStatus.OK, "성공적으로 가입 신청을 보냈습니다."),
     ACCEPT_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 수락했습니다."),
-    DECLINE_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 거절했습니다.");
+    DECLINE_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 거절했습니다."),
+
+    // group(meets)
+    MEET_CREATE_SUCCESS(HttpStatus.OK, "그룹을 생성하였습니다."),
+    MEET_READ_SUCCESS(HttpStatus.OK, "그룹을 조회하였습니다."),
+    MEET_UPDATE_SUCCESS(HttpStatus.OK, "그룹을 수정하였습니다."),
+    MEET_DELETE_SUCCESS(HttpStatus.OK, "그룹을 삭제하였습니다."),
+
+    // meetsReview
+    REVIEW_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다."),
+    REVIEW_READ_SUCCESS(HttpStatus.OK, "리뷰를 조회하였습니다."),
+    REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "리뷰를 수정하였습니다."),
+    REVIEW_DELETE_SUCCESS(HttpStatus.OK, "리뷰를 삭제하였습니다."),
+
+    // Likes
+    LIKES_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다.");
 
 
     private final HttpStatus status;
