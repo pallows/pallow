@@ -1,6 +1,7 @@
 package com.pallow.pallow.domain.invitedboard.service;
 
 import com.pallow.pallow.domain.invitedboard.dto.InvitedBoardRequestDto;
+import com.pallow.pallow.domain.invitedboard.dto.InvitedBoardResponseDto;
 import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
 import com.pallow.pallow.domain.invitedboard.repository.InvitedBoardRepository;
 import com.pallow.pallow.domain.meets.entity.Meets;
@@ -10,7 +11,7 @@ import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.InviteStatus;
 import com.pallow.pallow.global.exception.CustomException;
-import com.pallow.pallow.global.security.UserDetailsImpl;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +22,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class InvitedBoardService {
 
-    /**
-     *  인증 인가 구현 후 초대를 수락/거절하는 유저가 본인 모임인지 확인하는 로직 추가 필요
-     */
 
     private final InvitedBoardRepository invitedBoardRepository;
     private final UserRepository userRepository;
@@ -56,20 +54,40 @@ public class InvitedBoardService {
     public void acceptApply(long groupId, User user) {
         InvitedBoard invitedBoard = invitedBoardRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
-
+        if (!isUserGroupCreator(groupId, user)) {
+            throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
+        }
         invitedBoard.acceptInvite();
     }
 
     public void declineApply(long groupId, User user) {
         InvitedBoard invitedBoard = invitedBoardRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
-
+        if (!isUserGroupCreator(groupId, user)) {
+            throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
+        }
         invitedBoard.rejectInvite();
     }
 
     // 유저가 그룹에 포함되있는지 검사
     public boolean isUserInGroup(User user, Meets meets) {
-        Optional<InvitedBoard> invitedBoard = invitedBoardRepository.findByUserAndMeetsAndStatus(user, meets, InviteStatus.ACCEPTED);
+        Optional<InvitedBoard> invitedBoard = invitedBoardRepository.findByUserAndMeetsAndStatus(
+                user, meets, InviteStatus.ACCEPTED);
         return invitedBoard.isPresent();
+    }
+
+    public List<InvitedBoardResponseDto> getAllInvitation(long groupId, User user) {
+        if (!isUserGroupCreator(groupId, user)) {
+            throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
+        }
+        List<InvitedBoardResponseDto> invitationList = invitedBoardRepository.findAllByStatus(user,
+                InviteStatus.WAITING);
+        return invitationList;
+    }
+
+    private boolean isUserGroupCreator(long groupId, User user) {
+        Meets meets = meetsRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
+        return user.getId().equals(meets.getCreatedBy());
     }
 }
