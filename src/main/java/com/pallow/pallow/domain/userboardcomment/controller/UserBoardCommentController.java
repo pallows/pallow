@@ -34,6 +34,7 @@ public class UserBoardCommentController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody @Valid UserBoardCommentRequestDto requestDto) {
         UserBoardCommentResponseDto responseDto = userBoardCommentService.createComment(userId,
+                userBoardId,
                 userDetails.getUser(), requestDto);
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.COMMENT_CREATE_SUCCESS, responseDto));
@@ -62,11 +63,10 @@ public class UserBoardCommentController {
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<CommonResponseDto> deleteComment(
-            @PathVariable long userId,
-            @PathVariable long userBoardId,
             @PathVariable long commentId,
+            @PathVariable long userId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        userBoardCommentService.deleteComment(commentId, userDetails.getUser());
+        userBoardCommentService.deleteComment(commentId, userId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.COMMNET_DELETE_SUCCESS));
     }
 
