@@ -29,10 +29,10 @@ public class AuthController {
 
     // 로그인
     @PostMapping("/local")
-    public String login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<CommonResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         //응답할때, 토큰을 주기위해 매개변수로 HttpServletResponse 를 사용
         authService.login(loginRequestDto, response);
-        return "로그인완료";
+        return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGIN_SUCCESS, loginRequestDto.getUsername()));
     }
 
     @PostMapping("/refresh")
@@ -40,6 +40,12 @@ public class AuthController {
         authService.tokenReIssue(request, response);
         String RefreshToken = response.getHeader(JwtProvider.REFRESH_HEADER);
         return ResponseEntity.ok(new CommonResponseDto(Message.TOKEN_CREATE_REFRESH, RefreshToken));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<CommonResponseDto> userLogout(HttpServletRequest request) {
+        authService.logout(request);
+        return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGOUT_SUCCESS));
     }
 
 

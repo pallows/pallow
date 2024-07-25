@@ -10,7 +10,10 @@ public enum Message {
 
     //TOKEN
     TOKEN_CREATE_REFRESH(HttpStatus.OK, "Refresh Token 재발급하였습니다."),
+
     // USER
+    USER_LOGIN_SUCCESS(HttpStatus.OK, "로그인 ! 완료 ❤️."),
+    USER_LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 되었습니다."),
     USER_DELETE_SUCCESS(HttpStatus.OK, "회원 정보를 삭제하였습니다."),
     USER_READ_ALL_SUCCESS(HttpStatus.OK, "회원 전체 조회를 하였습니다."),
     USER_UPDATE_SUCCESS(HttpStatus.OK, "회원 정보를 수정하였습니다."),

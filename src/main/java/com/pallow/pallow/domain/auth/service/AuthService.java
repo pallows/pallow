@@ -70,10 +70,8 @@ public class AuthService {
     private void issueTokenAndSave(User user, HttpServletResponse response) {
         String newAccessToken = jwtProvider.createdAccessToken(user.getUsername(), user.getUserRole());
         String newRefreshToken = jwtProvider.createdRefreshToken(user.getUsername());
-
         // Access 토큰을 응답 헤더에 설정
         response.setHeader(JwtProvider.ACCESS_HEADER, newAccessToken);
-        response.setHeader(JwtProvider.REFRESH_HEADER, newRefreshToken);
         // Refresh Token 을 Redis 에 저장
         saveRefreshToken(user.getUsername(), newRefreshToken, jwtProvider.getJwtRefreshExpiration());
     } // Refresh Token 만료 시간을 가져오기 위해서 JwtProvider 에서 생성자를 생성해서 가져옴
@@ -93,6 +91,13 @@ public class AuthService {
         issueTokenAndSave(user, response);
     }
 
+    public void logout(HttpServletRequest request) {
+        String accessToken = jwtProvider.getJwtFromHeader(request, JwtProvider.ACCESS_HEADER);
+        String username = jwtProvider.getUserNameFromJwtToken(accessToken);
+        deleteRefreshToken(username);
+        SecurityContextHolder.clearContext();
+    }
+
     //TODO : N+1 최적화 필요
     public User findByUsername(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
@@ -102,7 +107,6 @@ public class AuthService {
         }
         return user;
     }
-
 
     public void saveRefreshToken(String username, String refreshToken, long duration) {
         redisTemplate.opsForValue().set(username, refreshToken, duration, TimeUnit.MILLISECONDS);

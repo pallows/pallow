@@ -36,8 +36,9 @@ public class SecurityConfig {
                 auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
-                        //            .requestMatchers("/users/**").permitAll()
-                        .requestMatchers("/auth/local/signup", "/auth/local", "/api/auth/login").permitAll()
+                        .requestMatchers("/auth/local/signup",
+                                "/auth/local",
+                                "/api/auth/login").permitAll()
                         .anyRequest().authenticated()
         ).authenticationProvider(authenticationProvider);
 //

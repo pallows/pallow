@@ -46,7 +46,8 @@ public enum ErrorType {
 
     //TOKEN
     TOKEN_MISMATCH(HttpStatus.NOT_FOUND, "리프레쉬 토큰이 일치하지 않습니다."),
-
+    TOKEN_CHECK_INVALID(HttpStatus.FORBIDDEN, "JWT 토큰을 확인할 수 없거나, 유효하지 않습니다."),
+    TOKEN_CHECK_EXPIRED(HttpStatus.FORBIDDEN, "토큰이 만료되었습니다."),
     // user
     DUPLICATE_ACCOUNT_ID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
     USER_ALREADY_DELETED(HttpStatus.FORBIDDEN, "이미 탈퇴한 유저입니다."),

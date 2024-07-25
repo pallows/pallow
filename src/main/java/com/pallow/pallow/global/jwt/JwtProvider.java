@@ -1,7 +1,10 @@
 package com.pallow.pallow.global.jwt;
 
 
+import com.pallow.pallow.global.enums.ErrorType;
+import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.enums.Role;
+import com.pallow.pallow.global.exception.CustomException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -93,18 +96,17 @@ public class JwtProvider {
     }
 
     public String getJwtFromHeader(HttpServletRequest request, String headerName) {
+        System.out.println("요청 받은 URL : " + request.getRequestURL());
         String token = request.getHeader(headerName);
-        System.out.println(request.getRequestURL());
-        //http://localhost:8080/auth/local
-        if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
-            return token.substring(7);
+        if (!request.getMethod().equals("GET") && // 모든 요청에 대해서 필터를 돌지만  GET 이 아니면서
+                (!request.getRequestURL().toString().equals("http://localhost:8080/auth/local") // 회원가입과
+                        || (!request.getRequestURL().toString().equals("http://localhost:8080/auth/signup"))) // 로그인이 아니면
+                || !StringUtils.hasText(token)
+                || !token.startsWith(BEARER_PREFIX)
+        ) { //카카오 로그인일 경우에도 토큰 제외 해야함
+            throw new CustomException(ErrorType.TOKEN_CHECK_INVALID); // 토큰 예외처리
         }
-        log.error("Jwt Token is not Found or invalid : {}", headerName);
-        if (!request.getMethod().equals("GET") && (!request.getRequestURL().toString().equals("http://localhost:8080/auth/local") || !request.getRequestURL().toString().equals("http://localhost:8080/auth/local"))) {
-            throw new RuntimeException("JwtTokenMissingException : JWT token is missing or invalid");
-        }
-        return null;
-        // RuntimeException 수정 요망 **
+        return token.substring(7);
     }
 
     // JWT 토큰에서 사용자 이름 추출
@@ -124,20 +126,19 @@ public class JwtProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
-            throw new RuntimeException("토큰이 유효하지 않습니다.");
+            throw new CustomException(ErrorType.TOKEN_CHECK_INVALID);
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
-            throw new RuntimeException("토큰이 유효하지 않습니다.");
+            throw new CustomException(ErrorType.TOKEN_CHECK_INVALID);
         } catch (ExpiredJwtException e) {
             log.error("JWT token is expired: {}", e.getMessage());
-            throw new RuntimeException("토큰이 만료되었습니다.");
+            throw new CustomException(ErrorType.TOKEN_CHECK_EXPIRED);
         } catch (UnsupportedJwtException e) {
             log.error("JWT token is unsupported: {}", e.getMessage());
-            throw new RuntimeException("토큰이 유효하지 않습니다.");
+            throw new CustomException(ErrorType.TOKEN_CHECK_INVALID);
         } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
-            throw new RuntimeException("토큰이 유효하지 않습니다.");
+            throw new CustomException(ErrorType.TOKEN_CHECK_INVALID);
         }
     }
-    // 예외처리 수정 필수 **
 }

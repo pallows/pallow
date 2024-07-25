@@ -44,7 +44,5 @@ public class UserController {
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_UPDATE_SUCCESS, user));
     }
 
-    //회원
-
 
 }
