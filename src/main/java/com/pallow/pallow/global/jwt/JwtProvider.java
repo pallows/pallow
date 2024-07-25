@@ -46,6 +46,10 @@ public class JwtProvider {
     private int jwtRefreshExpiration;
     // Refresh 토큰 유효 시간
 
+    public long getJwtRefreshExpiration() {
+        return jwtRefreshExpiration;
+    }
+
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS512;
     // Json Web Token 라이브러리에서 사용되는 클래스 혹은 열거형 enum, JWT 를 서명하고 검증할 때 사용하는 알고리즘을 정의
 
@@ -90,11 +94,16 @@ public class JwtProvider {
 
     public String getJwtFromHeader(HttpServletRequest request, String headerName) {
         String token = request.getHeader(headerName);
+        System.out.println(request.getRequestURL());
+        //http://localhost:8080/auth/local
         if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
             return token.substring(7);
         }
         log.error("Jwt Token is not Found or invalid : {}", headerName);
-        throw new RuntimeException("JwtTokenMissingException : JWT token is missing or invalid");
+        if (!request.getMethod().equals("GET") && (!request.getRequestURL().toString().equals("http://localhost:8080/auth/local") || !request.getRequestURL().toString().equals("http://localhost:8080/auth/local"))) {
+            throw new RuntimeException("JwtTokenMissingException : JWT token is missing or invalid");
+        }
+        return null;
         // RuntimeException 수정 요망 **
     }
 

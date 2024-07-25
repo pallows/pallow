@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,15 +32,15 @@ public class SecurityConfig {
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         // 기존 시큐리티의 세션방식을 사용하지 않음
 
-        http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .permitAll()
-                .requestMatchers("/auth/local/signup", "/auth/local", "/api/auth/login")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
+        http.authorizeHttpRequests((auth) ->
+                auth
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers(HttpMethod.GET).permitAll()
+                        //            .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/auth/local/signup", "/auth/local", "/api/auth/login").permitAll()
+                        .anyRequest().authenticated()
         ).authenticationProvider(authenticationProvider);
-
+//
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -8,6 +8,14 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum Message {
 
+    //TOKEN
+    TOKEN_CREATE_REFRESH(HttpStatus.OK, "Refresh Token 재발급하였습니다."),
+    // USER
+    USER_DELETE_SUCCESS(HttpStatus.OK, "회원 정보를 삭제하였습니다."),
+    USER_READ_ALL_SUCCESS(HttpStatus.OK, "회원 전체 조회를 하였습니다."),
+    USER_UPDATE_SUCCESS(HttpStatus.OK, "회원 정보를 수정하였습니다."),
+    USER_LOCAL_SIGNUP_SUCCESS(HttpStatus.OK, "LOCAL 회원 가입에 성공하였습니다."),
+
     // PROFILE
     PROFILE_READ_SUCCESS(HttpStatus.OK, "프로필을 조회하였습니다."),
     PROFILE_CREATE_SUCCESS(HttpStatus.OK, "프로필을 생성하였습니다."),

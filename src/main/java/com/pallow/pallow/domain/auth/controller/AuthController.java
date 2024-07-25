@@ -4,8 +4,13 @@ import com.pallow.pallow.domain.auth.dto.AuthRequestDto;
 import com.pallow.pallow.domain.auth.dto.AuthResponseDto;
 import com.pallow.pallow.domain.auth.dto.LoginRequestDto;
 import com.pallow.pallow.domain.auth.service.AuthService;
+import com.pallow.pallow.global.common.CommonResponseDto;
+import com.pallow.pallow.global.enums.Message;
+import com.pallow.pallow.global.jwt.JwtProvider;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,10 +21,10 @@ public class AuthController {
 
     private final AuthService authService;
 
-    // 회원 가입 1차 작성
+    // 회원 가입 1차 작성 AuthResponseDto
     @PostMapping("/local/signup")
-    public AuthResponseDto signUp(@RequestBody AuthRequestDto requestDto) {
-        return authService.signUp(requestDto);
+    public ResponseEntity<CommonResponseDto> signUp(@RequestBody AuthRequestDto requestDto) {
+        return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOCAL_SIGNUP_SUCCESS, authService.signUp(requestDto)));
     }
 
     // 로그인
@@ -30,12 +35,20 @@ public class AuthController {
         return "로그인완료";
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<CommonResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        authService.tokenReIssue(request, response);
+        String RefreshToken = response.getHeader(JwtProvider.REFRESH_HEADER);
+        return ResponseEntity.ok(new CommonResponseDto(Message.TOKEN_CREATE_REFRESH, RefreshToken));
+    }
+
+
     //카카오 소셜 로그인
     //카카오 소셜 회원가입
     //카카오 콜백
 
+    //로그아웃
 
-    //토큰 재발행은 보호뙨 리소스에 접근할 때 자동으로 재발급 해주는것으로 생각해보겠습니다.
 }
 
 

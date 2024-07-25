@@ -3,6 +3,7 @@ package com.pallow.pallow.domain.user.entity;
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.global.entity.TimeStamp;
+import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,12 +17,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
@@ -48,7 +52,7 @@ public class User extends TimeStamp {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Column(nullable = false)
@@ -58,11 +62,13 @@ public class User extends TimeStamp {
     @Column // (nullable = false)
     private String position;
 
-    // 유저 Soft Delete Entity 수정 있습니다.
+    //  ACTIVE("active"), CommonStatus.ACTIVE
+    //  DELETED("deleted"); CommonStatus.DELETED
     @Column
-    private LocalDate deletedAt;
+    private CommonStatus status;
 
-    // 유저 create 수정 있습니다.
+    //TODO : builder로 수정
+    @Builder
     public static User createdUser(String username, String nickname, String email, String password, Role role) {
         User user = new User();
         user.username = username;
@@ -70,10 +76,24 @@ public class User extends TimeStamp {
         user.password = password;
         user.email = email;
         user.userRole = role;
+        user.status = CommonStatus.ACTIVE;
         return user;
     }
 
-    @OneToMany(mappedBy = "createdBy", fetch =  FetchType.LAZY)
+    public void softDeleteUser() {
+        this.status = CommonStatus.DELETED;
+    }
+
+    public void updateUser(String nickname, String position, String password) {
+        this.nickname = nickname;
+        this.position = position;
+        this.password = password;
+    }
+
+
+    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
 
 }
+//객체의 생성이 복잡하고 필드가 많을 경우: 빌더 패턴을 사용하여 유연하고 가독성 높은 객체 생성.
+//단순한 객체 생성 및 서브클래싱을 통한 다형성이 필요한 경우: 팩토리 메서드 패턴을 사용하여 객체 생성 로직을 캡슐화.
