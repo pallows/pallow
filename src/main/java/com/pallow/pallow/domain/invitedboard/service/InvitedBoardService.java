@@ -13,9 +13,11 @@ import com.pallow.pallow.global.enums.InviteStatus;
 import com.pallow.pallow.global.exception.CustomException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -51,6 +53,7 @@ public class InvitedBoardService {
         invitedBoardRepository.save(invitedBoard);
     }
 
+    @Transactional
     public void acceptApply(long groupId, User user) {
         InvitedBoard invitedBoard = invitedBoardRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
@@ -60,6 +63,7 @@ public class InvitedBoardService {
         invitedBoard.acceptInvite();
     }
 
+    @Transactional
     public void declineApply(long groupId, User user) {
         InvitedBoard invitedBoard = invitedBoardRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
@@ -80,14 +84,19 @@ public class InvitedBoardService {
         if (!isUserGroupCreator(groupId, user)) {
             throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
         }
-        List<InvitedBoardResponseDto> invitationList = invitedBoardRepository.findAllByUserIdAndStatus(user,
-                InviteStatus.WAITING);
-        return invitationList;
+
+        List<InvitedBoard> boards = invitedBoardRepository.findAllByStatus(InviteStatus.WAITING);
+
+        return boards.stream()
+                .map(InvitedBoardResponseDto::new)
+                .collect(Collectors.toList());
+
+
     }
 
     private boolean isUserGroupCreator(long groupId, User user) {
         Meets meets = meetsRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
-        return user.getId().equals(meets.getCreatedBy());
+        return user.getId().equals(meets.getGroupCreator().getId());
     }
 }

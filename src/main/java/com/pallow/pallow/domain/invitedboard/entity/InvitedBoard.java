@@ -5,6 +5,8 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.enums.InviteStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +30,8 @@ public class InvitedBoard {
     private Long id;
 
     @Column(nullable = false)
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
     private InviteStatus status = InviteStatus.WAITING;
 
     @ManyToOne(fetch = FetchType.LAZY)

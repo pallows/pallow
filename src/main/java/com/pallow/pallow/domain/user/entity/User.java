@@ -73,7 +73,7 @@ public class User extends TimeStamp {
         return user;
     }
 
-    @OneToMany(mappedBy = "createdBy", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "groupCreator", fetch =  FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
 
 }

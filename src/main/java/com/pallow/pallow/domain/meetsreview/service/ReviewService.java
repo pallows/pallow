@@ -32,7 +32,7 @@ public class ReviewService {
         Meets meets = meetsService.findByMeetsIdAndStatus(meetsId);
 
         // 유저가 그룹에 속해있는지 확인
-        if (!invitedBoardService.isUserInGroup(user, meets)) {
+        if (!meets.getGroupCreator().getId().equals(user.getId()) && !invitedBoardService.isUserInGroup(user, meets)) {
             throw new CustomException(ErrorType.NOT_FOUND_USER_IN_GROUP);
         }
 
