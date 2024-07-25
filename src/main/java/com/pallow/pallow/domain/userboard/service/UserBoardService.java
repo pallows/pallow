@@ -1,5 +1,6 @@
 package com.pallow.pallow.domain.userboard.service;
 
+import com.pallow.pallow.domain.invitedboard.dto.InvitedBoardResponseDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.domain.user.service.UserService;
@@ -10,18 +11,16 @@ import com.pallow.pallow.domain.userboard.repository.UserBoardRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserBoardService {
-
-    /**
-     * TODO 인증인가 구현후 각 메서드에 권한 확인 로직 추가 필요
-     */
 
     private final UserService userService;
     private final UserBoardRepository userBoardRepository;
@@ -29,7 +28,7 @@ public class UserBoardService {
     public UserBoardResponseDto createBoard(UserBoardRequestDto requestDto, User user,
             long userId) {
         User createdBy = userService.findUserById(user.getId());
-        if (isSameIdAndUser(userId, user)) {
+        if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         UserBoard userBoard = userBoardRepository.save(requestDto.toEntity(createdBy));
@@ -39,30 +38,32 @@ public class UserBoardService {
     public UserBoardResponseDto getBoard(long userId, long userBoardId, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
-        if (isSameIdAndUser(userId, user)) {
+        if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         return new UserBoardResponseDto(userBoard);
     }
 
     public List<UserBoardResponseDto> getBoards(long userId, User user) {
-        List<UserBoard> userBoards = userBoardRepository.findAllById(userId);
-        return userBoards.stream().map(UserBoardResponseDto::new).toList();
+        List<UserBoard> userBoards = userBoardRepository.findAllByUserId(userId);
+        return userBoards.stream().map(UserBoardResponseDto::new).collect(Collectors.toList());
     }
 
+    @Transactional
     public UserBoardResponseDto updateUserBoard(long userId, long userBoardId,
             UserBoardRequestDto requestDto, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
-        if (isSameIdAndUser(userId, user)) {
+        if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         userBoard.update(requestDto);
         return new UserBoardResponseDto(userBoard);
     }
 
+    @Transactional
     public void deleteUserBoard(long userId, long userBoardId, User user) {
-        if (isSameIdAndUser(userId, user)) {
+        if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         userBoardRepository.deleteById(userBoardId);

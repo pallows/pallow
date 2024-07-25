@@ -18,6 +18,6 @@ public class UserBoardRequestDto {
     private String photo;
 
     public UserBoard toEntity(User createdBy) {
-        return UserBoard.builder().title(title).content(content).photo(photo).build();
+        return UserBoard.builder().title(title).content(content).photo(photo).user(createdBy).build();
     }
 }
