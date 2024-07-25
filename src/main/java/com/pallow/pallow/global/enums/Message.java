@@ -8,6 +8,10 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum Message {
 
+    //MAIL
+    MAIL_SEND_SUCCESS(HttpStatus.OK, "인증 번호가 전송되었습니다."),
+    MAIL_VERIFICATION_CODE_SUCCESS(HttpStatus.OK, "이메일 인증이 완료 되었습니다."),
+
     //TOKEN
     TOKEN_CREATE_REFRESH(HttpStatus.OK, "Refresh Token 재발급하였습니다."),
 

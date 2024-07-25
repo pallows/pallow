@@ -44,6 +44,9 @@ public enum ErrorType {
      * // admin NOT_EXIST_ALL_USERS(HttpStatus.BAD_REQUEST, "회원이 존재하지 않습니다.");
      */
 
+    //MAIL
+    MAIL_MISMATCH_OR_CODE_FORBIDDEN(HttpStatus.FORBIDDEN, "입력한 이메일과 다르거나, 코드가 일치하지 않습니다."),
+
     //TOKEN
     TOKEN_MISMATCH(HttpStatus.NOT_FOUND, "리프레쉬 토큰이 일치하지 않습니다."),
     TOKEN_CHECK_INVALID(HttpStatus.FORBIDDEN, "JWT 토큰을 확인할 수 없거나, 유효하지 않습니다."),

@@ -98,15 +98,24 @@ public class JwtProvider {
     public String getJwtFromHeader(HttpServletRequest request, String headerName) {
         System.out.println("요청 받은 URL : " + request.getRequestURL());
         String token = request.getHeader(headerName);
-        if (!request.getMethod().equals("GET") && // 모든 요청에 대해서 필터를 돌지만  GET 이 아니면서
-                (!request.getRequestURL().toString().equals("http://localhost:8080/auth/local") // 회원가입과
-                        || (!request.getRequestURL().toString().equals("http://localhost:8080/auth/signup"))) // 로그인이 아니면
-                || !StringUtils.hasText(token)
-                || !token.startsWith(BEARER_PREFIX)
-        ) { //카카오 로그인일 경우에도 토큰 제외 해야함
-            throw new CustomException(ErrorType.TOKEN_CHECK_INVALID); // 토큰 예외처리
+
+        // TODO: 각각 엔드포인트에 대한 개별 설정 수정 요망.. ㅠㅠ
+        //String requestUrl = request.getRequestURI();
+        // if (!request.getMethod().equals("GET") // 모든 요청에 대해서 필터를 돌지만  GET 이 아니면서
+        //        && !(requestUrl.equals("http://localhost:8080/auth/local") // local 로그인이 아니거나
+        //        || requestUrl.equals("http://localhost:8080/auth/signup") // local 회원 가입이 아니거나
+        //        || requestUrl.equals("http://localhost:8080/email/send") // 이메일 전송이 아니거나
+        //        || requestUrl.equals("http://localhost:8080/email/verify"))// 이메일 인증이 아닐때
+        //        && (!StringUtils.hasText(token) // 면서 토큰이 비었거나
+        //        || !token.startsWith(BEARER_PREFIX))) //Bearer 로 시작하지 않으면
+        // { //카카오 로그인일 경우에도 토큰 제외 해야함
+        //    throw new CustomException(ErrorType.TOKEN_CHECK_INVALID); // 이 토큰은 잘못되었다고 예외를 던진다.
+        // }
+        if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
+            return token.substring(7);
         }
-        return token.substring(7);
+        return null;
+
     }
 
     // JWT 토큰에서 사용자 이름 추출

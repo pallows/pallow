@@ -68,7 +68,6 @@ public class User extends TimeStamp {
     private CommonStatus status;
 
     //TODO : builder로 수정
-    @Builder
     public static User createdUser(String username, String nickname, String email, String password, Role role) {
         User user = new User();
         user.username = username;

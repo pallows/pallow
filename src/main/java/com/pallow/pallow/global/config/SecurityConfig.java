@@ -38,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET).permitAll()
                         .requestMatchers("/auth/local/signup",
                                 "/auth/local",
-                                "/api/auth/login").permitAll()
+                                "/auth/email/**").permitAll()
                         .anyRequest().authenticated()
         ).authenticationProvider(authenticationProvider);
 //

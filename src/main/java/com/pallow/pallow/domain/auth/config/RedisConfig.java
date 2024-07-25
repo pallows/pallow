@@ -1,4 +1,4 @@
-package com.pallow.pallow.global.config;
+package com.pallow.pallow.domain.auth.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
