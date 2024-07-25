@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.2'
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'io.spring.dependency-management' version '1.1.4'
 }
 
 group = 'com.pallow'
@@ -10,12 +10,6 @@ version = '0.0.1-SNAPSHOT'
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
     }
 }
 
@@ -33,8 +27,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // MAIL
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '3.0.5'
-    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '4.0.5'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:4.0.5'
 
     // JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -72,6 +66,22 @@ dependencies {
 
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // Websocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // stomp
+    implementation 'org.webjars:stomp-websocket:2.3.4'
+    implementation 'org.webjars:webjars-locator-core'
+    implementation 'org.webjars:sockjs-client:1.5.1'
+
+    // Messaging
+    implementation 'org.springframework:spring-messaging'
+    implementation 'org.springframework.security:spring-security-messaging'
+
+    // Webjars
+    implementation 'org.webjars:bootstrap:5.3.2'
+    implementation 'org.webjars:jquery:3.7.1'
 }
 
 tasks.named('test') {
