@@ -1,0 +1,23 @@
+### 그룹 가입 신청
+POST http://localhost:8080/groups/1/invitation
+Authorization: {{Authorization}}
+Content-Type: application/json
+
+{
+  "userId": 2
+}
+
+### 그룹 신청서 수락
+POST http://localhost:8080/groups/1/invitation/accept
+Authorization: {{Authorization}}
+Content-Type: application/json
+
+### 그룹 신청서 거절
+POST http://localhost:8080/groups/1/invitation/decline
+Authorization: {{Authorization}}
+Content-Type: application/json
+
+### 목록 조회
+GET http://localhost:8080/groups/1/invitation
+Authorization: {{Authorization}}
+Content-Type: application/json

@@ -40,7 +40,7 @@ public class Meets extends TimeStamp {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User createdBy;
+    private User groupCreator;
 
     @OneToMany(mappedBy = "meets", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<InvitedBoard> usersInvitedBoards = new ArrayList<>();
@@ -59,7 +59,7 @@ public class Meets extends TimeStamp {
         this.memberCount = memberCount;
         this.position = position;
         this.status = status;
-        this.createdBy = user;
+        this.groupCreator = user;
     }
 
     public Meets update(MeetsRequestDto requestDto) {

@@ -12,11 +12,15 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "user")
 @NoArgsConstructor
+@AllArgsConstructor
 public class User extends TimeStamp {
 
     @Id
@@ -47,6 +51,7 @@ public class User extends TimeStamp {
     @Column
     private String position;
 
+    // 유저 Soft Delete Entity 수정 있습니다.
     @Column
     private LocalDate deletedAt;
 
@@ -84,4 +89,8 @@ public class User extends TimeStamp {
         user.userRole = role;
         return user;
     }
+
+    @OneToMany(mappedBy = "groupCreator", fetch =  FetchType.LAZY)
+    private List<Meets> meets = new ArrayList<>();
+
 }

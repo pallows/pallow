@@ -77,7 +77,7 @@ public class MeetsService {
         Meets meets = findByMeetsIdAndStatus(meetsId);
 
         // 로그인된 유저와 그룹 생성자가 일치하는지 확인
-        if (!user.getId().equals(meets.getCreatedBy().getId())) {
+        if (!user.getId().equals(meets.getGroupCreator().getId())) {
             throw new CustomException(ErrorType.UNAPPROVED_USER);
         }
 
@@ -94,7 +94,7 @@ public class MeetsService {
         Meets meets = findByMeetsIdAndStatus(meetsId);
 
         // 로그인된 유저와 그룹 생성자가 일치하는지 확인
-        if (!user.getId().equals(meets.getCreatedBy().getId())) {
+        if (!user.getId().equals(meets.getGroupCreator().getId())) {
             throw new CustomException(ErrorType.UNAPPROVED_USER);
         }
 

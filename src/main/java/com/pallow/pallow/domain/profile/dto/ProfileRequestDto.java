@@ -22,6 +22,6 @@ public class ProfileRequestDto {
 
     public Profile toEntity(User foundUser) {
         return Profile.builder().birth(birth).content(content).gender(gender).mbti(mbti)
-                .hobby(hobby).createdby(foundUser).build();
+                .hobby(hobby).createdBy(foundUser).build();
     }
 }
