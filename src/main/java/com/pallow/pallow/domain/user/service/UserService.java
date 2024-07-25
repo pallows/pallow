@@ -7,6 +7,7 @@ import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,11 +46,12 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public UserResponseDto updateUser(Long userId, UserRequestDto requestDto) {
         User user = findUserById(userId);
-
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
         user.updateUser(requestDto.getNickname(), requestDto.getPosition(), encodedPassword);
+        userRepository.save(user);
         return new UserResponseDto(user);
     }
 }

@@ -14,7 +14,7 @@ public class UserResponseDto {
     public UserResponseDto(User user) {
         this.username = user.getUsername();
         this.email = user.getEmail();
-        this.nickname = user.getEmail();
+        this.nickname = user.getNickname();
         this.position = user.getPosition();
     }
 }
