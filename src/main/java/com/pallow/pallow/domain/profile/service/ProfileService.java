@@ -41,7 +41,7 @@ public class ProfileService {
     public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
         Profile foundUser = profileRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        if (isSameIdAndUser(userId, user)) {
+        if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         foundUser.update(requestDto);
@@ -50,7 +50,7 @@ public class ProfileService {
 
     @Transactional
     public void deleteProfile(Long userId, User user) {
-        if (isSameIdAndUser(userId, user)) {
+        if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         profileRepository.deleteById(userId);

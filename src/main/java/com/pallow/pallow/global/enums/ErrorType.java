@@ -69,6 +69,9 @@ public enum ErrorType {
     // InvitedBoard
     NOT_GROUP_CREATOR(HttpStatus.FORBIDDEN, "모임장이 아닙니다."),
 
+    // UserBoard
+    NOT_FOUND_BOARD(HttpStatus.NOT_FOUND, "해당 게시물을 찾을 수 없습니다."),
+
     // Likes
     NOT_FOUND_LIKE(HttpStatus.NOT_FOUND, "좋아요를 찾을 수 없습니다??????????"),
     DUPLICATE_LIKE(HttpStatus.LOCKED, "좋아요가 이미 등록되어 있습니다.");

@@ -6,6 +6,8 @@ import com.pallow.pallow.global.enums.Gender;
 import com.pallow.pallow.global.enums.Mbti;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,7 +28,7 @@ public class Profile {
     @Column(nullable = false, unique = true)
     private Long Id;
 
-    @Column(nullable = false)
+    @Column
     private String photo;
 
     @Column(nullable = false)
@@ -36,9 +38,11 @@ public class Profile {
     private String birth;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
     @Column(nullable = false)
@@ -49,14 +53,14 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, String birth, Gender gender, Mbti mbti, User createdby,
+    public Profile(String content, String birth, Gender gender, Mbti mbti, User createdBy,
             String hobby) {
         this.content = content;
         this.birth = birth;
         this.gender = gender;
         this.mbti = mbti;
         this.hobby = hobby;
-        this.user = createdby;
+        this.user = createdBy;
     }
 
     public void update(ProfileRequestDto requestDto) {
