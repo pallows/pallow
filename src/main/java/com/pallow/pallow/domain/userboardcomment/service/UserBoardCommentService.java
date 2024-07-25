@@ -29,16 +29,18 @@ public class UserBoardCommentService {
             UserBoardCommentRequestDto requestDto) {
         User createdBy = userService.findUserById(user.getId());
         UserBoard userBoard = userBoardRepository.findById(boardId)
-                .orElseThrow(()->new CustomException(ErrorType.NOT_FOUND_BOARD));
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_BOARD));
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
-        UserBoardComment comment = userBoardCommentRepository.save(requestDto.toEntity(createdBy, userBoard));
+        UserBoardComment comment = userBoardCommentRepository.save(
+                requestDto.toEntity(createdBy, userBoard));
         return new UserBoardCommentResponseDto(comment);
     }
 
     public List<UserBoardCommentResponseDto> getComments(long userBoardId) {
-        List<UserBoardComment> comments = userBoardCommentRepository.findAllByUserBoardId(userBoardId);
+        List<UserBoardComment> comments = userBoardCommentRepository.findAllByUserBoardId(
+                userBoardId);
         return comments.stream().map(UserBoardCommentResponseDto::new).toList();
     }
 
@@ -56,11 +58,13 @@ public class UserBoardCommentService {
     }
 
     @Transactional
-    public void deleteComment(long commentId,long userId, User user) {
+    public void deleteComment(long commentId, long userId, User user) {
+        UserBoardComment comment = userBoardCommentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD_COMMENT));
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
-        userBoardCommentRepository.deleteById(commentId);
+        userBoardCommentRepository.delete(comment);
     }
 
     private boolean isSameIdAndUser(long userId, User user) {

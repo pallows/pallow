@@ -63,10 +63,12 @@ public class UserBoardService {
 
     @Transactional
     public void deleteUserBoard(long userId, long userBoardId, User user) {
+        UserBoard userBoard = userBoardRepository.findById(userBoardId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
-        userBoardRepository.deleteById(userBoardId);
+        userBoardRepository.delete(userBoard);
     }
 
     private boolean isSameIdAndUser(Long userId, User user) {
