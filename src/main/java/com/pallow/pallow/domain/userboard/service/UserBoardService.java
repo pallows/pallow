@@ -23,13 +23,15 @@ public class UserBoardService {
      * TODO 인증인가 구현후 각 메서드에 권한 확인 로직 추가 필요
      */
 
-    private final UserRepository userRepository;
     private final UserService userService;
     private final UserBoardRepository userBoardRepository;
 
     public UserBoardResponseDto createBoard(UserBoardRequestDto requestDto, User user,
             long userId) {
         User createdBy = userService.findUserById(user.getId());
+        if (isSameIdAndUser(userId, user)) {
+            throw new CustomException(ErrorType.USER_MISMATCH_ID);
+        }
         UserBoard userBoard = userBoardRepository.save(requestDto.toEntity(createdBy));
         return new UserBoardResponseDto(userBoard);
     }
@@ -37,6 +39,9 @@ public class UserBoardService {
     public UserBoardResponseDto getBoard(long userId, long userBoardId, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
+        if (isSameIdAndUser(userId, user)) {
+            throw new CustomException(ErrorType.USER_MISMATCH_ID);
+        }
         return new UserBoardResponseDto(userBoard);
     }
 
@@ -49,11 +54,21 @@ public class UserBoardService {
             UserBoardRequestDto requestDto, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
+        if (isSameIdAndUser(userId, user)) {
+            throw new CustomException(ErrorType.USER_MISMATCH_ID);
+        }
         userBoard.update(requestDto);
         return new UserBoardResponseDto(userBoard);
     }
 
     public void deleteUserBoard(long userId, long userBoardId, User user) {
+        if (isSameIdAndUser(userId, user)) {
+            throw new CustomException(ErrorType.USER_MISMATCH_ID);
+        }
         userBoardRepository.deleteById(userBoardId);
+    }
+
+    private boolean isSameIdAndUser(Long userId, User user) {
+        return user.getId().equals(userId);
     }
 }
