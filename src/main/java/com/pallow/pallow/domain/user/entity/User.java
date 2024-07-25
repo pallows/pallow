@@ -1,5 +1,6 @@
 package com.pallow.pallow.domain.user.entity;
 
+import com.pallow.pallow.domain.chat.entity.UserAndChatRoom;
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.global.entity.TimeStamp;
@@ -17,15 +18,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Getter
@@ -40,7 +39,7 @@ public class User extends TimeStamp {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id") // ,nullable = false
+    @JoinColumn(name = "profile_id")
     private Profile profile;
 
     @Column(nullable = false, unique = true)
@@ -59,7 +58,7 @@ public class User extends TimeStamp {
     @Enumerated(EnumType.STRING)
     private Role userRole;
 
-    @Column // (nullable = false)
+    @Column
     private String position;
 
     //  ACTIVE("active"), CommonStatus.ACTIVE
@@ -68,6 +67,31 @@ public class User extends TimeStamp {
     private CommonStatus status;
 
     //TODO : builder로 수정
+    @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
+    private List<Meets> meets = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAndChatRoom> userAndChatRooms = new ArrayList<>();
+
+    public User(Long id, Profile profile, String username, String password, String email, String nickname, Role userRole, String position, LocalDate deletedAt, List<Meets> meets) {
+        this.id = id;
+        this.profile = profile;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.nickname = nickname;
+        this.userRole = userRole;
+        this.position = position;
+        this.deletedAt = deletedAt;
+        this.meets = meets;
+        this.userAndChatRooms = new ArrayList<>();
+    }
+
+    public void addUserAndChatRoom(UserAndChatRoom userAndChatRoom) {
+        this.userAndChatRooms.add(userAndChatRoom);
+        userAndChatRoom.setUser(this);
+    }
+
     public static User createdUser(String username, String nickname, String email, String password, Role role) {
         User user = new User();
         user.username = username;

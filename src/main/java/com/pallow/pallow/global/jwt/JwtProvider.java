@@ -114,8 +114,9 @@ public class JwtProvider {
         if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
             return token.substring(7);
         }
-        return null;
-
+        log.error("Jwt Token is not Found or invalid : {}", headerName);
+        throw new RuntimeException("JwtTokenMissingException : JWT token is missing or invalid");
+        // RuntimeException 수정 요망 **
     }
 
     // JWT 토큰에서 사용자 이름 추출

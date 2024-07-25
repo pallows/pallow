@@ -1,6 +1,5 @@
 package com.pallow.pallow.global.config;
 
-
 import com.pallow.pallow.global.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -10,12 +9,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -26,7 +27,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors(AbstractHttpConfigurer::disable)
+        http.cors(AbstractHttpConfigurer::disable) // 특정 도메인 간 요청을 허용하기 위해 사용됌 정말 필요한지 확인
                 .csrf(AbstractHttpConfigurer::disable);
 
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -36,9 +37,15 @@ public class SecurityConfig {
                 auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
-                        .requestMatchers("/auth/local/signup",
+                        .requestMatchers(
+                                "/auth/local/signup",
                                 "/auth/local",
-                                "/auth/email/**").permitAll()
+                                "/auth/email/**",
+                                "/",
+                                "/index.html",
+                                "/css/**",
+                                "/js/**",
+                                "/ws/**").permitAll()
                         .anyRequest().authenticated()
         ).authenticationProvider(authenticationProvider);
 //

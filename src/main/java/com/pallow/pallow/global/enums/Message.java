@@ -45,6 +45,7 @@ public enum Message {
     APPLY_FOR_GROUP_SUCCESS(HttpStatus.OK, "성공적으로 가입 신청을 보냈습니다."),
     ACCEPT_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 수락했습니다."),
     DECLINE_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 거절했습니다."),
+    INVITATION_READ_SUCCESS(HttpStatus.OK, "신청 목록을 불러왔습니다."),
 
     // group(meets)
     MEET_CREATE_SUCCESS(HttpStatus.OK, "그룹을 생성하였습니다."),

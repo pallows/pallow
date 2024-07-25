@@ -1,0 +1,24 @@
+### 회원가입
+POST http://localhost:8080/auth/local/signup
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}",
+  "nickname": "{{nickname}}",
+  "email": "{{email}}"
+}
+
+### 로그인
+POST http://localhost:8080/auth/local
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+  client.log(response.headers.valueOf("Authorization"));
+  client.global.set("Authorization", response.headers.valueOf("Authorization"));
+%}

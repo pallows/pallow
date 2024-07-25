@@ -2,6 +2,8 @@ package com.pallow.pallow.domain.userboardcomment.service;
 
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.service.UserService;
+import com.pallow.pallow.domain.userboard.entity.UserBoard;
+import com.pallow.pallow.domain.userboard.repository.UserBoardRepository;
 import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentRequestDto;
 import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentResponseDto;
 import com.pallow.pallow.domain.userboardcomment.entity.UserBoardComment;
@@ -12,6 +14,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -20,29 +23,51 @@ public class UserBoardCommentService {
 
     private final UserBoardCommentRepository userBoardCommentRepository;
     private final UserService userService;
+    private final UserBoardRepository userBoardRepository;
 
-    public UserBoardCommentResponseDto createComment(Long userId, Long userBoardId, User user,
+    public UserBoardCommentResponseDto createComment(long userId, long boardId, User user,
             UserBoardCommentRequestDto requestDto) {
         User createdBy = userService.findUserById(user.getId());
-        UserBoardComment comment = userBoardCommentRepository.save(requestDto.toEntity(createdBy));
+        UserBoard userBoard = userBoardRepository.findById(boardId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_BOARD));
+        if (!isSameIdAndUser(userId, user)) {
+            throw new CustomException(ErrorType.USER_MISMATCH_ID);
+        }
+        UserBoardComment comment = userBoardCommentRepository.save(
+                requestDto.toEntity(createdBy, userBoard));
         return new UserBoardCommentResponseDto(comment);
     }
 
-    public List<UserBoardCommentResponseDto> getComments(Long userId, Long userBoardId, User user) {
-        List<UserBoardComment> comments = userBoardCommentRepository.findAllById(userBoardId);
+    public List<UserBoardCommentResponseDto> getComments(long userBoardId) {
+        List<UserBoardComment> comments = userBoardCommentRepository.findAllByUserBoardId(
+                userBoardId);
         return comments.stream().map(UserBoardCommentResponseDto::new).toList();
     }
 
-    public UserBoardCommentResponseDto updateComment(long userId, long userBoardId, long commentId,
+    @Transactional
+    public UserBoardCommentResponseDto updateComment(long userId, long commentId,
             User user, UserBoardCommentRequestDto requestDto) {
         UserBoardComment userBoardComment = userBoardCommentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(
                         ErrorType.NOT_FOUND_USER_BOARD_COMMENT));
+        if (!isSameIdAndUser(userId, user)) {
+            throw new CustomException(ErrorType.USER_MISMATCH_ID);
+        }
         userBoardComment.update(requestDto);
         return new UserBoardCommentResponseDto(userBoardComment);
     }
 
-    public void deleteComment(long commentId, User user) {
-        userBoardCommentRepository.deleteById(commentId);
+    @Transactional
+    public void deleteComment(long commentId, long userId, User user) {
+        UserBoardComment comment = userBoardCommentRepository.findById(commentId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD_COMMENT));
+        if (!isSameIdAndUser(userId, user)) {
+            throw new CustomException(ErrorType.USER_MISMATCH_ID);
+        }
+        userBoardCommentRepository.delete(comment);
+    }
+
+    private boolean isSameIdAndUser(long userId, User user) {
+        return user.getId().equals(userId);
     }
 }

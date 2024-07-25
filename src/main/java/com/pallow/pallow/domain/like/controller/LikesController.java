@@ -25,19 +25,17 @@ public class LikesController {
      */
     @PostMapping("/review/{review_id}/like")
     public ResponseEntity<CommonResponseDto> createLike(@PathVariable Long review_id,
-            @RequestBody LikesRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        likesService.createLike(review_id, requestDto, userDetails.getUser());
+        likesService.createLike(review_id, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_CREATE_SUCCESS));
     }
 
     @DeleteMapping("/review/{review_id}/like")
     public ResponseEntity<CommonResponseDto> deleteLike(@PathVariable Long review_id,
-            @RequestBody LikesRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        likesService.deleteLike(review_id, requestDto, userDetails.getUser());
+        likesService.deleteLike(review_id, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_CREATE_SUCCESS));
     }
 }
