@@ -3,55 +3,55 @@ package com.pallow.pallow.domain.chat.controller;
 import com.pallow.pallow.domain.chat.dto.ChatMessageDto;
 import com.pallow.pallow.domain.chat.dto.ChatRoomDto;
 import com.pallow.pallow.domain.chat.dto.ChatRoomResponseDto;
+import com.pallow.pallow.domain.chat.entity.ChatMessage;
 import com.pallow.pallow.domain.chat.model.WebSocketChatMessage;
 import com.pallow.pallow.domain.chat.model.MessageType;
 import com.pallow.pallow.domain.chat.service.ChatService;
-import com.pallow.pallow.global.security.UserDetailsImpl;
-import java.security.Principal;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.server.ResponseStatusException;
 
-
+@Slf4j
 @Controller
 public class ChatController {
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
-    private final UserDetailsService userDetailsService;
+    private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
     @Autowired
-    public ChatController(ChatService chatService, SimpMessagingTemplate messagingTemplate, UserDetailsService userDetailsService) {
+    public ChatController(ChatService chatService, SimpMessagingTemplate messagingTemplate) {
         this.chatService = chatService;
         this.messagingTemplate = messagingTemplate;
-        this.userDetailsService = userDetailsService;
     }
+
     @MessageMapping("/chat.createRoom")
-    public ChatRoomDto createRoom(@Payload String roomName, Authentication authentication) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        ChatRoomDto chatRoomDto = chatService.createChatRoom(roomName, userDetails);
+    public ChatRoomDto createRoom(@Payload String roomName, @Payload String username) {
+        ChatRoomDto chatRoomDto = chatService.createChatRoom(roomName, username);
         messagingTemplate.convertAndSend("/topic/room/" + chatRoomDto.getId(), chatRoomDto);
         return chatRoomDto;
     }
 
     @MessageMapping("/chat.enterRoom")
-    public ChatRoomResponseDto enterRoom(@Payload Long roomId) {
-        ChatRoomResponseDto responseDto = chatService.enterChatRoom(roomId);
+    public ChatRoomResponseDto enterRoom(@Payload Long roomId, @Payload String username) {
+        ChatRoomResponseDto responseDto = chatService.enterChatRoom(roomId, username);
         messagingTemplate.convertAndSend("/topic/room/" + roomId, responseDto);
         return responseDto;
     }
 
     @MessageMapping("/chat.addUser")
-    public WebSocketChatMessage addUser(@Payload WebSocketChatMessage webSocketChatMessage, SimpMessageHeaderAccessor headerAccessor){
+    @SendTo("/topic/public")
+    public WebSocketChatMessage addUser(@Payload WebSocketChatMessage webSocketChatMessage,
+            SimpMessageHeaderAccessor headerAccessor) {
         headerAccessor.getSessionAttributes().put("username", webSocketChatMessage.getSender());
         webSocketChatMessage.setType(MessageType.JOIN);
         messagingTemplate.convertAndSend("/topic/room/" + webSocketChatMessage.getRoomId(), webSocketChatMessage);
@@ -59,14 +59,20 @@ public class ChatController {
     }
 
     @MessageMapping("/chat.sendMessage")
-    public ChatMessageDto sendMessage(@Payload ChatMessageDto chatMessageDto, Principal principal) {
-        if (principal == null) {
-            throw new IllegalArgumentException("User not authenticated");
-        }
+    @SendTo("/topic/public")
+    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
+        chatMessage.setType(MessageType.CHAT);
+        return chatMessage;
+    }
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(principal.getName());
-        ChatMessageDto savedMessage = chatService.sendAndSaveMessage(chatMessageDto, userDetails);
-        messagingTemplate.convertAndSend("/topic/room/" + chatMessageDto.getChatRoomId(), savedMessage);
-        return savedMessage;
+    @MessageMapping("/chat.getRooms")
+    public List<ChatRoomDto> getChatRooms(@Payload String username) {
+        try {
+            logger.info("Fetching chat rooms for user: {}", username);
+            return chatService.getChatRoomsForUser(username);
+        } catch (Exception e) {
+            logger.error("Error fetching chat rooms for user: {}", username, e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching chat rooms", e);
+        }
     }
 }

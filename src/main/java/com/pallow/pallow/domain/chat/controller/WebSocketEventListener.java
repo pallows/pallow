@@ -44,6 +44,4 @@ public class WebSocketEventListener {
             messagingTemplate.convertAndSend("/topic/public", webSocketChatMessage);
         }
     }
-
-
 }

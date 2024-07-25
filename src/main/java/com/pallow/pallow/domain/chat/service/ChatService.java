@@ -1,17 +1,23 @@
 package com.pallow.pallow.domain.chat.service;
 
+import com.pallow.pallow.domain.chat.controller.ChatController;
 import com.pallow.pallow.domain.chat.dto.ChatMessageDto;
 import com.pallow.pallow.domain.chat.dto.ChatRoomDto;
 import com.pallow.pallow.domain.chat.dto.ChatRoomResponseDto;
 import com.pallow.pallow.domain.chat.entity.ChatMessage;
 import com.pallow.pallow.domain.chat.entity.ChatRoom;
+import com.pallow.pallow.domain.chat.entity.UserAndChatRoom;
 import com.pallow.pallow.domain.chat.repository.ChatMessageRepository;
 import com.pallow.pallow.domain.chat.repository.ChatRoomRepository;
+import com.pallow.pallow.domain.chat.repository.UserAndChatRoomRepository;
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.global.security.UserDetailsImpl;
+import com.pallow.pallow.domain.user.repository.UserRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,22 +28,49 @@ public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final UserAndChatRoomRepository userAndChatRoomRepository;
+    private final UserRepository userRepository;  // UserRepository를 추가합니다.
+    private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
-    public ChatRoomDto createChatRoom(String name, UserDetailsImpl userDetails) {
-        User user = userDetails.getUser();
+    private User findUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public ChatRoomDto createChatRoom(String name, String username) {
+        User user = findUserByUsername(username);
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(name)
                 .sender(user)
                 .build();
         chatRoom = chatRoomRepository.save(chatRoom);
+
+        UserAndChatRoom userAndChatRoom = UserAndChatRoom.builder()
+                .user(user)
+                .chatRoom(chatRoom)
+                .isActive(true)
+                .build();
+        userAndChatRoomRepository.save(userAndChatRoom);
+
         return convertToChatRoomDto(chatRoom);
     }
 
-    public ChatRoomResponseDto enterChatRoom(Long chatRoomId) {
+    public ChatRoomResponseDto enterChatRoom(Long chatRoomId, String username) {
+        User user = findUserByUsername(username);
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("Chat room not found"));
-        List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(
-                chatRoomId);
+
+        UserAndChatRoom userAndChatRoom = userAndChatRoomRepository.findByUserAndChatRoom(user, chatRoom)
+                .orElseGet(() -> {
+                    UserAndChatRoom newUserAndChatRoom = UserAndChatRoom.builder()
+                            .user(user)
+                            .chatRoom(chatRoom)
+                            .isActive(true)
+                            .build();
+                    return userAndChatRoomRepository.save(newUserAndChatRoom);
+                });
+
+        List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(chatRoomId);
 
         return new ChatRoomResponseDto(
                 convertToChatRoomDto(chatRoom),
@@ -45,8 +78,8 @@ public class ChatService {
         );
     }
 
-    public ChatMessageDto sendAndSaveMessage(ChatMessageDto messageDto, UserDetailsImpl userDetails) {
-        User user = userDetails.getUser();
+    public ChatMessageDto sendAndSaveMessage(ChatMessageDto messageDto, String username) {
+        User user = findUserByUsername(username);
         ChatRoom chatRoom = chatRoomRepository.findById(messageDto.getChatRoomId())
                 .orElseThrow(() -> new RuntimeException("Chatroom not found"));
 
@@ -59,6 +92,20 @@ public class ChatService {
 
         message = chatMessageRepository.save(message);
         return convertToChatMessageDto(message);
+    }
+
+    public List<ChatRoomDto> getChatRoomsForUser(String username) {
+        User user = findUserByUsername(username);
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+        List<UserAndChatRoom> userChatRooms = userAndChatRoomRepository.findByUserAndIsActiveTrue(user);
+        if (userChatRooms.isEmpty()) {
+            logger.info("No chat rooms found for user: {}", user.getUsername());
+        }
+        return userChatRooms.stream()
+                .map(ucr -> convertToChatRoomDto(ucr.getChatRoom()))
+                .collect(Collectors.toList());
     }
 
     private ChatRoomDto convertToChatRoomDto(ChatRoom chatRoom) {
@@ -78,7 +125,5 @@ public class ChatService {
                 .createdAt(message.getCreatedAt())
                 .modifiedAt(message.getModifiedAt())
                 .build();
-
     }
-
 }

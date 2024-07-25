@@ -1,22 +1,14 @@
 package com.pallow.pallow.domain.chat.entity;
 
+import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.entity.TimeStamp;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDateTime;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -36,18 +28,43 @@ public class ChatRoom extends TimeStamp {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", nullable = false)
-    private User sender;
+    @Column
+    private LocalDateTime deletedAt;
 
     @Builder.Default
     @Column(nullable = false)
     private boolean isDeleted = false;
 
-    private LocalDateTime deletedAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id", nullable = false)
+    private User sender;
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMessage> messages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAndChatRoom> userAndChatRooms = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meets_id")
+    private Meets meets;
 
     public void updateDeletedAt() {
         this.isDeleted = true;
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void addMessage(ChatMessage message) {
+        messages.add(message);
+        message.setChatRoom(this);
+    }
+
+    public void addUserAndChatRoom(UserAndChatRoom userAndChatRoom) {
+        userAndChatRooms.add(userAndChatRoom);
+        userAndChatRoom.setChatRoom(this);
+    }
+
+    public void setMeets(Meets meets) {
+        this.meets = meets;
     }
 }
