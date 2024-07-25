@@ -55,7 +55,7 @@ public class User extends TimeStamp {
     @Column
     private LocalDate deletedAt;
 
-    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -90,7 +90,5 @@ public class User extends TimeStamp {
         return user;
     }
 
-    @OneToMany(mappedBy = "groupCreator", fetch =  FetchType.LAZY)
-    private List<Meets> meets = new ArrayList<>();
 
 }
