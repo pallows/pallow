@@ -80,6 +80,7 @@ public class AuthService {
         String newRefreshToken = jwtProvider.createdRefreshToken(user.getUsername());
         // Access 토큰을 응답 헤더에 설정
         response.setHeader(JwtProvider.ACCESS_HEADER, newAccessToken);
+        response.setHeader(JwtProvider.REFRESH_HEADER, newRefreshToken);
         // Refresh Token 을 Redis 에 저장
         saveRefreshToken(user.getUsername(), newRefreshToken, jwtProvider.getJwtRefreshExpiration());
     } // Refresh Token 만료 시간을 가져오기 위해서 JwtProvider 에서 생성자를 생성해서 가져옴

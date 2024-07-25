@@ -115,7 +115,7 @@ public class JwtProvider {
             return token.substring(7);
         }
         log.error("Jwt Token is not Found or invalid : {}", headerName);
-        throw new RuntimeException("JwtTokenMissingException : JWT token is missing or invalid");
+        return null;
         // RuntimeException 수정 요망 **
     }
 

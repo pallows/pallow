@@ -21,9 +21,11 @@ import jakarta.persistence.Table;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.AllArgsConstructor;
 
 @Entity
@@ -66,7 +68,7 @@ public class User extends TimeStamp {
     @Column
     private CommonStatus status;
 
-    //TODO : builder로 수정
+
     @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
 
@@ -82,7 +84,7 @@ public class User extends TimeStamp {
         this.nickname = nickname;
         this.userRole = userRole;
         this.position = position;
-        this.deletedAt = deletedAt;
+        //    this.deletedAt = deletedAt;   //todo : 없는 엔티티 같은데 이것이 무엇일까요? 일단 주석처리 해놧습니다.
         this.meets = meets;
         this.userAndChatRooms = new ArrayList<>();
     }
@@ -112,10 +114,6 @@ public class User extends TimeStamp {
         this.position = position;
         this.password = password;
     }
-
-
-    @OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
-    private List<Meets> meets = new ArrayList<>();
 
 }
 //객체의 생성이 복잡하고 필드가 많을 경우: 빌더 패턴을 사용하여 유연하고 가독성 높은 객체 생성.
