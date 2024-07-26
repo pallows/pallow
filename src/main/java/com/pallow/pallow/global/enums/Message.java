@@ -17,6 +17,7 @@ public enum Message {
 
     // USER
     USER_LOGIN_SUCCESS(HttpStatus.OK, "로그인 ! 완료 ❤️."),
+    USER_LOGIN_FAIL(HttpStatus.BAD_REQUEST, "로그인 ! 실패 💔."),
     USER_LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 되었습니다."),
     USER_DELETE_SUCCESS(HttpStatus.OK, "회원 정보를 삭제하였습니다."),
     USER_READ_ALL_SUCCESS(HttpStatus.OK, "회원 전체 조회를 하였습니다."),
@@ -61,6 +62,7 @@ public enum Message {
 
     // Likes
     LIKES_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다.");
+
 
 
     private final HttpStatus status;

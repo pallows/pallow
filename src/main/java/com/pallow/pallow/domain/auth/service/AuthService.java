@@ -24,6 +24,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,18 @@ public class AuthService {
     public AuthResponseDto signUp(AuthRequestDto authRequestDto) {
         if (userRepository.findByUsername(authRequestDto.getUsername()).isPresent()) {
             throw new CustomException(ErrorType.DUPLICATE_ACCOUNT_ID);
+        }
+        /**
+         * 유지영 수정
+         * 유효성 검사 로직 추가
+         * - `username`은  `최소 4자 이상, 10자 이하이며 알파벳 소문자(a~z), 숫자(0~9)`로 구성되어야 한다.
+         * - `password`는  `최소 8자 이상, 15자 이하이며 알파벳 대소문자(a~z, A~Z), 숫자(0~9)`로 구성되어야 한다.
+         */
+        if (!isValidUsername(authRequestDto.getUsername())) {
+            throw new CustomException(ErrorType.INVALID_USERNAME);
+        }
+        if (!isValidPassword(authRequestDto.getPassword())) {
+            throw new CustomException(ErrorType.INVALID_PASSWORD);
         } // 닉네임 유저아이디 유저네임 이메일 다 고유해야함
         User creadtedUser = User.createdUser(
                 authRequestDto.getUsername(),
@@ -62,17 +75,29 @@ public class AuthService {
     }
 
     public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
-        User user = findByUsername(loginRequestDto.getUsername());
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequestDto.getUsername()
-                        , loginRequestDto.getPassword())
-        );
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequestDto.getUsername(),
+                            loginRequestDto.getPassword())
+            );
         // authenticationManager 는 authenticate 메서드를 통해
         // UsernamePasswordAuthenticationToken 객체를 받아들이고,
         // 설정된 AuthenticationProvider 들을 사용하여 인증을 시도
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        issueTokenAndSave(user, response);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            User user = findByUsername(loginRequestDto.getUsername());
+            issueTokenAndSave(user, response);
+        } catch (AuthenticationException e) {
+            throw new CustomException(ErrorType.LOGIN_FAILED);
+        }
+    }
+
+    private boolean isValidUsername(String username) {
+        return username.matches("^[a-z0-9]{4,10}$");
+    }
+
+    private boolean isValidPassword(String password) {
+        return password.matches("^[a-zA-Z0-9]{8,15}$");
     }
 
     private void issueTokenAndSave(User user, HttpServletResponse response) {
