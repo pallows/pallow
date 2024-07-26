@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+<header class="bg-white shadow">
+  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <div class="text-2xl font-bold">Pialow</div>
+    <nav class="space-x-4">
+      <a href="#" class="text-gray-700">이벤트</a>
+      <a href="#" class="text-gray-700">인기 글/상승 요청</a>
+      <a href="#" class="text-gray-700">내 주변 모임</a>
+      <a href="#" class="text-gray-700">내페이지</a>
+      <a href="#" class="text-gray-700">프로필</a>
+    </nav>
+    <button class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
+  </div>
+</header>
+<main class="container mx-auto px-4 py-8">
+  <div class="text-center mb-8">
+    <h1 class="text-3xl font-bold">내 페이지/다른 사람 페이지</h1>
+  </div>
+  <div class="bg-white shadow rounded-lg p-8">
+    <div class="flex items-center mb-8">
+      <img src="https://source.unsplash.com/random/100x100" alt="Profile Picture" class="w-24 h-24 rounded-full mr-4">
+      <div>
+        <h2 class="text-xl font-bold">불광동 철리지역</h2>
+        <p class="text-gray-600">서울</p>
+      </div>
+    </div>
+    <div class="mb-8">
+      <img src="https://source.unsplash.com/random/800x400" alt="Main Image" class="w-full h-64 object-cover rounded-lg">
+      <p class="text-center text-xl font-bold mt-4">메시지</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+      <div>
+        <label class="block text-gray-700">지역</label>
+        <input type="text" class="w-full border border-gray-300 rounded px-4 py-2" value="서울">
+      </div>
+      <div>
+        <label class="block text-gray-700">생년월일</label>
+        <input type="text" class="w-full border border-gray-300 rounded px-4 py-2" value="980925">
+      </div>
+      <div>
+        <label class="block text-gray-700">취미</label>
+        <input type="text" class="w-full border border-gray-300 rounded px-4 py-2" value="전북 익산에서 소주에 고기 한점">
+      </div>
+      <div>
+        <label class="block text-gray-700">MBTI</label>
+        <input type="text" class="w-full border border-gray-300 rounded px-4 py-2" value="ESTP">
+      </div>
+      <div class="col-span-2">
+        <label class="block text-gray-700">본인 소개</label>
+        <textarea class="w-full border border-gray-300 rounded px-4 py-2">헬로우에서 좋은 모임을 갖고 싶은 사람입니다.</textarea>
+      </div>
+    </div>
+    <button class="bg-black text-white px-4 py-2 rounded">수정</button>
+  </div>
+  <div class="mt-8">
+    <h2 class="text-2xl font-bold mb-4">사진첩</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="relative">
+        <img src="https://source.unsplash.com/random/400x400" alt="Photo 1" class="w-full h-64 object-cover rounded-lg">
+        <div class="absolute top-2 right-2 bg-white p-2 rounded-full shadow">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-3 3m0 0l-3-3m3 3V4m0 16v-7m0 0l3 3m-3-3l-3 3" />
+          </svg>
+        </div>
+        <div class="absolute bottom-2 left-2 bg-white p-2 rounded shadow">
+          <span class="text-black font-bold">150만</span>
+        </div>
+      </div>
+      <div class="relative">
+        <img src="https://source.unsplash.com/random/400x400" alt="Photo 2" class="w-full h-64 object-cover rounded-lg">
+        <div class="absolute top-2 right-2 bg-white p-2 rounded-full shadow">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-3 3m0 0l-3-3m3 3V4m0 16v-7m0 0l3 3m-3-3l-3 3" />
+          </svg>
+        </div>
+        <div class="absolute bottom-2 left-2 bg-white p-2 rounded shadow">
+          <span class="text-black font-bold">15만</span>
+        </div>
+      </div>
+      <div class="relative">
+        <img src="https://source.unsplash.com/random/400x400" alt="Photo 3" class="w-full h-64 object-cover rounded-lg">
+        <div class="absolute top-2 right-2 bg-white p-2 rounded-full shadow">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-3 3m0 0l-3-3m3 3V4m0 16v-7m0 0l3 3m-3-3l-3 3" />
+          </svg>
+        </div>
+        <div class="absolute bottom-2 left-2 bg-white p-2 rounded shadow">
+          <span class="text-black font-bold">50만</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

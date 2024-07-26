@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Application</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+<header class="bg-black text-white p-4">
+  <div class="container mx-auto flex justify-between items-center">
+    <h1 class="text-2xl">채팅 목록 / 채팅</h1>
+    <div>
+      <button class="bg-gray-800 px-4 py-2 rounded">내페이지</button>
+      <button class="bg-gray-800 px-4 py-2 rounded ml-2">로그아웃</button>
+    </div>
+  </div>
+</header>
+<main class="container mx-auto mt-4 flex">
+  <aside class="w-1/4 bg-gray-800 text-white p-4">
+    <ul>
+      <li class="mb-2"><button class="w-full text-left">월요일모임</button></li>
+      <li class="mb-2"><button class="w-full text-left">화요일모임</button></li>
+      <li class="mb-2"><button class="w-full text-left">수요일모임</button></li>
+      <li class="mb-2"><button class="w-full text-left">서초대 담구모임</button></li>
+      <li class="mb-2"><button class="w-full text-left">돌 챌린지 모임</button></li>
+    </ul>
+  </aside>
+  <section class="w-3/4 bg-white p-4 flex flex-col">
+    <div class="flex-1 overflow-y-auto mb-4">
+      <div class="mb-4">
+        <div class="bg-gray-200 p-2 rounded mb-2">
+          <p>오늘 12시에 루 돌릴 사람?</p>
+          <span class="text-gray-500 text-sm">2024.07.20 03:42</span>
+        </div>
+        <div class="bg-gray-200 p-2 rounded mb-2">
+          <p>ㅋㅋ</p>
+          <span class="text-gray-500 text-sm">2024.07.20 03:43</span>
+        </div>
+        <div class="bg-gray-200 p-2 rounded mb-2">
+          <p>난 빠짐</p>
+          <span class="text-gray-500 text-sm">2024.07.20 03:44</span>
+        </div>
+      </div>
+      <div class="mb-4">
+        <div class="bg-blue-200 p-2 rounded mb-2 self-end">
+          <p>나 벌집집 가기 직전인데</p>
+          <span class="text-gray-500 text-sm">2024.07.20 03:45</span>
+        </div>
+        <div class="bg-blue-200 p-2 rounded mb-2 self-end">
+          <p>저 만나면 저주세요</p>
+          <span class="text-gray-500 text-sm">2024.07.20 03:45</span>
+        </div>
+        <div class="bg-blue-200 p-2 rounded mb-2 self-end">
+          <p>네가 외계 3개 사드릴게요</p>
+          <span class="text-gray-500 text-sm">2024.07.20 03:45</span>
+        </div>
+        <div class="bg-blue-200 p-2 rounded mb-2 self-end">
+          <p>왜 아무도 대답안해요</p>
+          <span class="text-gray-500 text-sm">2024.07.20 03:46</span>
+        </div>
+        <div class="bg-blue-200 p-2 rounded mb-2 self-end">
+          <p>빨리 대답 바람</p>
+          <span class="text-gray-500 text-sm">2024.07.20 03:50</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <input type="text" class="flex-1 border border-gray-300 p-2 rounded" placeholder="아 대답 빨리 하로">
+      <button class="bg-blue-500 text-white px-4 py-2 rounded ml-2">전송</button>
+    </div>
+  </section>
+</main>
+<footer class="bg-gray-200 p-4 mt-4">
+  <div class="container mx-auto text-center">
+    <p>회원가입만 해도 받는 엘리트 멤버십 혜택</p>
+    <p>로그인 후 혜택 상세정보를 확인할 수 있어요.</p>
+    <button class="bg-blue-500 text-white px-4 py-2 rounded mt-2">로그인/회원가입</button>
+    <button class="bg-gray-500 text-white px-4 py-2 rounded mt-2 ml-2">멤버십혜택 보기</button>
+  </div>
+</footer>
+</body>
+</html>
