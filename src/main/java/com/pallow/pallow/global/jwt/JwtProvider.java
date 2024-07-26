@@ -1,7 +1,10 @@
 package com.pallow.pallow.global.jwt;
 
 
+import com.pallow.pallow.global.enums.ErrorType;
+import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.enums.Role;
+import com.pallow.pallow.global.exception.CustomException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -46,6 +49,10 @@ public class JwtProvider {
     private int jwtRefreshExpiration;
     // Refresh 토큰 유효 시간
 
+    public long getJwtRefreshExpiration() {
+        return jwtRefreshExpiration;
+    }
+
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS512;
     // Json Web Token 라이브러리에서 사용되는 클래스 혹은 열거형 enum, JWT 를 서명하고 검증할 때 사용하는 알고리즘을 정의
 
@@ -89,12 +96,25 @@ public class JwtProvider {
     }
 
     public String getJwtFromHeader(HttpServletRequest request, String headerName) {
+        System.out.println("요청 받은 URL : " + request.getRequestURL());
         String token = request.getHeader(headerName);
+
+        // TODO: 각각 엔드포인트에 대한 개별 설정 수정 요망.. ㅠㅠ
+        //String requestUrl = request.getRequestURI();
+        // if (!request.getMethod().equals("GET") // 모든 요청에 대해서 필터를 돌지만  GET 이 아니면서
+        //        && !(requestUrl.equals("http://localhost:8080/auth/local") // local 로그인이 아니거나
+        //        || requestUrl.equals("http://localhost:8080/auth/signup") // local 회원 가입이 아니거나
+        //        || requestUrl.equals("http://localhost:8080/email/send") // 이메일 전송이 아니거나
+        //        || requestUrl.equals("http://localhost:8080/email/verify"))// 이메일 인증이 아닐때
+        //        && (!StringUtils.hasText(token) // 면서 토큰이 비었거나
+        //        || !token.startsWith(BEARER_PREFIX))) //Bearer 로 시작하지 않으면
+        // { //카카오 로그인일 경우에도 토큰 제외 해야함
+        //    throw new CustomException(ErrorType.TOKEN_CHECK_INVALID); // 이 토큰은 잘못되었다고 예외를 던진다.
+        // }
         if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
             return token.substring(7);
         }
         log.error("Jwt Token is not Found or invalid : {}", headerName);
-//        throw new RuntimeException("JwtTokenMissingException : JWT token is missing or invalid");
         return null;
         // RuntimeException 수정 요망 **
     }
@@ -116,20 +136,19 @@ public class JwtProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
-            throw new RuntimeException("토큰이 유효하지 않습니다.");
+            throw new CustomException(ErrorType.TOKEN_CHECK_INVALID);
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
-            throw new RuntimeException("토큰이 유효하지 않습니다.");
+            throw new CustomException(ErrorType.TOKEN_CHECK_INVALID);
         } catch (ExpiredJwtException e) {
             log.error("JWT token is expired: {}", e.getMessage());
-            throw new RuntimeException("토큰이 만료되었습니다.");
+            throw new CustomException(ErrorType.TOKEN_CHECK_EXPIRED);
         } catch (UnsupportedJwtException e) {
             log.error("JWT token is unsupported: {}", e.getMessage());
-            throw new RuntimeException("토큰이 유효하지 않습니다.");
+            throw new CustomException(ErrorType.TOKEN_CHECK_INVALID);
         } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty: {}", e.getMessage());
-            throw new RuntimeException("토큰이 유효하지 않습니다.");
+            throw new CustomException(ErrorType.TOKEN_CHECK_INVALID);
         }
     }
-    // 예외처리 수정 필수 **
 }

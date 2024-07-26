@@ -5,14 +5,12 @@ import lombok.Getter;
 @Getter
 public class AuthResponseDto {
 
-    private final Long userId;
 
     private final String nickname;
 
     private final String email;
 
-    public AuthResponseDto(Long userId, String nickname, String email) {
-        this.userId = userId;
+    public AuthResponseDto(String nickname, String email) {
         this.nickname = nickname;
         this.email = email;
     }
