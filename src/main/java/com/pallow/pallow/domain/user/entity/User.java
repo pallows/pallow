@@ -84,7 +84,6 @@ public class User extends TimeStamp {
         this.nickname = nickname;
         this.userRole = userRole;
         this.position = position;
-        //    this.deletedAt = deletedAt;   //todo : 없는 엔티티 같은데 이것이 무엇일까요? 일단 주석처리 해놧습니다.
         this.meets = meets;
         this.userAndChatRooms = new ArrayList<>();
     }
