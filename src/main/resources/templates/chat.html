@@ -15,75 +15,145 @@
 <body class="bg-gray-100">
 <header class="bg-black text-white p-4">
   <div class="container mx-auto flex justify-between items-center">
-    <h1 class="text-2xl">채팅 목록 / 채팅</h1>
+    <h1 class="text-2xl" id="chatTitle" th:text="${username} + '\'s Chatting Room'">채팅 목록 / 채팅</h1>
     <div>
-      <button class="bg-gray-800 px-4 py-2 rounded">내페이지</button>
-      <button class="bg-gray-800 px-4 py-2 rounded ml-2">로그아웃</button>
+      <button class="bg-gray-800 px-4 py-2 rounded">My Page</button>
+      <button class="bg-gray-800 px-4 py-2 rounded ml-2">LogOut</button>
     </div>
   </div>
 </header>
 <main class="container mx-auto mt-4 flex">
   <aside class="w-1/4 bg-gray-800 text-white p-4">
-    <ul>
-      <li class="mb-2"><button class="w-full text-left">월요일모임</button></li>
-      <li class="mb-2"><button class="w-full text-left">화요일모임</button></li>
-      <li class="mb-2"><button class="w-full text-left">수요일모임</button></li>
-      <li class="mb-2"><button class="w-full text-left">서초대 담구모임</button></li>
-      <li class="mb-2"><button class="w-full text-left">돌 챌린지 모임</button></li>
+    <ul id="chatRoomsList">
     </ul>
   </aside>
   <section class="w-3/4 bg-white p-4 flex flex-col">
-    <div class="flex-1 overflow-y-auto mb-4">
-      <div class="mb-4">
-        <div class="bg-gray-200 p-2 rounded mb-2">
-          <p>오늘 12시에 루 돌릴 사람?</p>
-          <span class="text-gray-500 text-sm">2024.07.20 03:42</span>
-        </div>
-        <div class="bg-gray-200 p-2 rounded mb-2">
-          <p>ㅋㅋ</p>
-          <span class="text-gray-500 text-sm">2024.07.20 03:43</span>
-        </div>
-        <div class="bg-gray-200 p-2 rounded mb-2">
-          <p>난 빠짐</p>
-          <span class="text-gray-500 text-sm">2024.07.20 03:44</span>
-        </div>
-      </div>
-      <div class="mb-4">
-        <div class="bg-blue-200 p-2 rounded mb-2 self-end">
-          <p>나 벌집집 가기 직전인데</p>
-          <span class="text-gray-500 text-sm">2024.07.20 03:45</span>
-        </div>
-        <div class="bg-blue-200 p-2 rounded mb-2 self-end">
-          <p>저 만나면 저주세요</p>
-          <span class="text-gray-500 text-sm">2024.07.20 03:45</span>
-        </div>
-        <div class="bg-blue-200 p-2 rounded mb-2 self-end">
-          <p>네가 외계 3개 사드릴게요</p>
-          <span class="text-gray-500 text-sm">2024.07.20 03:45</span>
-        </div>
-        <div class="bg-blue-200 p-2 rounded mb-2 self-end">
-          <p>왜 아무도 대답안해요</p>
-          <span class="text-gray-500 text-sm">2024.07.20 03:46</span>
-        </div>
-        <div class="bg-blue-200 p-2 rounded mb-2 self-end">
-          <p>빨리 대답 바람</p>
-          <span class="text-gray-500 text-sm">2024.07.20 03:50</span>
-        </div>
-      </div>
+    <div id="chatSection" class="flex-1 overflow-y-auto mb-4">
     </div>
     <div class="flex items-center">
-      <input type="text" class="flex-1 border border-gray-300 p-2 rounded" placeholder="아 대답 빨리 하로">
-      <button class="bg-blue-500 text-white px-4 py-2 rounded ml-2">전송</button>
+      <input type="text" id="chatInput" class="flex-1 border border-gray-300 p-2 rounded" placeholder="Type a message...">
+      <button class="bg-blue-500 text-white px-4 py-2 rounded ml-2" id="sendButton">Send</button>
     </div>
   </section>
 </main>
-<footer class="bg-gray-200 p-4 mt-4">
-  <div class="container mx-auto text-center">
-    <p>회원가입만 해도 받는 엘리트 멤버십 혜택</p>
-    <p>로그인 후 혜택 상세정보를 확인할 수 있어요.</p>
-    <button class="bg-blue-500 text-white px-4 py-2 rounded mt-2">로그인/회원가입</button>
-    <button class="bg-gray-500 text-white px-4 py-2 rounded mt-2 ml-2">멤버십혜택 보기</button>
-  </div>
-</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let username = localStorage.getItem('username');  // Retrieve stored username
+    if (username) {
+      document.getElementById('chatTitle').textContent = `${username}'s Chatting Room`;  // Update text
+    }
+
+    function fetchChatRooms(username) {
+      return fetch(`/chat/getRooms`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(username)
+      })
+      .then(response => response.json())
+      .then(data => {
+        return data;
+      })
+      .catch(error => {
+        console.error('Error fetching chat rooms:', error);
+      });
+    }
+
+    function renderChatRooms(chatRooms) {
+      const chatRoomsList = document.getElementById('chatRoomsList');
+      chatRoomsList.innerHTML = ''; // Clear any existing chat rooms
+
+      chatRooms.forEach(room => {
+        const li = document.createElement('li');
+        li.classList.add('mb-2');
+        const button = document.createElement('button');
+        button.classList.add('w-full', 'text-left');
+        button.innerText = room.name;
+        button.onclick = () => enterRoom(room.id); // Replace with actual navigation logic
+        li.appendChild(button);
+        chatRoomsList.appendChild(li);
+      });
+    }
+
+    function displayChatMessages(roomId) {
+      fetchChatMessages(roomId).then(messages => {
+        const chatSection = document.getElementById('chatSection');
+        chatSection.innerHTML = '';
+
+        messages.forEach(message => {
+          const messageDiv = document.createElement('div');
+          messageDiv.classList.add('p-2', 'rounded', 'mb-2');
+          messageDiv.classList.add(message.sender === username ? 'bg-blue-200' : 'bg-gray-200');
+          messageDiv.style.alignSelf = message.sender === username ? 'flex-end' : 'flex-start';
+
+          const messageContent = document.createElement('p');
+          messageContent.innerText = message.content;
+
+          const messageTimestamp = document.createElement('span');
+          messageTimestamp.classList.add('text-gray-500', 'text-sm');
+          messageTimestamp.innerText = new Date(message.createdAt).toLocaleString();
+
+          messageDiv.appendChild(messageContent);
+          messageDiv.appendChild(messageTimestamp);
+          chatSection.appendChild(messageDiv);
+        });
+      });
+    }
+
+    function fetchChatMessages(roomId) {
+      return fetch(`/chat/getMessages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ roomId })
+      })
+      .then(response => response.json())
+      .then(data => data)
+      .catch(error => {
+        console.error('Error fetching chat messages:', error);
+      });
+    }
+
+    function sendMessage() {
+      const chatInput = document.getElementById('chatInput');
+      const message = chatInput.value;
+
+      if (message && currentRoomId) {
+        const chatMessage = {
+          content: message,
+          sender: username,
+          chatRoomId: currentRoomId,
+          type: 'CHAT'
+        };
+
+        fetch(`/chat/sendMessage`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(chatMessage)
+        })
+        .then(response => response.json())
+        .then(data => {
+          chatInput.value = '';
+          displayChatMessages(currentRoomId);
+        })
+        .catch(error => {
+          console.error('Error sending message:', error);
+        });
+      }
+    }
+
+    document.getElementById('sendButton').addEventListener('click', sendMessage);
+
+    fetchChatRooms(username).then(chatRooms => {
+      renderChatRooms(chatRooms);
+    });
+  });
+</script>
+
 </body>
 </html>
