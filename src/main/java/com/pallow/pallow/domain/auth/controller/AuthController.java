@@ -23,42 +23,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-
     private final AuthService authService;
 
-
-    /**
-     * 유지영 수정
-     * SecurityConfig 참고
-      */
-    @GetMapping("/main.html")
-    public String mainPage() {
-        return "main";
-    }
-
-    @GetMapping("/login.html")
-    public String loginPage() {
-        return "login";
-    }
-
-    /**
-     * 유지영 수정
-     * 로그인 실패시 /login?error로 다이랙트
-     */
-    @GetMapping("/login")
-    public String loginPage(@RequestParam(required = false) String error, Model model) {
-        if (error != null) {
-            model.addAttribute("error", "Invalid username or password");
-        }
-        return "login";
-    }
-
-    // 회원 가입 1차 작성 AuthResponseDto
     /**
      * 유지영 수정
      * @Valid 추가
      */
-    @PostMapping("/local/signup")
+    @PostMapping("/signup")
     public ResponseEntity<CommonResponseDto> signUp(@Valid @RequestBody AuthRequestDto requestDto) {
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOCAL_SIGNUP_SUCCESS, authService.signUp(requestDto)));
     }
@@ -68,7 +39,7 @@ public class AuthController {
      * @Valid 추가
      */
     // 로컬 로그인
-    @PostMapping("/local")
+    @PostMapping("/login")
     public ResponseEntity<CommonResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response, HttpSession session) {
         try {
             authService.login(loginRequestDto, response);
@@ -99,25 +70,13 @@ public class AuthController {
     public ResponseEntity<CommonResponseDto> sendVerificationEmail(@Valid @RequestBody EmailInputRequestDto emailInputRequestDto) {
         String code = authService.sendMail(emailInputRequestDto);
         return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_SEND_SUCCESS, code));
-        // 임시로 code 를 Postman 을 통해서 확인하기 위해 인증 코드를 반환합니다. 추후 삭제 예정
     }
-
 
     @PostMapping("/email/verify")
     public ResponseEntity<CommonResponseDto> verificationEmailCode(@Valid @RequestBody EmailCodeRequestDto emailCodeRequestDto) {
         String checkEmail = authService.verifyCode(emailCodeRequestDto);
         return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_VERIFICATION_CODE_SUCCESS, checkEmail));
-    }// True 혹은 False 를 반환 하게끔 만들어서 그걸 토대로 확인 후 다음 페이지로 접근하기 위한 문자열을 응답합니다.
-    // Email 확인
-
-    //TODO :  이메일 인증 로직
-    // 회원가입시 정보를 입력하고 이메일 발송후 인증 메일의 인증번호와 프론트에서 입력해서 넘겨주는 값이 일치할 경우
-    // 회원가입 완료 버튼을 클릭할 수 있다.
-
-
-
-
-
+    }
 
     //카카오 소셜 로그인
 

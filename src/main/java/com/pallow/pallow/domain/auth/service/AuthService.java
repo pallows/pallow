@@ -9,6 +9,7 @@ import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.Role;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.jwt.JwtProvider;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -21,6 +22,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,6 +48,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final RedisTemplate<String, Object> redisTemplate;
     private final JavaMailSender javaMailSender;
+    private static final String senderEmail= "pallow.mail@gmail.com";
 
     @Transactional
     public AuthResponseDto signUp(AuthRequestDto authRequestDto) {
@@ -135,20 +138,29 @@ public class AuthService {
     }
 
     public String sendMail(EmailInputRequestDto emailInputRequestDto) {
-        log.info("이메일 요청 받은것 {}", emailInputRequestDto.getEmail());
         String code = generateVerificationCode();
         ValueOperations<String, Object> emailAndCode = redisTemplate.opsForValue();
         emailAndCode.set(emailInputRequestDto.getEmail(), code, 5, TimeUnit.MINUTES);
 
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(emailInputRequestDto.getEmail());
-            message.setSubject("Email 인증");
-            message.setText("인증 코드 : " + code);
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setTo(emailInputRequestDto.getEmail());
+            helper.setFrom(senderEmail);
+            helper.setSubject("Pallow Email 인증 코드입니다.");
+
+            String body = "<html><body>";
+            body += "<img src='https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96' alt='Pallow logo' />";
+            body += "<h3>요청하신 인증 번호입니다.</h3>";
+            body += "<h1>" + code + "</h1>";
+            body += "</body></html>";
+            helper.setText(body, true);
+
             javaMailSender.send(message);
         } catch (Exception e) {
             log.error("메일 전송 오류: ", e);
-            throw new RuntimeException("여기가 존나 에러임"); // CustomException 으로 적절한 에러 처리
+            throw new CustomException(ErrorType.MAIL_MISMATCH_OR_CODE_FORBIDDEN);
         }
         return code;
     }

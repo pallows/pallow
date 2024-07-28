@@ -26,11 +26,9 @@ spring:
           starttls:
             enable: 'true'
             required: 'true'
-
       redis:
         host: localhost
         port: 6379
-
   web:
     resources:
       add-mappings: true
