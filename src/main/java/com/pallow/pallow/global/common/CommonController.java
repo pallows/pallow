@@ -23,4 +23,14 @@ public class CommonController {
         return "login";
     }
 
+    @GetMapping("/auth/local/signup")
+    public String signupPage() {
+        return "register";
+    }
+
+    @GetMapping("/auth/local/register_information.html")
+    public String registerInformationPage() {
+        return "register_information";
+    }
+
 }
