@@ -23,42 +23,13 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-
     private final AuthService authService;
 
-
-    /**
-     * 유지영 수정
-     * SecurityConfig 참고
-      */
-    @GetMapping("/main.html")
-    public String mainPage() {
-        return "main";
-    }
-
-    @GetMapping("/login.html")
-    public String loginPage() {
-        return "login";
-    }
-
-    /**
-     * 유지영 수정
-     * 로그인 실패시 /login?error로 다이랙트
-     */
-    @GetMapping("/login")
-    public String loginPage(@RequestParam(required = false) String error, Model model) {
-        if (error != null) {
-            model.addAttribute("error", "Invalid username or password");
-        }
-        return "login";
-    }
-
-    // 회원 가입 1차 작성 AuthResponseDto
     /**
      * 유지영 수정
      * @Valid 추가
      */
-    @PostMapping("/local/signup")
+    @PostMapping("/signup")
     public ResponseEntity<CommonResponseDto> signUp(@Valid @RequestBody AuthRequestDto requestDto) {
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOCAL_SIGNUP_SUCCESS, authService.signUp(requestDto)));
     }
@@ -68,7 +39,7 @@ public class AuthController {
      * @Valid 추가
      */
     // 로컬 로그인
-    @PostMapping("/local")
+    @PostMapping("/login")
     public ResponseEntity<CommonResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response, HttpSession session) {
         try {
             authService.login(loginRequestDto, response);

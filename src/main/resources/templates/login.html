@@ -18,7 +18,7 @@
   <div class="mb-6 text-center">
     <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png" alt="Team Logo" class="mx-auto mb-4">
   </div>
-  <form id="loginForm" th:action="@{/auth/local}" method="post">
+  <form id="loginForm" th:action="@{/auth/login}" method="POST">
     <div class="mb-4">
       <label for="username" class="block text-gray-700">ID</label>
       <input type="text" id="username" name="username" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -29,7 +29,7 @@
     </div>
     <div class="flex justify-between mb-4">
       <button type="submit" class="w-1/2 mr-2 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">로그인</button>
-      <a href="/auth/local/signup" class="w-1/2 ml-2 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 text-center">회원가입</a>
+      <a href="/signup" class="w-1/2 ml-2 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 text-center">회원가입</a>
     </div>
   </form>
   <a href="/auth/kakao" class="block w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 text-center">카카오 로그인</a>
@@ -38,21 +38,5 @@
   </div>
 </div>
 
-<script th:inline="javascript">
-  document.getElementById('loginForm').addEventListener('submit', function(e) {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const usernameRegex = /^[a-z0-9]{4,10}$/;
-    const passwordRegex = /^[a-zA-Z0-9]{8,15}$/;
-
-    if (!usernameRegex.test(username)) {
-      e.preventDefault();
-      alert('아이디는 4~10자의 영소문자와 숫자로만 구성되어야 합니다.');
-    } else if (!passwordRegex.test(password)) {
-      e.preventDefault();
-      alert('비밀번호는 8~15자의 영문자와 숫자로만 구성되어야 합니다.');
-    }
-  });
-</script>
 </body>
 </html>
