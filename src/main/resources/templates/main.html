@@ -1,88 +1,217 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prototype</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Inter', sans-serif;
+    }
+    .carousel {
+      display: flex;
+      overflow: hidden;
+    }
+    .carousel-item {
+      min-width: 33.33%;
+      transition: transform 0.5s ease;
+    }
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .carousel-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: gray;
+      cursor: pointer;
+    }
+    .carousel-dot.active {
+      background-color: black;
+    }
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .carousel-arrow.left {
+      left: 10px;
+    }
+    .carousel-arrow.right {
+      right: 10px;
     }
   </style>
-  <link rel="icon" href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png" type="image/x-icon">
 </head>
-<body class="bg-gray-100 text-gray-900">
-<header class="bg-white shadow-md">
-  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-    <div class="flex items-center space-x-4">
-      <div class="w-10 h-10 bg-gray-300"></div>
-      <nav class="space-x-4">
-        <a href="#" class="text-gray-700 hover:text-gray-900">오늘의 동친</a>
-        <a href="#" class="text-gray-700 hover:text-gray-900">내 주변 모임</a>
-      </nav>
-    </div>
-    <div class="space-x-4">
-      <a href="#" class="text-gray-700 hover:text-gray-900">마이페이지</a>
-      <button class="bg-blue-500 text-white px-4 py-2 rounded">로그아웃</button>
-    </div>
+<body class="bg-gray-100 text-black">
+<header class="flex justify-between items-center p-4 bg-white shadow">
+  <div class="flex items-center">
+    <img src="LOGO.png" width="70" height="70" alt="Logo" class="mr-4">
+    <nav>
+      <a href="#" class="mr-4">오늘의 동친</a>
+      <a href="#" class="mr-4">인기 급 상승 모임</a>
+      <a href="#" class="mr-4">내 주변 모임</a>
+    </nav>
+  </div>
+  <div class="flex items-center">
+    <button id="profileBtn" class="mr-4">내 프로필</button>
+    <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
   </div>
 </header>
-<main class="container mx-auto px-4 py-8">
+
+<main class="p-4">
   <section class="mb-8">
-    <h2 class="text-xl font-bold mb-4">오늘의 동친</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="bg-white p-4 shadow-md flex items-center justify-between">
-        <div class="w-10 h-10 bg-gray-300"></div>
-        <div class="flex-1 mx-4 h-10 bg-gray-200"></div>
-        <div class="w-10 h-10 bg-gray-300"></div>
-      </div>
-      <div class="bg-white p-4 shadow-md flex items-center justify-between">
-        <div class="w-10 h-10 bg-gray-300"></div>
-        <div class="flex-1 mx-4 h-10 bg-gray-200"></div>
-        <div class="w-10 h-10 bg-gray-300"></div>
-      </div>
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">오늘의 동친</h2>
+      <a href="dongchin.html" class="text-blue-500">더보기</a>
     </div>
+    <div class="relative">
+      <div class="carousel" id="carousel1"></div>
+      <div class="carousel-arrow left">❮</div>
+      <div class="carousel-arrow right">❯</div>
+    </div>
+    <div class="carousel-dots mt-4" id="dots1"></div>
   </section>
+
   <section class="mb-8">
-    <h2 class="text-xl font-bold mb-4">오늘의 동친</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="bg-white p-4 shadow-md flex items-center justify-between">
-        <div class="w-10 h-10 bg-gray-300"></div>
-        <div class="flex-1 mx-4 h-10 bg-gray-200"></div>
-        <div class="w-10 h-10 bg-gray-300"></div>
-      </div>
-      <div class="bg-white p-4 shadow-md flex items-center justify-between">
-        <div class="w-10 h-10 bg-gray-300"></div>
-        <div class="flex-1 mx-4 h-10 bg-gray-200"></div>
-        <div class="w-10 h-10 bg-gray-300"></div>
-      </div>
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">인기 급 상승 모임</h2>
+      <a href="ingimoim.html" class="text-blue-500">더보기</a>
     </div>
+    <div class="relative">
+      <div class="carousel" id="carousel2"></div>
+      <div class="carousel-arrow left">❮</div>
+      <div class="carousel-arrow right">❯</div>
+    </div>
+    <div class="carousel-dots mt-4" id="dots2"></div>
   </section>
-  <section class="mb-8">
-    <h2 class="text-xl font-bold mb-4">오늘의 동친</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="bg-white p-4 shadow-md flex items-center justify-between">
-        <div class="w-10 h-10 bg-gray-300"></div>
-        <div class="flex-1 mx-4 h-10 bg-gray-200"></div>
-        <div class="w-10 h-10 bg-gray-300"></div>
-      </div>
-      <div class="bg-white p-4 shadow-md flex items-center justify-between">
-        <div class="w-10 h-10 bg-gray-300"></div>
-        <div class="flex-1 mx-4 h-10 bg-gray-200"></div>
-        <div class="w-10 h-10 bg-gray-300"></div>
-      </div>
+
+  <section class="mb-20">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">내 주변 모임</h2>
+      <a href="meetsCollection.html" class="text-blue-500">더보기</a>
     </div>
+    <div class="relative">
+      <div class="carousel" id="carousel3"></div>
+      <div class="carousel-arrow left">❮</div>
+      <div class="carousel-arrow right">❯</div>
+    </div>
+    <div class="carousel-dots mt-4" id="dots3"></div>
   </section>
-  <section class="bg-blue-100 p-6 rounded shadow-md text-center">
-    <p class="text-lg font-bold mb-4">회원가입만 해도 받는 엘리트 멤버십 혜택</p>
-    <p class="text-gray-700 mb-4">로그인 하면 멤버십 혜택을 받아볼 수 있어요.</p>
-    <div class="space-x-4">
-      <button class="bg-blue-500 text-white px-4 py-2 rounded">로그인/회원가입</button>
-      <button class="bg-white text-blue-500 border border-blue-500 px-4 py-2 rounded">혜택 자세히 보기</button>
-    </div>
+
+  <section class="bg-blue-100 p-4 rounded shadow">
+    <h2 class="text-xl font-bold mb-4">회원가입만 해도 받는 엘리트 멤버십 혜택</h2>
+    <p class="mb-4">로그인 하면 멤버십 할인가로 예약할 수 있어요.</p>
+    <button id="loginSignupBtn" class="bg-blue-500 text-white px-4 py-2 rounded mb-4">로그인/회원가입</button>
+    <br>
+    <a href="#" class="text-blue-500 inline-block">혜택 자세히 보기</a>
   </section>
 </main>
+
+<footer class="p-4 bg-white shadow mt-8 flex justify-end">
+  <button id="chatBtn" class="p-2 rounded flex flex-col items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-chat-heart" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M2.965 12.695a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2m-.8 3.108.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125M8 5.993c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132"/>
+    </svg>
+    <span class="text-xs mt-1">Chat</span>
+  </button>
+</footer>
+
+<script>
+  function createCarousel(containerId, dotsId, numCards) {
+    const container = document.getElementById(containerId);
+    const dotsContainer = document.getElementById(dotsId);
+    const numDots = Math.ceil(numCards / 3);
+
+    // Create cards
+    for (let i = 0; i < numCards; i++) {
+      const card = document.createElement('div');
+      card.className = 'carousel-item bg-white p-4 shadow mr-4';
+      card.style.width = '300px';
+      card.style.height = '200px';
+      card.innerHTML = `
+        <img src="https://via.placeholder.com/280x120" alt="Thumbnail" class="mb-2">
+        <h3 class="font-bold">Card ${i + 1}</h3>
+        <p>Description for Card ${i + 1}</p>
+      `;
+      container.appendChild(card);
+    }
+
+    // Create dots
+    for (let i = 0; i < numDots; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      dotsContainer.appendChild(dot);
+    }
+
+    let currentIndex = 0;
+
+    function updateCarousel() {
+      container.style.transform = `translateX(-${currentIndex * 33.33}%)`;
+      Array.from(dotsContainer.children).forEach((dot, index) => {
+        dot.classList.toggle('active', index === Math.floor(currentIndex / 3));
+      });
+    }
+
+    // Arrow click handlers
+    container.parentElement.querySelector('.carousel-arrow.left').addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + numCards) % numCards;
+      updateCarousel();
+    });
+
+    container.parentElement.querySelector('.carousel-arrow.right').addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % numCards;
+      updateCarousel();
+    });
+
+    // Dot click handlers
+    Array.from(dotsContainer.children).forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        currentIndex = index * 3;
+        updateCarousel();
+      });
+    });
+  }
+
+  // Initialize carousels
+  createCarousel('carousel1', 'dots1', 9);
+  createCarousel('carousel2', 'dots2', 9);
+  createCarousel('carousel3', 'dots3', 9);
+
+  document.getElementById('profileBtn').addEventListener('click', () => {
+    window.location.href = 'userboard.html';
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    // Perform logout logic here
+    window.location.href = 'login.html';
+  });
+
+  document.getElementById('loginSignupBtn').addEventListener('click', () => {
+    // Check if user is logged in
+    const isLoggedIn = false; // Replace with actual login check
+    if (isLoggedIn) {
+      alert('이미 엘리트 멤버십 혜택을 받고 계십니다!');
+    } else {
+      window.location.href = 'login.html';
+    }
+  });
+
+  document.getElementById('chatBtn').addEventListener('click', () => {
+    window.location.href = 'chat.html';
+  });
+</script>
 </body>
 </html>
