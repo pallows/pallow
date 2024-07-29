@@ -59,6 +59,8 @@ public enum Message {
     REVIEW_READ_SUCCESS(HttpStatus.OK, "리뷰를 조회하였습니다."),
     REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "리뷰를 수정하였습니다."),
     REVIEW_DELETE_SUCCESS(HttpStatus.OK, "리뷰를 삭제하였습니다."),
+    UNAUTHORIZED_REVIEW(HttpStatus.UNAUTHORIZED, "모임 멤버만 리뷰를 작성할 수 있습니다."),
+
 
     // Likes
     LIKES_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다.");
