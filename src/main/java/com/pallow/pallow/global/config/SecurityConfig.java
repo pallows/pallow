@@ -40,6 +40,8 @@ public class SecurityConfig {
                                 "/auth/signup",
                                 "/login",
                                 "/email/**",
+                                "/profiles",
+                                "/register_information",
                                 "/",
                                 "/css/**",
                                 "/js/**",
