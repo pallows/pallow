@@ -45,8 +45,6 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final AuthenticationManager authenticationManager;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final JavaMailSender javaMailSender;
-    private static final String senderEmail = "pallow.mail@gmail.com";
 
     @Transactional
     public AuthResponseDto signUp(AuthRequestDto authRequestDto) {
