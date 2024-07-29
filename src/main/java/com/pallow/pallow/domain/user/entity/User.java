@@ -60,9 +60,6 @@ public class User extends TimeStamp {
     @Enumerated(EnumType.STRING)
     private Role userRole;
 
-    @Column
-    private String position;
-
     @Column(nullable = false)
     private String gender;
 
@@ -75,7 +72,8 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAndChatRoom> userAndChatRooms = new ArrayList<>();
 
-    public User(Long id, Profile profile, String username, String password, String email, String nickname, Role userRole, String position, LocalDate deletedAt, List<Meets> meets) {
+    public User(Long id, Profile profile, String username, String password, String email,
+            String nickname, Role userRole, LocalDate deletedAt, List<Meets> meets) {
         this.id = id;
         this.profile = profile;
         this.username = username;
@@ -83,7 +81,6 @@ public class User extends TimeStamp {
         this.email = email;
         this.nickname = nickname;
         this.userRole = userRole;
-        this.position = position;
         //    this.deletedAt = deletedAt;   //todo : 없는 엔티티 같은데 이것이 무엇일까요? 일단 주석처리 해놧습니다.
         this.meets = meets;
         this.userAndChatRooms = new ArrayList<>();
@@ -94,7 +91,8 @@ public class User extends TimeStamp {
         userAndChatRoom.setUser(this);
     }
 
-    public static User createdUser(String username, String nickname, String email, String gender, String password, Role role) {
+    public static User createdUser(String username, String nickname, String email, String gender,
+            String password, Role role) {
         User user = new User();
         user.username = username;
         user.nickname = nickname;
@@ -110,9 +108,8 @@ public class User extends TimeStamp {
         this.status = CommonStatus.DELETED;
     }
 
-    public void updateUser(String nickname, String position, String password) {
+    public void updateUser(String nickname, String password) {
         this.nickname = nickname;
-        this.position = position;
         this.password = password;
     }
 
