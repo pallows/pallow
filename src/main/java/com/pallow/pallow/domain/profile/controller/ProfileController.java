@@ -13,11 +13,16 @@ import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,6 +41,7 @@ public class ProfileController {
 
     private final ProfileService profileService;
     private final UserRepository userRepository;
+    private static final String UPLOAD_DIR = "src/main/resources/static/images/";
 
     /**
      * 프로필 조회
@@ -63,12 +69,14 @@ public class ProfileController {
         LocalDate birthDate = LocalDate.parse(birth);
         Mbti mbtiEnum = Mbti.valueOf(mbti);
 
+        String photoPath = saveFile(photo);
+
         ProfileRequestDto requestDto = new ProfileRequestDto();
         requestDto.setContent(content);
         requestDto.setBirth(birthDate);
         requestDto.setMbti(mbtiEnum);
         requestDto.setHobby(hobby);
-        requestDto.setPhoto(new String(photo.getBytes()));
+        requestDto.setPhoto(photoPath);
         requestDto.setPosition(position);
 
         User user = userRepository.findByUsername(username)
@@ -76,6 +84,25 @@ public class ProfileController {
 
         ProfileResponseDto responseDto = profileService.createProfile(requestDto, user);
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
+    }
+
+    private String saveFile(MultipartFile file) throws IOException {
+        if (file.isEmpty()) {
+            throw new IOException("Failed to store empty file.");
+        }
+
+        String fileName = UUID.randomUUID().toString() + "_" + StringUtils.cleanPath(file.getOriginalFilename());
+        Path uploadPath = Paths.get(UPLOAD_DIR);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        Path filePath = uploadPath.resolve(fileName);
+        Files.copy(file.getInputStream(), filePath);
+
+        // Return the path accessible to the web application
+        return "/images/" + fileName;
     }
 
     /**
