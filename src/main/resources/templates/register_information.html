@@ -137,9 +137,11 @@
         let isSeoul = regionName.includes("서울");
 
         if (isSeoul) {
-          document.getElementById('location').value = result[0].address.region_1depth_name + " " + result[0].address.region_2depth_name;
+          document.getElementById('location').value = result[0].address.region_1depth_name + " "
+              + result[0].address.region_2depth_name;
         } else {
-          document.getElementById('location').value = result[0].address.region_2depth_name + " " + result[0].address.region_3depth_name;
+          document.getElementById('location').value = result[0].address.region_2depth_name + " "
+              + result[0].address.region_3depth_name;
         }
       }
     }
