@@ -110,4 +110,15 @@ public class MeetsService {
         );
     }
 
+    public boolean isCreator(Long meetId, User user) {
+        Meets meet = findByMeetsIdAndStatus(meetId);
+        return meet.getGroupCreator().getId().equals(user.getId());
+    }
+
+    public boolean isParticipant(Long meetId, User user) {
+        // 참가자 확인 로직 구현 필요
+        // 현재 코드에서는 참가자 관리 로직이 보이지 않으므로,
+        // 이 부분은 추후 참가자 관리 기능 구현 시 추가해야 합니다.
+        return true;
+    }
 }
