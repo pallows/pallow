@@ -16,78 +16,170 @@
 <body class="bg-gray-100 p-6">
 <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
   <div class="flex items-center mb-6">
-    <img src="https://source.unsplash.com/random/100x100" alt="Profile" class="w-24 h-24 rounded-full mr-6">
+    <img th:src="${event.profileImageUrl}" alt="Profile" class="w-24 h-24 rounded-full mr-6">
     <div>
-      <h1 class="text-2xl font-bold">조회수</h1>
-      <p class="text-gray-500">2024.07.20 작성됨</p>
+      <h1 class="text-2xl font-bold" th:text="${event.title}">모임 제목</h1>
+      <p class="text-gray-500" th:text="${#temporals.format(event.createdAt, 'yyyy.MM.dd')} + ' 작성됨'">작성 날짜</p>
     </div>
   </div>
-  <div class="grid grid-cols-2 gap-4 mb-6">
-    <div>
-      <label class="block text-gray-700">참가인원</label>
-      <input type="text" value="8명" class="w-full p-2 border border-gray-300 rounded">
-    </div>
-    <div>
-      <label class="block text-gray-700">위치</label>
-      <input type="text" value="가락동동 거래교육 노블PC방 2층" class="w-full p-2 border border-gray-300 rounded">
-    </div>
-    <div>
+
+  <!-- 모임 생성/수정 폼 -->
+  <form th:action="@{${event.id != null ? '/api/meets/' + event.id : '/api/meets'}}" th:method="${event.id != null ? 'PATCH' : 'POST'}" id="meetForm" style="display: none;">
+    <div class="mb-4">
       <label class="block text-gray-700">제목</label>
-      <input type="text" value="챌린지 파티" class="w-full p-2 border border-gray-300 rounded">
+      <input type="text" name="title" th:value="${event.title}" class="w-full p-2 border border-gray-300 rounded">
     </div>
-  </div>
-  <div class="mb-6">
-    <label class="block text-gray-700">모임설명</label>
-    <textarea class="w-full p-2 border border-gray-300 rounded" rows="4">나의 챌린지 찍는 길 같이 가실 분</textarea>
-  </div>
-  <div class="flex justify-between items-center mb-6">
-    <button class="bg-red-500 text-white px-4 py-2 rounded">참가 신청자 목록</button>
-    <div>
-      <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded">참가신청</button>
-      <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded">받기</button>
+    <div class="mb-4">
+      <label class="block text-gray-700">위치</label>
+      <input type="text" name="location" th:value="${event.location}" class="w-full p-2 border border-gray-300 rounded">
     </div>
-  </div>
-  <div class="mb-6">
-    <h2 class="text-xl font-bold mb-4">리뷰 작성란</h2>
-    <div class="flex items-center mb-4">
-      <textarea class="w-full p-2 border border-gray-300 rounded" rows="2" placeholder="리뷰를 작성하세요..."></textarea>
-      <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded ml-4">작성</button>
+    <div class="mb-4">
+      <label class="block text-gray-700">모임설명</label>
+      <textarea name="content" th:text="${event.content}" class="w-full p-2 border border-gray-300 rounded" rows="4"></textarea>
     </div>
-  </div>
-  <div>
-    <div class="flex items-start mb-4">
-      <img src="https://source.unsplash.com/random/50x50" alt="Reviewer" class="w-12 h-12 rounded-full mr-4">
-      <div class="bg-gray-100 p-4 rounded-lg w-full">
-        <div class="flex justify-between items-center mb-2">
-          <span class="font-bold">이름</span>
-          <div class="flex">
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-          </div>
-        </div>
-        <p>아싸~ 챌린지 달성!! 담에 또 같이해요~~</p>
+    <button type="submit" class="bg-black text-white px-4 py-2 rounded">
+      [[${event.id != null ? '수정' : '등록'}]]
+    </button>
+  </form>
+
+  <!-- 모임 정보 표시 -->
+  <div id="meetInfo">
+    <div class="grid grid-cols-2 gap-4 mb-6">
+      <div>
+        <label class="block text-gray-700">참가인원</label>
+        <input type="text" th:value="${event.memberCount} + '명'" class="w-full p-2 border border-gray-300 rounded" readonly>
+      </div>
+      <div>
+        <label class="block text-gray-700">위치</label>
+        <input type="text" th:value="${event.location}" class="w-full p-2 border border-gray-300 rounded" readonly>
+      </div>
+      <div>
+        <label class="block text-gray-700">제목</label>
+        <input type="text" th:value="${event.title}" class="w-full p-2 border border-gray-300 rounded" readonly>
       </div>
     </div>
-    <div class="flex items-start">
-      <img src="https://source.unsplash.com/random/50x50" alt="Reviewer" class="w-12 h-12 rounded-full mr-4">
+    <div class="mb-6">
+      <label class="block text-gray-700">모임설명</label>
+      <textarea class="w-full p-2 border border-gray-300 rounded" rows="4" th:text="${event.content}" readonly></textarea>
+    </div>
+  </div>
+
+  <!-- 관리자/사용자에 따른 버튼 표시 -->
+  <div class="flex justify-between items-center mb-6">
+    <div th:if="${#authentication.principal.userRole.name() == 'ADMIN'}">
+      <a th:href="@{'/groups/' + ${event.id} + '/invitation'}" class="bg-red-500 text-white px-4 py-2 rounded">참가 신청자 목록</a>
+      <button onclick="toggleEditForm()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded ml-2">수정</button>
+    </div>
+    <div th:if="${#authentication.principal.userRole.name() == 'USER'}">
+      <button onclick="applyForGroup()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded">참가신청</button>
+    </div>
+  </div>
+
+  <!-- 리뷰 작성 폼 -->
+  <div class="mb-6" th:if="${#authentication.principal.userRole.name() == 'USER'}">
+    <h2 class="text-xl font-bold mb-4">리뷰 작성란</h2>
+    <form id="reviewForm">
+      <textarea name="content" class="w-full p-2 border border-gray-300 rounded" rows="2" placeholder="리뷰를 작성하세요..."></textarea>
+      <select name="rating" class="ml-2">
+        <option value="1">★</option>
+        <option value="2">★★</option>
+        <option value="3">★★★</option>
+        <option value="4">★★★★</option>
+        <option value="5">★★★★★</option>
+      </select>
+      <button type="submit" class="bg-gray-200 text-gray-700 px-4 py-2 rounded ml-4">작성</button>
+    </form>
+  </div>
+
+  <!-- 리뷰 목록 -->
+  <div>
+    <div th:each="review : ${reviews}" class="flex items-start mb-4">
+      <img th:src="${review.userProfileImage}" alt="Reviewer" class="w-12 h-12 rounded-full mr-4">
       <div class="bg-gray-100 p-4 rounded-lg w-full">
         <div class="flex justify-between items-center mb-2">
-          <span class="font-bold">이름</span>
+          <span class="font-bold" th:text="${review.userName}">이름</span>
           <div class="flex">
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
+                            <span th:each="star : ${#numbers.sequence(1, review.rating)}">
+                                <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
+                            </span>
           </div>
         </div>
-        <p>아싸~ 챌린지 달성!! 담에 또 같이해요~~</p>
+        <p th:text="${review.content}">리뷰 내용</p>
       </div>
     </div>
   </div>
 </div>
+
+<script th:inline="javascript">
+  function toggleEditForm() {
+    const form = document.getElementById('meetForm');
+    const info = document.getElementById('meetInfo');
+    if (form.style.display === 'none') {
+      form.style.display = 'block';
+      info.style.display = 'none';
+    } else {
+      form.style.display = 'none';
+      info.style.display = 'block';
+    }
+  }
+
+  document.getElementById('meetForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const method = this.method;
+    const url = this.action;
+
+    fetch(url, {
+      method: method,
+      body: JSON.stringify(Object.fromEntries(formData)),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+            .then(response => response.json())
+            .then(data => {
+              alert(data.message);
+              location.reload();
+            })
+            .catch(error => console.error('Error:', error));
+  });
+
+  document.getElementById('reviewForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const meetId = [[${event.id}]];
+
+    fetch(`/api/meets/${meetId}/review`, {
+      method: 'POST',
+      body: JSON.stringify(Object.fromEntries(formData)),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+            .then(response => response.json())
+            .then(data => {
+              alert(data.message);
+              location.reload();
+            })
+            .catch(error => console.error('Error:', error));
+  });
+
+  function applyForGroup() {
+    const groupId = [[${event.id}]];
+    fetch(`/api/groups/${groupId}/invitation`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId: [[${#authentication.principal.id}]] })
+    })
+            .then(response => response.json())
+            .then(data => {
+              alert(data.message);
+              location.reload();
+            })
+            .catch(error => console.error('Error:', error));
+  }
+</script>
 </body>
 </html>
