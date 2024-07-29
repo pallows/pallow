@@ -20,16 +20,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/profiles")
+@RequestMapping("/profiles/{userId}")
 @RequiredArgsConstructor
 public class ProfileController {
 
     private final ProfileService profileService;
 
+    /**
+     * 프로필 조회
+     *
+     * @param userId 유저아이디
+     * @return 조회 성공 메시지 + 조회 데이터
+     */
     @GetMapping
     public ResponseEntity<CommonResponseDto> getProfile(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        ProfileResponseDto responseDto = profileService.getProfile(userDetails.getUser().getId());
+            @PathVariable Long userId) {
+        ProfileResponseDto responseDto = profileService.getProfile(userId);
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
     }
 
@@ -50,20 +56,31 @@ public class ProfileController {
                 new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
     }
 
+    /**
+     * 프로필 수정
+     *
+     * @param requestDto  수정 데이터
+     * @param userDetails 수정하는 유저 데이터
+     * @param userId      수정하려는 유저 데이터
+     * @return 수정 성공 메시지 + 수정된 프로필 데이터
+     */
     @PatchMapping
     public ResponseEntity<CommonResponseDto> updateProfile(
             @RequestBody @Valid ProfileRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        ProfileResponseDto responseDto = profileService.updateProfile(userDetails.getUser().getId(), requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long userId) {
+        ProfileResponseDto responseDto = profileService.updateProfile(userId, requestDto,
                 userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_UPDATE_SUCCESS, responseDto));
+
     }
 
     @DeleteMapping
     public ResponseEntity<CommonResponseDto> deleteProfile(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        profileService.deleteProfile(userDetails.getUser().getId(), userDetails.getUser());
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long userId) {
+        profileService.deleteProfile(userId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_DELETE_SUCCESS));
     }
 
