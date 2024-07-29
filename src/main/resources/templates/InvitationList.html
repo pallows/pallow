@@ -18,65 +18,29 @@
   <h1 class="text-2xl font-bold mb-4">참가 신청자 목록</h1>
 
   <div class="space-y-4">
-    <!-- Repeated Entry Start -->
-    <div class="flex items-center bg-gray-200 p-4 rounded-lg shadow">
-      <img src="https://source.unsplash.com/50x50/?portrait" alt="Profile" class="w-12 h-12 rounded-full mr-4">
+    <div th:each="invitation : ${invitations}" class="flex items-center bg-gray-200 p-4 rounded-lg shadow">
+      <img th:src="${invitation.userProfileImage}" alt="Profile" class="w-12 h-12 rounded-full mr-4">
       <div class="flex-1">
-        <p class="text-blue-600 font-bold">불광동두번째챌린저</p>
+        <p class="text-blue-600 font-bold" th:text="${invitation.userName}">사용자 이름</p>
         <p>님이 참가 신청을 하셨습니다.</p>
       </div>
       <div class="flex space-x-2">
-        <button class="bg-black text-white px-4 py-2 rounded">승인</button>
-        <button class="bg-black text-white px-4 py-2 rounded">거절</button>
+        <form th:action="@{'/groups/' + ${groupId} + '/invitation/accept/' + ${invitation.id}}" method="post">
+          <button type="submit" class="bg-black text-white px-4 py-2 rounded">승인</button>
+        </form>
+        <form th:action="@{'/groups/' + ${groupId} + '/invitation/decline/' + ${invitation.id}}" method="post">
+          <button type="submit" class="bg-black text-white px-4 py-2 rounded">거절</button>
+        </form>
       </div>
     </div>
-    <!-- Repeated Entry End -->
+  </div>
 
-    <!-- Repeated Entry Start -->
-    <div class="flex items-center bg-gray-200 p-4 rounded-lg shadow">
-      <img src="https://source.unsplash.com/50x50/?portrait" alt="Profile" class="w-12 h-12 rounded-full mr-4">
-      <div class="flex-1">
-        <p class="text-blue-600 font-bold">불광동두번째챌린저</p>
-        <p>님이 참가 신청을 하셨습니다.</p>
-      </div>
-      <div class="flex space-x-2">
-        <button class="bg-black text-white px-4 py-2 rounded">승인</button>
-        <button class="bg-black text-white px-4 py-2 rounded">거절</button>
-      </div>
-    </div>
-    <!-- Repeated Entry End -->
-
-    <!-- Repeated Entry Start -->
-    <div class="flex items-center bg-gray-200 p-4 rounded-lg shadow">
-      <img src="https://source.unsplash.com/50x50/?portrait" alt="Profile" class="w-12 h-12 rounded-full mr-4">
-      <div class="flex-1">
-        <p class="text-blue-600 font-bold">불광동두번째챌린저</p>
-        <p>님이 참가 신청을 하셨습니다.</p>
-      </div>
-      <div class="flex space-x-2">
-        <button class="bg-black text-white px-4 py-2 rounded">승인</button>
-        <button class="bg-black text-white px-4 py-2 rounded">거절</button>
-      </div>
-    </div>
-    <!-- Repeated Entry End -->
-
-    <!-- Repeated Entry Start -->
-    <div class="flex items-center bg-gray-200 p-4 rounded-lg shadow">
-      <img src="https://source.unsplash.com/50x50/?portrait" alt="Profile" class="w-12 h-12 rounded-full mr-4">
-      <div class="flex-1">
-        <p class="text-blue-600 font-bold">불광동두번째챌린저</p>
-        <p>님이 참가 신청을 하셨습니다.</p>
-      </div>
-      <div class="flex space-x-2">
-        <button class="bg-black text-white px-4 py-2 rounded">승인</button>
-        <button class="bg-black text-white px-4 py-2 rounded">거절</button>
-      </div>
-    </div>
-    <!-- Repeated Entry End -->
+  <div th:if="${invitations.empty}">
+    <p class="text-center text-gray-500 my-4">현재 참가 신청자가 없습니다.</p>
   </div>
 
   <div class="mt-6 text-center">
-    <button class="bg-black text-white px-6 py-2 rounded">닫기</button>
+    <a th:href="@{'/meets/' + ${groupId}}" class="bg-black text-white px-6 py-2 rounded">닫기</a>
   </div>
 </div>
 </body>
