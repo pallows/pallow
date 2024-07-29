@@ -1,4 +1,4 @@
-package com.pallow.pallow.domain.user.Dto;
+package com.pallow.pallow.domain.user.dto;
 
 import lombok.Getter;
 
@@ -6,5 +6,4 @@ import lombok.Getter;
 public class UserRequestDto {
     private String nickname;
     private String password;
-    private String position;
 }

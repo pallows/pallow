@@ -1,4 +1,4 @@
-package com.pallow.pallow.domain.auth.dto;
+package com.pallow.pallow.domain.email.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
