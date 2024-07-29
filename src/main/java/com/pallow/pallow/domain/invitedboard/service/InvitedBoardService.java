@@ -54,8 +54,8 @@ public class InvitedBoardService {
     }
 
     @Transactional
-    public void acceptApply(long groupId, User user) {
-        InvitedBoard invitedBoard = invitedBoardRepository.findById(groupId)
+    public void acceptApply(long groupId, long invitationId, User user) {
+        InvitedBoard invitedBoard = invitedBoardRepository.findById(invitationId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
         if (!isUserGroupCreator(groupId, user)) {
             throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
@@ -64,8 +64,8 @@ public class InvitedBoardService {
     }
 
     @Transactional
-    public void declineApply(long groupId, User user) {
-        InvitedBoard invitedBoard = invitedBoardRepository.findById(groupId)
+    public void declineApply(long groupId, long invitationId, User user) {
+        InvitedBoard invitedBoard = invitedBoardRepository.findById(invitationId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
         if (!isUserGroupCreator(groupId, user)) {
             throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
