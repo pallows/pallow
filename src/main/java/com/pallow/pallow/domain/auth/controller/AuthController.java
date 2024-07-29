@@ -1,8 +1,8 @@
 package com.pallow.pallow.domain.auth.controller;
 
 import com.pallow.pallow.domain.auth.dto.AuthRequestDto;
-import com.pallow.pallow.domain.auth.dto.EmailCodeRequestDto;
-import com.pallow.pallow.domain.auth.dto.EmailInputRequestDto;
+import com.pallow.pallow.domain.email.dto.EmailCodeRequestDto;
+import com.pallow.pallow.domain.email.dto.EmailInputRequestDto;
 import com.pallow.pallow.domain.auth.dto.LoginRequestDto;
 import com.pallow.pallow.domain.auth.service.AuthService;
 import com.pallow.pallow.global.common.CommonResponseDto;
@@ -15,7 +15,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,32 +26,40 @@ public class AuthController {
 
     /**
      * 유지영 수정
+     *
      * @Valid 추가
      */
     @PostMapping("/signup")
     public ResponseEntity<CommonResponseDto> signUp(@Valid @RequestBody AuthRequestDto requestDto) {
-        return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOCAL_SIGNUP_SUCCESS, authService.signUp(requestDto)));
+        return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOCAL_SIGNUP_SUCCESS,
+                authService.signUp(requestDto)));
     }
 
     /**
      * 유지영 수정
+     *
      * @Valid 추가
      */
     // 로컬 로그인
     @PostMapping("/login")
-    public ResponseEntity<CommonResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response, HttpSession session) {
+    public ResponseEntity<CommonResponseDto> login(
+            @Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response,
+            HttpSession session) {
         try {
             authService.login(loginRequestDto, response);
-            return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGIN_SUCCESS, loginRequestDto.getUsername()));
+            return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGIN_SUCCESS,
+                    loginRequestDto.getUsername()));
         } catch (Exception e) {
             session.setAttribute("error", "Invalid username or password");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new CommonResponseDto(Message.USER_LOGIN_FAIL, null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new CommonResponseDto(Message.USER_LOGIN_FAIL, null));
         }
     }
 
     // 리프레쉬 토큰 재발급
     @PostMapping("/refresh")
-    public ResponseEntity<CommonResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<CommonResponseDto> refreshToken(HttpServletRequest request,
+            HttpServletResponse response) {
         authService.tokenReIssue(request, response);
         String RefreshToken = response.getHeader(JwtProvider.REFRESH_HEADER);
         return ResponseEntity.ok(new CommonResponseDto(Message.TOKEN_CREATE_REFRESH, RefreshToken));
@@ -63,19 +70,6 @@ public class AuthController {
     public ResponseEntity<CommonResponseDto> userLogout(HttpServletRequest request) {
         authService.logout(request);
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGOUT_SUCCESS));
-    }
-
-    // Email 전송
-    @PostMapping("/email/send")
-    public ResponseEntity<CommonResponseDto> sendVerificationEmail(@Valid @RequestBody EmailInputRequestDto emailInputRequestDto) {
-        String code = authService.sendMail(emailInputRequestDto);
-        return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_SEND_SUCCESS, code));
-    }
-
-    @PostMapping("/email/verify")
-    public ResponseEntity<CommonResponseDto> verificationEmailCode(@Valid @RequestBody EmailCodeRequestDto emailCodeRequestDto) {
-        String checkEmail = authService.verifyCode(emailCodeRequestDto);
-        return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_VERIFICATION_CODE_SUCCESS, checkEmail));
     }
 
     //카카오 소셜 로그인
@@ -89,8 +83,6 @@ public class AuthController {
      *
      */
     //
-
-
 
     //카카오 소셜 회원가입
     //카카오 콜백
