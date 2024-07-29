@@ -4,8 +4,10 @@ package com.pallow.pallow.domain.auth.service;
 import com.pallow.pallow.domain.auth.dto.*;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
+import com.pallow.pallow.global.common.CommonOauth;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
+import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.enums.Role;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.jwt.JwtProvider;
@@ -64,12 +66,19 @@ public class AuthService {
         if (!isValidPassword(authRequestDto.getPassword())) {
             throw new CustomException(ErrorType.INVALID_PASSWORD);
         } // 닉네임 유저아이디 유저네임 이메일 다 고유해야함
+        CommonOauth oauth = CommonOauth.LOCAL;
+        if ("KAKAO".equals(String.valueOf(authRequestDto.getOauth()))) {
+            oauth = CommonOauth.KAKAO;
+        }
+
+
         User creadtedUser = User.createdUser(
                 authRequestDto.getUsername(),
                 authRequestDto.getNickname(),
                 authRequestDto.getEmail(),
                 passwordEncoder.encode(authRequestDto.getPassword()),
-                Role.USER);
+                Role.USER,
+                oauth);
         userRepository.save(creadtedUser);
         return new AuthResponseDto(creadtedUser.getNickname(), creadtedUser.getEmail());
     }
@@ -81,9 +90,9 @@ public class AuthService {
                             loginRequestDto.getUsername(),
                             loginRequestDto.getPassword())
             );
-        // authenticationManager 는 authenticate 메서드를 통해
-        // UsernamePasswordAuthenticationToken 객체를 받아들이고,
-        // 설정된 AuthenticationProvider 들을 사용하여 인증을 시도
+            // authenticationManager 는 authenticate 메서드를 통해
+            // UsernamePasswordAuthenticationToken 객체를 받아들이고,
+            // 설정된 AuthenticationProvider 들을 사용하여 인증을 시도
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = findByUsername(loginRequestDto.getUsername());
             issueTokenAndSave(user, response);
@@ -100,7 +109,7 @@ public class AuthService {
         return password.matches("^[a-zA-Z0-9]{8,15}$");
     }
 
-    private void issueTokenAndSave(User user, HttpServletResponse response) {
+    public String issueTokenAndSave(User user, HttpServletResponse response) {
         String newAccessToken = jwtProvider.createdAccessToken(user.getUsername(), user.getUserRole());
         String newRefreshToken = jwtProvider.createdRefreshToken(user.getUsername());
         // Access 토큰을 응답 헤더에 설정
@@ -108,6 +117,7 @@ public class AuthService {
         response.setHeader(JwtProvider.REFRESH_HEADER, newRefreshToken);
         // Refresh Token 을 Redis 에 저장
         saveRefreshToken(user.getUsername(), newRefreshToken, jwtProvider.getJwtRefreshExpiration());
+        return newAccessToken;
     } // Refresh Token 만료 시간을 가져오기 위해서 JwtProvider 에서 생성자를 생성해서 가져옴
 
     public void tokenReIssue(HttpServletRequest request, HttpServletResponse response) {
@@ -148,7 +158,7 @@ public class AuthService {
             javaMailSender.send(message);
         } catch (Exception e) {
             log.error("메일 전송 오류: ", e);
-            throw new RuntimeException("여기가 존나 에러임"); // CustomException 으로 적절한 에러 처리
+            throw new CustomException(ErrorType.MAIL_NOT_SEND); // CustomException 으로 적절한 에러 처리
         }
         return code;
     }

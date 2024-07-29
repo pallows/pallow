@@ -30,11 +30,12 @@ spring:
       redis:
         host: localhost
         port: 6379
-
   web:
     resources:
       add-mappings: true
-
+security:
+  oauth2:
+    client:
 jwt:
   secret:
     key: ${JWT_KEY}
@@ -57,3 +58,6 @@ custom:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
+kakao:
+  clientId: ${CLIENT_ID}
+  redirectUri: ${REDIRECT_URI}

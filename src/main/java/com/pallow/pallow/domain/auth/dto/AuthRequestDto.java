@@ -1,5 +1,6 @@
 package com.pallow.pallow.domain.auth.dto;
 
+import com.pallow.pallow.global.common.CommonOauth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -19,4 +20,5 @@ public class AuthRequestDto {
     @Email
     private String email;
 
+    private CommonOauth oauth;
 }

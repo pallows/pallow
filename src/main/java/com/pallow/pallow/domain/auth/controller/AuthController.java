@@ -5,6 +5,7 @@ import com.pallow.pallow.domain.auth.dto.EmailCodeRequestDto;
 import com.pallow.pallow.domain.auth.dto.EmailInputRequestDto;
 import com.pallow.pallow.domain.auth.dto.LoginRequestDto;
 import com.pallow.pallow.domain.auth.service.AuthService;
+import com.pallow.pallow.domain.auth.service.OauthService;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.jwt.JwtProvider;
@@ -15,8 +16,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth")
@@ -24,9 +26,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final OauthService oauthService;
 
     /**
      * 유지영 수정
+     *
      * @Valid 추가
      */
     @PostMapping("/signup")
@@ -36,6 +40,7 @@ public class AuthController {
 
     /**
      * 유지영 수정
+     *
      * @Valid 추가
      */
     // 로컬 로그인
@@ -86,29 +91,37 @@ public class AuthController {
     // 회원가입 완료 버튼을 클릭할 수 있다.
 
 
-
-
-
-
     //카카오 소셜 로그인
 
-    /**
-     * 카카오 로그인 엔드포인트 (아직 구현되지 않음)
-     * @GetMapping("/kakao")
-     *     public ResponseEntity<CommonResponseDto> kakaoLogin() {
-     *         // 카카오 로그인 로직 구현 필요
-     *         return ResponseEntity.ok(new CommonResponseDto(Message.KAKAO_LOGIN_NOT_IMPLEMENTED));
-     *
-     */
-    //
 
+    //  소셜 로그인 엔드포인트 (아직 구현되지 않음)
+    @GetMapping("/oauth/login/{provider}")
+    public void oauthLogin(@PathVariable String provider, HttpServletResponse response) {
+        oauthService.redirectToProvider(provider, response);
+    }
 
+    // 소셜 로그인 콜벡
+    @GetMapping("/oauth/callback")
+    public void oauthCallback(@RequestParam String code, HttpServletResponse response) throws IOException {
+        String token = oauthService.login("kakao", code, response);
+        response.setStatus(HttpStatus.OK.value());
+        response.getWriter().write(new CommonResponseDto(Message.USER_LOGIN_SUCCESS, token).toString());
+    }
 
-    //카카오 소셜 회원가입
-    //카카오 콜백
-
-    //로그아웃
-
+    @PostMapping("/oauth/signup")
+    public ResponseEntity<CommonResponseDto> oauthSignUp(@Valid @RequestBody AuthRequestDto requestDto, HttpServletResponse response) {
+        String token = oauthService.oauthSignUp(requestDto, response);
+        return ResponseEntity.ok(new CommonResponseDto(Message.USER_OAUTH_SIGNUP_SUCCESS, token));
+    }
 }
+
+// return ResponseEntity.ok(new CommonResponseDto(Message.KAKAO_LOGIN_NOT_IMPLEMENTED));
+
+
+//카카오 소셜 회원가입
+//카카오 콜백
+
+//로그아웃
+
 
 

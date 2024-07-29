@@ -8,6 +8,10 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum Message {
 
+    //SOCIAL OAUTH
+    OAUTH_LOGIN_NOT_IMPLEMENTED(HttpStatus.OK, "로그인 성공하였습니다."),
+    USER_OAUTH_SIGNUP_SUCCESS(HttpStatus.OK, "소셜 회원가입에 성공하였습니다."),
+
     //MAIL
     MAIL_SEND_SUCCESS(HttpStatus.OK, "인증 번호가 전송되었습니다."),
     MAIL_VERIFICATION_CODE_SUCCESS(HttpStatus.OK, "이메일 인증이 완료 되었습니다."),
@@ -61,8 +65,8 @@ public enum Message {
     REVIEW_DELETE_SUCCESS(HttpStatus.OK, "리뷰를 삭제하였습니다."),
 
     // Likes
-    LIKES_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다.");
-
+    LIKES_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다."),
+    ;
 
 
     private final HttpStatus status;
