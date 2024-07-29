@@ -63,11 +63,11 @@ public class User extends TimeStamp {
     @Column
     private String position;
 
-    //  ACTIVE("active"), CommonStatus.ACTIVE
-    //  DELETED("deleted"); CommonStatus.DELETED
-    @Column
-    private CommonStatus status;
+    @Column(nullable = false)
+    private String gender;
 
+    @Column
+    private CommonStatus status = CommonStatus.ACTIVE;
 
     @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
@@ -94,12 +94,13 @@ public class User extends TimeStamp {
         userAndChatRoom.setUser(this);
     }
 
-    public static User createdUser(String username, String nickname, String email, String password, Role role) {
+    public static User createdUser(String username, String nickname, String email, String gender, String password, Role role) {
         User user = new User();
         user.username = username;
         user.nickname = nickname;
         user.password = password;
         user.email = email;
+        user.gender = gender;
         user.userRole = role;
         user.status = CommonStatus.ACTIVE;
         return user;

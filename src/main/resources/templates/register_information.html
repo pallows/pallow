@@ -105,10 +105,11 @@
 
   document.getElementById('profileForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the default form submission
-    // Perform any necessary validation or data processing here
-
-    // Redirect to /login
-    window.location.href = '/login';
+    const username = document.getElementById('username').value;
+    const nickname = document.getElementById('nickname').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    window.location.href = '/';
   });
 </script>
 </body>

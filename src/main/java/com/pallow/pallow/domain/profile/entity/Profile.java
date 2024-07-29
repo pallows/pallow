@@ -39,10 +39,6 @@ public class Profile {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Gender gender;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
     @Column(nullable = false)
@@ -53,11 +49,10 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, String birth, Gender gender, Mbti mbti, User createdBy,
+    public Profile(String content, String birth, Mbti mbti, User createdBy,
             String hobby) {
         this.content = content;
         this.birth = birth;
-        this.gender = gender;
         this.mbti = mbti;
         this.hobby = hobby;
         this.user = createdBy;
@@ -66,7 +61,6 @@ public class Profile {
     public void update(ProfileRequestDto requestDto) {
         this.content = requestDto.getContent();
         this.birth = requestDto.getBirth();
-        this.gender = requestDto.getGender();
         this.mbti = requestDto.getMbti();
         this.hobby = requestDto.getHobby();
     }

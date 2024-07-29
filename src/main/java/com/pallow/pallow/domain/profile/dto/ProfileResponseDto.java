@@ -10,7 +10,6 @@ public class ProfileResponseDto {
 
     private String content;
     private String birth;
-    private Gender gender;
     private Mbti mbti;
     private String hobby;
     private String photo;
@@ -18,7 +17,6 @@ public class ProfileResponseDto {
     public ProfileResponseDto(Profile foundUser) {
         this.content = foundUser.getContent();
         this.birth = foundUser.getBirth();
-        this.gender = foundUser.getGender();
         this.mbti = foundUser.getMbti();
         this.hobby = foundUser.getHobby();
         this.photo = foundUser.getPhoto();

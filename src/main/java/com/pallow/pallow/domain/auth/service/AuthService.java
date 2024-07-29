@@ -71,6 +71,7 @@ public class AuthService {
                 authRequestDto.getUsername(),
                 authRequestDto.getNickname(),
                 authRequestDto.getEmail(),
+                authRequestDto.getGender(),
                 passwordEncoder.encode(authRequestDto.getPassword()),
                 Role.USER);
         userRepository.save(creadtedUser);

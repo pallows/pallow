@@ -19,4 +19,7 @@ public class AuthRequestDto {
     @Email
     private String email;
 
+    @NotBlank
+    private String gender;
+
 }

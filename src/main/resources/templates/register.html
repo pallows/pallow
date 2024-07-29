@@ -167,7 +167,6 @@
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
     const email = document.getElementById('email').value;
-    const emailCode = document.getElementById('emailCode').value;
     const gender = document.querySelector('input[name="gender"]:checked').value;
     const isEmailVerified = $("#Confirm").val();
 
@@ -182,11 +181,29 @@
     }
 
     // Simulate form submission
-    alert('회원가입이 완료되었습니다.');
-    window.location.href = '/register_information';
+    $.ajax({
+      url: "/auth/signup",
+      type: "post",
+      contentType: "application/json",
+      dataType: "json",
+      data: JSON.stringify({
+        username: username,
+        nickname: nickname,
+        password: password,
+        email: email,
+        gender: gender
+      }),
+      success: function(response) {
+        alert('회원가입이 완료되었습니다.');
+        localStorage.setItem("username", username);
+        window.location.href = '/register_information';
+      },
+      error: function(xhr, status, error) {
+        alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+      }
+    });
   });
 </script>
 
-</script>
 </body>
 </html>

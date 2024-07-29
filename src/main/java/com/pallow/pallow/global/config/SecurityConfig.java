@@ -37,7 +37,7 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
                         .requestMatchers(
-                                "/signup",
+                                "/auth/signup",
                                 "/login",
                                 "/email/**",
                                 "/",

@@ -14,14 +14,13 @@ public class ProfileRequestDto {
     private String content;
     @NotNull(message = "생일을 입력해 주세요.")
     private String birth;
-    @NotNull(message = "성별을 선택해 주세요.")
-    private Gender gender;
+
     private Mbti mbti;
     private String hobby;
     private String photo;
 
     public Profile toEntity(User foundUser) {
-        return Profile.builder().birth(birth).content(content).gender(gender).mbti(mbti)
+        return Profile.builder().birth(birth).content(content).mbti(mbti)
                 .hobby(hobby).createdBy(foundUser).build();
     }
 }
