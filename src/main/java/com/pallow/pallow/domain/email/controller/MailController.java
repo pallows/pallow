@@ -22,8 +22,8 @@ public class MailController {
 
     @PostMapping("/email/send")
     public ResponseEntity<CommonResponseDto> sendVerificationEmail(@Valid @RequestBody EmailInputRequestDto emailInputRequestDto) {
-        String code = mailService.sendMail(emailInputRequestDto);
-        return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_SEND_SUCCESS, code));
+        mailService.sendMail(emailInputRequestDto);
+        return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_SEND_SUCCESS));
     }
 
     @PostMapping("/email/verify")

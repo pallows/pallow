@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -24,7 +25,8 @@ public class MailService {
     private static final String senderEmail = "pallow-company@gmail.com";
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public String sendMail(EmailInputRequestDto emailInputRequestDto) {
+    @Async
+    public void sendMail(EmailInputRequestDto emailInputRequestDto) {
         String code = generateVerificationCode();
         ValueOperations<String, Object> emailAndCode = redisTemplate.opsForValue();
         emailAndCode.set(emailInputRequestDto.getEmail(), code, 5, TimeUnit.MINUTES);
@@ -49,7 +51,6 @@ public class MailService {
             log.error("메일 전송 오류: ", e);
             throw new CustomException(ErrorType.MAIL_MISMATCH_OR_CODE_FORBIDDEN);
         }
-        return code;
     }
 
     private String generateVerificationCode() {
