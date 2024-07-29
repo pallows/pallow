@@ -1,4 +1,4 @@
-package com.pallow.pallow.domain.chat.config;
+package com.pallow.pallow.global.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.CacheControl;
