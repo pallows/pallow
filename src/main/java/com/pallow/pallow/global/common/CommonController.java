@@ -19,11 +19,6 @@ public class CommonController {
         return "main";
     }
 
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
-    }
-
     @GetMapping("/login.html")
     public String loginPageMove() {
         return "login";
