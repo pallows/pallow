@@ -23,7 +23,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,16 +60,20 @@ public class User extends TimeStamp {
     @Enumerated(EnumType.STRING)
     private Role userRole;
 
+    @Column(nullable = false)
+    private String gender;
+
     @Column
     private String position;
 
     //  ACTIVE("active"), CommonStatus.ACTIVE
     //  DELETED("deleted"); CommonStatus.DELETED
     @Column
-    private CommonStatus status;
+    private CommonStatus status = CommonStatus.ACTIVE;
 
     @Column
     private CommonOauth oauth;
+
 
     @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
@@ -96,12 +99,13 @@ public class User extends TimeStamp {
         userAndChatRoom.setUser(this);
     }
 
-    public static User createdUser(String username, String nickname, String email, String password, Role role, CommonOauth commonOauth) {
+    public static User createdUser(String username, String nickname, String email, String password, String gender, Role role, CommonOauth commonOauth) {
         User user = new User();
         user.username = username;
         user.nickname = nickname;
         user.password = password;
         user.email = email;
+        user.gender = gender;
         user.userRole = role;
         user.status = CommonStatus.ACTIVE;
         user.oauth = commonOauth;

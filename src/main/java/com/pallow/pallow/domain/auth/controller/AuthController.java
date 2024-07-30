@@ -1,8 +1,8 @@
 package com.pallow.pallow.domain.auth.controller;
 
 import com.pallow.pallow.domain.auth.dto.AuthRequestDto;
-import com.pallow.pallow.domain.auth.dto.EmailCodeRequestDto;
-import com.pallow.pallow.domain.auth.dto.EmailInputRequestDto;
+import com.pallow.pallow.domain.email.dto.EmailCodeRequestDto;
+import com.pallow.pallow.domain.email.dto.EmailInputRequestDto;
 import com.pallow.pallow.domain.auth.dto.LoginRequestDto;
 import com.pallow.pallow.domain.auth.service.AuthService;
 import com.pallow.pallow.domain.auth.service.OauthService;
@@ -35,7 +35,8 @@ public class AuthController {
      */
     @PostMapping("/signup")
     public ResponseEntity<CommonResponseDto> signUp(@Valid @RequestBody AuthRequestDto requestDto) {
-        return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOCAL_SIGNUP_SUCCESS, authService.signUp(requestDto)));
+        return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOCAL_SIGNUP_SUCCESS,
+                authService.signUp(requestDto)));
     }
 
     /**
@@ -45,19 +46,24 @@ public class AuthController {
      */
     // 로컬 로그인
     @PostMapping("/login")
-    public ResponseEntity<CommonResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response, HttpSession session) {
+    public ResponseEntity<CommonResponseDto> login(
+            @Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response,
+            HttpSession session) {
         try {
             authService.login(loginRequestDto, response);
-            return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGIN_SUCCESS, loginRequestDto.getUsername()));
+            return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGIN_SUCCESS,
+                    loginRequestDto.getUsername()));
         } catch (Exception e) {
             session.setAttribute("error", "Invalid username or password");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new CommonResponseDto(Message.USER_LOGIN_FAIL, null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new CommonResponseDto(Message.USER_LOGIN_FAIL, null));
         }
     }
 
     // 리프레쉬 토큰 재발급
     @PostMapping("/refresh")
-    public ResponseEntity<CommonResponseDto> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<CommonResponseDto> refreshToken(HttpServletRequest request,
+            HttpServletResponse response) {
         authService.tokenReIssue(request, response);
         String RefreshToken = response.getHeader(JwtProvider.REFRESH_HEADER);
         return ResponseEntity.ok(new CommonResponseDto(Message.TOKEN_CREATE_REFRESH, RefreshToken));

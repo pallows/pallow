@@ -37,14 +37,15 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
                         .requestMatchers(
-                                "/signup",
+                                "/auth/signup",
                                 "/login",
                                 "/email/**",
                                 "/",
                                 "/css/**",
                                 "/js/**",
                                 "/ws/**",
-                                "/auth/**")
+                                "/auth/**",
+                                "/**") // 임시 모든 api 허용
                         .permitAll()
                         .anyRequest().authenticated()
                 )

@@ -2,6 +2,8 @@ package com.pallow.pallow.domain.auth.service;
 
 
 import com.pallow.pallow.domain.auth.dto.*;
+import com.pallow.pallow.domain.email.dto.EmailCodeRequestDto;
+import com.pallow.pallow.domain.email.dto.EmailInputRequestDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.common.CommonOauth;
@@ -11,18 +13,19 @@ import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.enums.Role;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.jwt.JwtProvider;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,8 +34,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -76,6 +77,7 @@ public class AuthService {
                 authRequestDto.getUsername(),
                 authRequestDto.getNickname(),
                 authRequestDto.getEmail(),
+                authRequestDto.getGender(),
                 passwordEncoder.encode(authRequestDto.getPassword()),
                 Role.USER,
                 oauth);
@@ -179,7 +181,8 @@ public class AuthService {
     //TODO : N+1 최적화 필요
     // --------------- 해당 클래스에서 사용되어지는 메서드 ---------------
     public User findByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         // 해당 유저가 있으면 (전 : if 구문에서 예외처리로 확인 -> 수정)
         if (user.getStatus() == CommonStatus.DELETED) { // 유저가 이미 삭제된 유저라면
             throw new CustomException(ErrorType.USER_ALREADY_DELETED);

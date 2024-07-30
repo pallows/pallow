@@ -21,4 +21,8 @@ public class AuthRequestDto {
     private String email;
 
     private CommonOauth oauth;
+
+    @NotBlank
+    private String gender;
+
 }

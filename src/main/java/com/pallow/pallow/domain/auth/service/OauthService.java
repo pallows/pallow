@@ -169,6 +169,7 @@ public class OauthService {
                 requestDto.getNickname(),
                 requestDto.getEmail(),
                 passwordEncoder.encode(requestDto.getPassword()),
+                requestDto.getGender(),
                 Role.USER,
                 CommonOauth.KAKAO
         );

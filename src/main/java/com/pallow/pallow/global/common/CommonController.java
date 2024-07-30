@@ -6,6 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class CommonController {
 
+    @GetMapping("/")
+    public String home() {return "login";}
+
     @GetMapping("/main")
     public String mainPage() {
         return "main";
@@ -14,11 +17,6 @@ public class CommonController {
     @GetMapping("/main.html")
     public String mainPageMove() {
         return "main";
-    }
-
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
     }
 
     @GetMapping("/login.html")

@@ -1,6 +1,7 @@
 package com.pallow.pallow.domain.user.service;
 
 import com.pallow.pallow.domain.user.Dto.UserRequestDto;
+
 import com.pallow.pallow.domain.user.Dto.UserResponseDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
@@ -51,7 +52,7 @@ public class UserService {
     public UserResponseDto updateUser(Long userId, UserRequestDto requestDto) {
         User user = findUserById(userId);
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-        user.updateUser(requestDto.getNickname(), requestDto.getPosition(), encodedPassword);
+        user.updateUser(requestDto.getNickname(), encodedPassword, requestDto.getPosition());
         userRepository.save(user);
         return new UserResponseDto(user);
     }
