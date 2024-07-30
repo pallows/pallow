@@ -65,14 +65,10 @@ public class User extends TimeStamp {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column
-    private String photo;
-
     //  ACTIVE("active"), CommonStatus.ACTIVE
     //  DELETED("deleted"); CommonStatus.DELETED
     @Column
     private CommonStatus status;
-
 
     @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
@@ -88,7 +84,6 @@ public class User extends TimeStamp {
         this.email = email;
         this.nickname = nickname;
         this.userRole = userRole;
-        this.photo = photo;
         //    this.deletedAt = deletedAt;   //todo : 없는 엔티티 같은데 이것이 무엇일까요? 일단 주석처리 해놧습니다.
         this.meets = meets;
         this.gender = gender;
@@ -116,9 +111,8 @@ public class User extends TimeStamp {
         this.status = CommonStatus.DELETED;
     }
 
-    public void updateUser(String nickname, String photo, String password) {
+    public void updateUser(String nickname, String password) {
         this.nickname = nickname;
-        this.photo = photo;
         this.password = password;
     }
 

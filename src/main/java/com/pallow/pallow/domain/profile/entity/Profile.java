@@ -34,6 +34,10 @@ public class Profile {
     @Column
     private String position;
 
+    @Column
+    private String photo;
+
+
     @Column(nullable = false)
     private String birth;
 

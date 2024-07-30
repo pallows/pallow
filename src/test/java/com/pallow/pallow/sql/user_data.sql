@@ -1,4 +1,3 @@
-INSERT INTO user (created_at, modified_at, email, nickname, password, gender, user_role, username, profile_id) VALUES ('2024-05-16 16:41:48', '2024-06-09 16:41:48', 'test@gmail.com', 'testuser1', 'password1', 'MAN', 'ROOT', 'testuser1', NULL);
 
 INSERT INTO user (created_at, modified_at, email, nickname, password, gender, user_role, username, profile_id) VALUES ('2024-05-16 16:41:48', '2024-06-09 16:41:48', 'user1@example.com', 'User 1', 'password1', 'MAN', 'ROOT', 'user1', NULL);
 INSERT INTO user (created_at, modified_at, email, nickname, password, gender, user_role, username, profile_id) VALUES ('2023-12-18 07:26:08', '2023-12-29 07:26:08', 'user2@example.com', 'User 2', 'password2', 'MAN', 'ROOT', 'user2', NULL);

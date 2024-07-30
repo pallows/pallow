@@ -3,10 +3,11 @@ POST http://localhost:8080/auth/local/signup
 Content-Type: application/json
 
 {
-  "username": "testuser55",
-  "password": "password55",
-  "nickname": "testuser55",
-  "email": "test@gmail.com"
+  "username": "{{username}}",
+  "password": "{{password}}",
+  "nickname": "{{nickname}}",
+  "email": "{{email}}",
+  "gender": "MAN"
 }
 
 ### 로그인
@@ -14,8 +15,8 @@ POST http://localhost:8080/auth/local
 Content-Type: application/json
 
 {
-  "username": "testuser1",
-  "password": "password1"
+  "username": "{{username}}",
+  "password": "{{password}}"
 }
 
 > {%

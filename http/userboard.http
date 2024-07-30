@@ -1,5 +1,5 @@
 ### 유저 게시글 생성
-POST http://localhost:8080/users/1/userboards
+POST http://localhost:8080/users/1003/userboards
 Authorization: {{Authorization}}
 Content-Type: application/json
 
@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ### 유저 게시글 수정
-PATCH http://localhost:8080/users/1/userboards/4
+PATCH http://localhost:8080/users/1003/userboards/4
 Authorization: {{Authorization}}
 Content-Type: application/json
 
@@ -21,15 +21,15 @@ Content-Type: application/json
 }
 
 ### 유저 게시글 삭제
-DELETE http://localhost:8080/users/1/userboards/1
+DELETE http://localhost:8080/users/1003/userboards/4
 Authorization: {{Authorization}}
 
 ### 유저 게시글 단건 조회
-GET http://localhost:8080/users/1/userboards/2
+GET http://localhost:8080/users/1003/userboards/4
 Authorization: {{Authorization}}
 Content-Type: application/json
 
-### 유저 게시글 모두 조회
-GET http://localhost:8080/users/1/userboards
+### 유저 게시글 모두 조회 페이징 처리가 필요하지 않은가?
+GET http://localhost:8080/users/1003/userboards
 Authorization: {{Authorization}}
 Content-Type: application/json

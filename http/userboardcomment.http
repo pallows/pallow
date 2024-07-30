@@ -1,5 +1,5 @@
 ### 유저 게시글 댓글 생성
-POST http://localhost:8080/users/1/userboards/2/comments
+POST http://localhost:8080/users/1003/userboards/1/comments
 Authorization: {{Authorization}}
 Content-Type: application/json
 
@@ -8,12 +8,12 @@ Content-Type: application/json
 }
 
 ### 유저 게시글 댓글 조회
-GET http://localhost:8080/users/1/userboards/2/comments
+GET http://localhost:8080/users/1003/userboards/1/comments
 Authorization: {{Authorization}}
 
 
 ### 유저 게시글 댓글 수정
-PATCH http://localhost:8080/users/1/userboards/2/comments/2
+PATCH http://localhost:8080/users/1003/userboards/1/comments/2
 Authorization: {{Authorization}}
 Content-Type: application/json
 
@@ -23,6 +23,7 @@ Content-Type: application/json
 
 
 ### 유저 게시글 댓글 삭제
-DELETE http://localhost:8080/users/1/userboards/2/comments/3
+DELETE http://localhost:8080/users/1003/userboards/1/comments/2
 Authorization: {{Authorization}}
 Content-Type: application/json
+

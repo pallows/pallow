@@ -1,5 +1,5 @@
 ### 리뷰생성
-POST http://localhost:8080/meets/1/review
+POST http://localhost:8080/meets/1003/review
 Authorization: {{Authorization}}
 Content-Type: application/json
 
@@ -8,12 +8,12 @@ Content-Type: application/json
 }
 
 ### 리뷰선택조회
-GET http://localhost:8080/meets/1/review/1
+GET http://localhost:8080/meets/1003/review/1002
 Authorization: {{Authorization}}
 Content-Type: application/json
 
 ### 리뷰전체조회
-GET http://localhost:8080/meets/1/review
+GET http://localhost:8080/meets/1003/review
 Authorization: {{Authorization}}
 Content-Type: application/json
 
