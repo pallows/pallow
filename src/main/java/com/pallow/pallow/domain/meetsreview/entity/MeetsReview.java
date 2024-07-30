@@ -28,11 +28,11 @@ public class MeetsReview extends TimeStamp {
     private int likesCount;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "meets_id")
     private Meets meets;
 
     @Builder

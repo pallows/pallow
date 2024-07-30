@@ -5,6 +5,7 @@ import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.CommonStatus;
+import com.pallow.pallow.global.enums.Gender;
 import com.pallow.pallow.global.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -60,8 +61,12 @@ public class User extends TimeStamp {
     @Enumerated(EnumType.STRING)
     private Role userRole;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
     @Column
-    private String position;
+    private String photo;
 
     //  ACTIVE("active"), CommonStatus.ACTIVE
     //  DELETED("deleted"); CommonStatus.DELETED
@@ -75,7 +80,7 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAndChatRoom> userAndChatRooms = new ArrayList<>();
 
-    public User(Long id, Profile profile, String username, String password, String email, String nickname, Role userRole, String position, LocalDate deletedAt, List<Meets> meets) {
+    public User(Long id, Profile profile, String username, String password, String email, String nickname, Role userRole, String photo, LocalDate deletedAt, List<Meets> meets, Gender gender) {
         this.id = id;
         this.profile = profile;
         this.username = username;
@@ -83,9 +88,10 @@ public class User extends TimeStamp {
         this.email = email;
         this.nickname = nickname;
         this.userRole = userRole;
-        this.position = position;
+        this.photo = photo;
         //    this.deletedAt = deletedAt;   //todo : 없는 엔티티 같은데 이것이 무엇일까요? 일단 주석처리 해놧습니다.
         this.meets = meets;
+        this.gender = gender;
         this.userAndChatRooms = new ArrayList<>();
     }
 
@@ -94,7 +100,7 @@ public class User extends TimeStamp {
         userAndChatRoom.setUser(this);
     }
 
-    public static User createdUser(String username, String nickname, String email, String password, Role role) {
+    public static User createdUser(String username, String nickname, String email, String password, Role role, Gender gender) {
         User user = new User();
         user.username = username;
         user.nickname = nickname;
@@ -102,6 +108,7 @@ public class User extends TimeStamp {
         user.email = email;
         user.userRole = role;
         user.status = CommonStatus.ACTIVE;
+        user.gender = gender;
         return user;
     }
 
@@ -109,9 +116,9 @@ public class User extends TimeStamp {
         this.status = CommonStatus.DELETED;
     }
 
-    public void updateUser(String nickname, String position, String password) {
+    public void updateUser(String nickname, String photo, String password) {
         this.nickname = nickname;
-        this.position = position;
+        this.photo = photo;
         this.password = password;
     }
 

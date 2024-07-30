@@ -28,18 +28,14 @@ public class Profile {
     @Column(nullable = false, unique = true)
     private Long Id;
 
-    @Column
-    private String photo;
-
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private String birth;
+    @Column
+    private String position;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
+    private String birth;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -53,20 +49,19 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, String birth, Gender gender, Mbti mbti, User createdBy,
-            String hobby) {
+    public Profile(String content, String birth, Mbti mbti, User createdBy,
+            String hobby, String position) {
         this.content = content;
         this.birth = birth;
-        this.gender = gender;
         this.mbti = mbti;
         this.hobby = hobby;
         this.user = createdBy;
+//        this.position = position;
     }
 
     public void update(ProfileRequestDto requestDto) {
         this.content = requestDto.getContent();
         this.birth = requestDto.getBirth();
-        this.gender = requestDto.getGender();
         this.mbti = requestDto.getMbti();
         this.hobby = requestDto.getHobby();
     }
