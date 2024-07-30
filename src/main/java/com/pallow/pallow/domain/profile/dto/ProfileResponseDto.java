@@ -1,15 +1,15 @@
 package com.pallow.pallow.domain.profile.dto;
 
 import com.pallow.pallow.domain.profile.entity.Profile;
-import com.pallow.pallow.global.enums.Gender;
 import com.pallow.pallow.global.enums.Mbti;
+import java.time.LocalDate;
 import lombok.Getter;
 
 @Getter
 public class ProfileResponseDto {
 
     private String content;
-    private String birth;
+    private LocalDate birth;
     private Mbti mbti;
     private String hobby;
     private String photo;

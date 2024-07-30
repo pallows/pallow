@@ -25,7 +25,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     public User findUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));

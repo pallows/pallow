@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,19 +35,21 @@ public class InvitedBoardController {
         return ResponseEntity.ok(new CommonResponseDto(Message.APPLY_FOR_GROUP_SUCCESS));
     }
 
-    @PostMapping("/accept")
+    @PostMapping("{invitationId}/accept")
     public ResponseEntity<CommonResponseDto> acceptApply(
             @PathVariable("groupId") long groupId,
+            @PathVariable("invitationId") long invitationId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        invitedBoardService.acceptApply(groupId, userDetails.getUser());
+        invitedBoardService.acceptApply(groupId, invitationId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.ACCEPT_APPLY_SUCCESS));
     }
 
-    @PostMapping("/decline")
+    @PostMapping("{invitationId}/decline")
     public ResponseEntity<CommonResponseDto> declineApply(
             @PathVariable("groupId") long groupId,
+            @PathVariable("invitationId") long invitationId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        invitedBoardService.declineApply(groupId, userDetails.getUser());
+        invitedBoardService.declineApply(groupId, invitationId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.DECLINE_APPLY_SUCCESS));
     }
 
