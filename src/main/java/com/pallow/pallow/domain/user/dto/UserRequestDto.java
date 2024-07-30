@@ -1,4 +1,4 @@
-package com.pallow.pallow.domain.user.Dto;
+package com.pallow.pallow.domain.user.dto;
 
 import lombok.Getter;
 

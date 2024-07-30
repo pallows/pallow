@@ -51,6 +51,7 @@ public class OauthService {
         } else {
             throw new CustomException(ErrorType.UNSUPPORTED_PROVIDE_FORBIDDEN);
         }
+        log.info("Redirect URL: {}", redirectUrl);
         response.setHeader("Location", redirectUrl);
         response.setStatus(302);
     }

@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                         .permitAll()
                         .requestMatchers(HttpMethod.GET).permitAll()
+                        .requestMatchers(HttpMethod.POST).permitAll()
                         .requestMatchers(
                                 "/auth/signup",
                                 "/login",
@@ -50,20 +51,6 @@ public class SecurityConfig {
                                 "/**") // 임시 모든 api 허용
                         .permitAll()
                         .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .loginProcessingUrl("/auth/login")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                        .successHandler((request, response, authentication) -> {
-                            response.sendRedirect("/main.html");
-                        })
-                        .failureHandler((request, response, exception) -> {
-                            String errorMessage = "Invalid username or password";
-                            request.getSession().setAttribute("error", errorMessage);
-                            response.sendRedirect("/login.html?error");
-                        })
                 )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter,

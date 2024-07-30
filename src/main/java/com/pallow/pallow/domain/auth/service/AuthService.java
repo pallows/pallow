@@ -77,8 +77,8 @@ public class AuthService {
                 authRequestDto.getUsername(),
                 authRequestDto.getNickname(),
                 authRequestDto.getEmail(),
-                authRequestDto.getGender(),
                 passwordEncoder.encode(authRequestDto.getPassword()),
+                authRequestDto.getGender(),
                 Role.USER,
                 oauth);
         userRepository.save(creadtedUser);
@@ -86,6 +86,8 @@ public class AuthService {
     }
 
     public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        System.out.println(loginRequestDto + "  //// " + response);
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -146,36 +148,36 @@ public class AuthService {
         SecurityContextHolder.clearContext();
     }
 
-    public String sendMail(EmailInputRequestDto emailInputRequestDto) {
-        log.info("이메일 요청 받은것 {}", emailInputRequestDto.getEmail());
-        String code = generateVerificationCode();
-        ValueOperations<String, Object> emailAndCode = redisTemplate.opsForValue();
-        emailAndCode.set(emailInputRequestDto.getEmail(), code, 5, TimeUnit.MINUTES);
+//    public String sendMail(EmailInputRequestDto emailInputRequestDto) {
+//        log.info("이메일 요청 받은것 {}", emailInputRequestDto.getEmail());
+//        String code = generateVerificationCode();
+//        ValueOperations<String, Object> emailAndCode = redisTemplate.opsForValue();
+//        emailAndCode.set(emailInputRequestDto.getEmail(), code, 5, TimeUnit.MINUTES);
+//
+//        try {
+//            SimpleMailMessage message = new SimpleMailMessage();
+//            message.setTo(emailInputRequestDto.getEmail());
+//            message.setSubject("Email 인증");
+//            message.setText("인증 코드 : " + code);
+//            javaMailSender.send(message);
+//        } catch (Exception e) {
+//            log.error("메일 전송 오류: ", e);
+//            throw new CustomException(ErrorType.MAIL_NOT_SEND); // CustomException 으로 적절한 에러 처리
+//        }
+//        return code;
+//    }
 
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(emailInputRequestDto.getEmail());
-            message.setSubject("Email 인증");
-            message.setText("인증 코드 : " + code);
-            javaMailSender.send(message);
-        } catch (Exception e) {
-            log.error("메일 전송 오류: ", e);
-            throw new CustomException(ErrorType.MAIL_NOT_SEND); // CustomException 으로 적절한 에러 처리
-        }
-        return code;
-    }
-
-    public String verifyCode(EmailCodeRequestDto emailCodeRequestDto) {
-        ValueOperations<String, Object> emailAndCode = redisTemplate.opsForValue();
-        if ((emailAndCode.get(emailCodeRequestDto.getEmail())) instanceof String) {
-            String storedCode = (String) emailAndCode.get(emailCodeRequestDto.getEmail());
-            if (storedCode != null && storedCode.equals(emailCodeRequestDto.getCode())) {
-                return "True";
-            }
-        }
-        log.info("이메일 인증 실패");
-        throw new CustomException(ErrorType.MAIL_MISMATCH_OR_CODE_FORBIDDEN);
-    }
+//    public String verifyCode(EmailCodeRequestDto emailCodeRequestDto) {
+//        ValueOperations<String, Object> emailAndCode = redisTemplate.opsForValue();
+//        if ((emailAndCode.get(emailCodeRequestDto.getEmail())) instanceof String) {
+//            String storedCode = (String) emailAndCode.get(emailCodeRequestDto.getEmail());
+//            if (storedCode != null && storedCode.equals(emailCodeRequestDto.getCode())) {
+//                return "True";
+//            }
+//        }
+//        log.info("이메일 인증 실패");
+//        throw new CustomException(ErrorType.MAIL_MISMATCH_OR_CODE_FORBIDDEN);
+//    }
 
 
     //TODO : N+1 최적화 필요

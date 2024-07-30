@@ -114,7 +114,7 @@ public class JwtProvider {
         if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
             return token.substring(7);
         }
-        log.error("Jwt Token is not Found or invalid : {}", headerName);
+        // ->> 필터
         return null;
         // RuntimeException 수정 요망 **
     }

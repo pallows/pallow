@@ -1,8 +1,7 @@
 package com.pallow.pallow.domain.user.service;
 
-import com.pallow.pallow.domain.user.Dto.UserRequestDto;
-
-import com.pallow.pallow.domain.user.Dto.UserResponseDto;
+import com.pallow.pallow.domain.user.dto.UserRequestDto;
+import com.pallow.pallow.domain.user.dto.UserResponseDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.CommonStatus;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
