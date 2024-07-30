@@ -38,9 +38,6 @@ public class UserBoardService {
     public UserBoardResponseDto getBoard(long userId, long userBoardId, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
-        if (!isSameIdAndUser(userId, user)) {
-            throw new CustomException(ErrorType.USER_MISMATCH_ID);
-        }
         return new UserBoardResponseDto(userBoard);
     }
 
