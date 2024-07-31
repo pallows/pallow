@@ -1,7 +1,6 @@
 package com.pallow.pallow.domain.user.dto;
 
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.global.enums.Region;
 import lombok.Getter;
 
 @Getter

@@ -2,7 +2,6 @@ package com.pallow.pallow.domain.invitedboard.controller;
 
 import com.pallow.pallow.domain.invitedboard.dto.InvitedBoardRequestDto;
 import com.pallow.pallow.domain.invitedboard.dto.InvitedBoardResponseDto;
-import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
 import com.pallow.pallow.domain.invitedboard.service.InvitedBoardService;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;

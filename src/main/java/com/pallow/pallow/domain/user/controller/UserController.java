@@ -1,19 +1,21 @@
 package com.pallow.pallow.domain.user.controller;
 
-import com.pallow.pallow.domain.user.Dto.UserRequestDto;
-import com.pallow.pallow.domain.user.Dto.UserResponseDto;
-import com.pallow.pallow.domain.user.entity.User;
+import com.pallow.pallow.domain.user.dto.UserRequestDto;
+import com.pallow.pallow.domain.user.dto.UserResponseDto;
 import com.pallow.pallow.domain.user.service.UserService;
 import com.pallow.pallow.global.common.CommonResponseDto;
-import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users")

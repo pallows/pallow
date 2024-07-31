@@ -1,11 +1,10 @@
 package com.pallow.pallow.domain.chat.controller;
 
-import com.pallow.pallow.domain.chat.dto.ChatMessageDto;
 import com.pallow.pallow.domain.chat.dto.ChatRoomDto;
 import com.pallow.pallow.domain.chat.dto.ChatRoomResponseDto;
 import com.pallow.pallow.domain.chat.entity.ChatMessage;
-import com.pallow.pallow.domain.chat.model.WebSocketChatMessage;
 import com.pallow.pallow.domain.chat.model.MessageType;
+import com.pallow.pallow.domain.chat.model.WebSocketChatMessage;
 import com.pallow.pallow.domain.chat.service.ChatService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;

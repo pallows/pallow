@@ -1,6 +1,5 @@
 package com.pallow.pallow.domain.invitedboard.repository;
 
-import com.pallow.pallow.domain.invitedboard.dto.InvitedBoardResponseDto;
 import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.user.entity.User;

@@ -1,7 +1,6 @@
 package com.pallow.pallow.domain.profile.dto;
 
 import com.pallow.pallow.domain.profile.entity.Profile;
-import com.pallow.pallow.global.enums.Gender;
 import com.pallow.pallow.global.enums.Mbti;
 import com.pallow.pallow.global.enums.Region;
 import lombok.Getter;
