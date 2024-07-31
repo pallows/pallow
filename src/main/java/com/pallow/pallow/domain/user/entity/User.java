@@ -5,6 +5,7 @@ import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.CommonStatus;
+import com.pallow.pallow.global.enums.Gender;
 import com.pallow.pallow.global.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,17 +58,18 @@ public class User extends TimeStamp {
     private String nickname;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role userRole;
 
-    @Column
-    private String position;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
-    //  ACTIVE("active"), CommonStatus.ACTIVE
-    //  DELETED("deleted"); CommonStatus.DELETED
     @Column
     private CommonStatus status;
-
 
     @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
@@ -75,7 +77,8 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAndChatRoom> userAndChatRooms = new ArrayList<>();
 
-    public User(Long id, Profile profile, String username, String password, String email, String nickname, Role userRole, String position, LocalDate deletedAt, List<Meets> meets) {
+    public User(Long id, Profile profile, String username, String password, String email,
+            String nickname, Role userRole, String name, List<Meets> meets, Gender gender) {
         this.id = id;
         this.profile = profile;
         this.username = username;
@@ -83,9 +86,9 @@ public class User extends TimeStamp {
         this.email = email;
         this.nickname = nickname;
         this.userRole = userRole;
-        this.position = position;
-        //    this.deletedAt = deletedAt;   //todo : 없는 엔티티 같은데 이것이 무엇일까요? 일단 주석처리 해놧습니다.
         this.meets = meets;
+        this.name = name;
+        this.gender = gender;
         this.userAndChatRooms = new ArrayList<>();
     }
 
@@ -94,13 +97,16 @@ public class User extends TimeStamp {
         userAndChatRoom.setUser(this);
     }
 
-    public static User createdUser(String username, String nickname, String email, String password, Role role) {
+    public static User createdUser(String username, String nickname, String name, String email,
+            String password, Gender gender, Role role) {
         User user = new User();
         user.username = username;
         user.nickname = nickname;
         user.password = password;
         user.email = email;
         user.userRole = role;
+        user.name = name;
+        user.gender = gender;
         user.status = CommonStatus.ACTIVE;
         return user;
     }
@@ -109,9 +115,8 @@ public class User extends TimeStamp {
         this.status = CommonStatus.DELETED;
     }
 
-    public void updateUser(String nickname, String position, String password) {
+    public void updateUser(String nickname, String password) {
         this.nickname = nickname;
-        this.position = position;
         this.password = password;
     }
 
