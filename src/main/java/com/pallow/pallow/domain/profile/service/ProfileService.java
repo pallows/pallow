@@ -9,7 +9,6 @@ import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.region.District;
-import com.pallow.pallow.global.region.Region;
 import com.pallow.pallow.global.region.Region.District_Busan;
 import com.pallow.pallow.global.region.Region.District_Chungcheongbuk;
 import com.pallow.pallow.global.region.Region.District_Chungcheongnam;
