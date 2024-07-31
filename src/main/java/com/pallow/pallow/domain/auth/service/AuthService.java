@@ -55,7 +55,9 @@ public class AuthService {
                 authRequestDto.getUsername(),
                 authRequestDto.getNickname(),
                 authRequestDto.getEmail(),
+                authRequestDto.getName(),
                 passwordEncoder.encode(authRequestDto.getPassword()),
+                authRequestDto.getGender(),
                 Role.USER);
         userRepository.save(creadtedUser);
         return new AuthResponseDto(creadtedUser.getNickname(), creadtedUser.getEmail());
@@ -76,13 +78,15 @@ public class AuthService {
     }
 
     private void issueTokenAndSave(User user, HttpServletResponse response) {
-        String newAccessToken = jwtProvider.createdAccessToken(user.getUsername(), user.getUserRole());
+        String newAccessToken = jwtProvider.createdAccessToken(user.getUsername(),
+                user.getUserRole());
         String newRefreshToken = jwtProvider.createdRefreshToken(user.getUsername());
         // Access 토큰을 응답 헤더에 설정
         response.setHeader(JwtProvider.ACCESS_HEADER, newAccessToken);
         response.setHeader(JwtProvider.REFRESH_HEADER, newRefreshToken);
         // Refresh Token 을 Redis 에 저장
-        saveRefreshToken(user.getUsername(), newRefreshToken, jwtProvider.getJwtRefreshExpiration());
+        saveRefreshToken(user.getUsername(), newRefreshToken,
+                jwtProvider.getJwtRefreshExpiration());
     } // Refresh Token 만료 시간을 가져오기 위해서 JwtProvider 에서 생성자를 생성해서 가져옴
 
     public void tokenReIssue(HttpServletRequest request, HttpServletResponse response) {
@@ -144,7 +148,8 @@ public class AuthService {
     //TODO : N+1 최적화 필요
     // --------------- 해당 클래스에서 사용되어지는 메서드 ---------------
     public User findByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         // 해당 유저가 있으면 (전 : if 구문에서 예외처리로 확인 -> 수정)
         if (user.getStatus() == CommonStatus.DELETED) { // 유저가 이미 삭제된 유저라면
             throw new CustomException(ErrorType.USER_ALREADY_DELETED);
