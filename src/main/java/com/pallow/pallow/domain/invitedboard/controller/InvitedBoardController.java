@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/groups/{groupId}/invitation")
+@RequestMapping("/api/groups/{groupId}/invitation")
 @RequiredArgsConstructor
 public class InvitedBoardController {
 
