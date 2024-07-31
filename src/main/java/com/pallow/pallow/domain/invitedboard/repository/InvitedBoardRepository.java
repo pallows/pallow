@@ -12,9 +12,11 @@ public interface InvitedBoardRepository extends JpaRepository<InvitedBoard, Long
 
     boolean existsByUserAndMeets(User user, Meets meets);
 
-    Optional<InvitedBoard> findByUserAndMeetsAndStatus(User user, Meets meets, InviteStatus status);
+    Optional<InvitedBoard> findByUserIdAndMeetsIdAndStatus(Long userId, Long meetsId, InviteStatus status);
 
     List<InvitedBoard> findAllByStatus(InviteStatus status);
 
     Optional<InvitedBoard> findByUserId(long userId);
+
+    List<InvitedBoard> findAllByMeetsAndStatus(Meets meets, InviteStatus status);
 }
