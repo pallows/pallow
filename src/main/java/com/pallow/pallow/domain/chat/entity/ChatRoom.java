@@ -39,9 +39,11 @@ public class ChatRoom extends TimeStamp {
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
+    @Builder.Default
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> messages = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAndChatRoom> userAndChatRooms = new ArrayList<>();
 
