@@ -28,16 +28,16 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserAndChatRoomRepository userAndChatRoomRepository;
-    private final UserRepository userRepository;  // UserRepository를 추가합니다.
+    private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
-    private User findUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    private User findUserByNickname(String nickname) {
+        return userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new RuntimeException("Nickname not found"));
     }
 
-    public ChatRoomDto createChatRoom(String name, String username) {
-        User user = findUserByUsername(username);
+    public ChatRoomDto createChatRoom(String name, String nickname) {
+        User user = findUserByNickname(nickname);
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(name)
                 .sender(user)
@@ -54,8 +54,8 @@ public class ChatService {
         return convertToChatRoomDto(chatRoom);
     }
 
-    public ChatRoomResponseDto enterChatRoom(Long chatRoomId, String username) {
-        User user = findUserByUsername(username);
+    public ChatRoomResponseDto enterChatRoom(Long chatRoomId, String nickname) {
+        User user = findUserByNickname(nickname);
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("Chat room not found"));
 
@@ -77,14 +77,14 @@ public class ChatService {
         );
     }
 
-    public ChatMessageDto sendAndSaveMessage(ChatMessageDto messageDto, String username) {
-        User user = findUserByUsername(username);
+    public ChatMessageDto sendAndSaveMessage(ChatMessageDto messageDto, String nickname) {
+        User user = findUserByNickname(nickname);
         ChatRoom chatRoom = chatRoomRepository.findById(messageDto.getChatRoomId())
                 .orElseThrow(() -> new RuntimeException("Chatroom not found"));
 
         ChatMessage message = ChatMessage.builder()
                 .chatRoom(chatRoom)
-                .sender(user.getUsername())
+                .sender(user.getNickname())
                 .content(messageDto.getContent())
                 .type(messageDto.getType())
                 .build();
@@ -93,14 +93,14 @@ public class ChatService {
         return convertToChatMessageDto(message);
     }
 
-    public List<ChatRoomDto> getChatRoomsForUser(String username) {
-        User user = findUserByUsername(username);
+    public List<ChatRoomDto> getChatRoomsForUser(String nickname) {
+        User user = findUserByNickname(nickname);
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
         List<UserAndChatRoom> userChatRooms = userAndChatRoomRepository.findByUserAndIsActiveTrue(user);
         if (userChatRooms.isEmpty()) {
-            logger.info("No chat rooms found for user: {}", user.getUsername());
+            logger.info("No chat rooms found for user: {}", user.getNickname());
         }
         return userChatRooms.stream()
                 .map(ucr -> convertToChatRoomDto(ucr.getChatRoom()))
