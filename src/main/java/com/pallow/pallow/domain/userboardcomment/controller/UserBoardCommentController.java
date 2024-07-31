@@ -29,13 +29,11 @@ public class UserBoardCommentController {
 
     @PostMapping
     public ResponseEntity<CommonResponseDto> createComment(
-            @PathVariable long userId,
             @PathVariable long userBoardId,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody @Valid UserBoardCommentRequestDto requestDto) {
-        UserBoardCommentResponseDto responseDto = userBoardCommentService.createComment(userId,
-                userBoardId,
-                userDetails.getUser(), requestDto);
+        UserBoardCommentResponseDto responseDto = userBoardCommentService.createComment(
+                userBoardId, userDetails.getUser(), requestDto);
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.COMMENT_CREATE_SUCCESS, responseDto));
     }
@@ -50,11 +48,10 @@ public class UserBoardCommentController {
 
     @PatchMapping("/{commentId}")
     public ResponseEntity<CommonResponseDto> updateComment(
-            @PathVariable long userId,
             @PathVariable long commentId,
             @RequestBody @Valid UserBoardCommentRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        UserBoardCommentResponseDto responseDto = userBoardCommentService.updateComment(userId,
+        UserBoardCommentResponseDto responseDto = userBoardCommentService.updateComment(
                 commentId, userDetails.getUser(), requestDto);
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.COMMENT_UPDATE_SUCCESS, responseDto));
@@ -64,9 +61,8 @@ public class UserBoardCommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<CommonResponseDto> deleteComment(
             @PathVariable long commentId,
-            @PathVariable long userId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        userBoardCommentService.deleteComment(commentId, userId, userDetails.getUser());
+        userBoardCommentService.deleteComment(commentId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.COMMNET_DELETE_SUCCESS));
     }
 

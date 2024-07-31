@@ -1,7 +1,6 @@
 package com.pallow.pallow.domain.chat.dto;
 
 import com.pallow.pallow.domain.chat.model.MessageType;
-import com.pallow.pallow.global.entity.TimeStamp;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

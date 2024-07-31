@@ -2,7 +2,6 @@ package com.pallow.pallow.domain.invitedboard.controller;
 
 import com.pallow.pallow.domain.invitedboard.dto.InvitedBoardRequestDto;
 import com.pallow.pallow.domain.invitedboard.dto.InvitedBoardResponseDto;
-import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
 import com.pallow.pallow.domain.invitedboard.service.InvitedBoardService;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
@@ -34,19 +33,21 @@ public class InvitedBoardController {
         return ResponseEntity.ok(new CommonResponseDto(Message.APPLY_FOR_GROUP_SUCCESS));
     }
 
-    @PostMapping("/accept")
+    @PostMapping("/{userId}/accept")
     public ResponseEntity<CommonResponseDto> acceptApply(
             @PathVariable("groupId") long groupId,
+            @PathVariable("userId") long userId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        invitedBoardService.acceptApply(groupId, userDetails.getUser());
+        invitedBoardService.acceptApply(groupId, userId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.ACCEPT_APPLY_SUCCESS));
     }
 
-    @PostMapping("/decline")
+    @PostMapping("/{userId}/decline")
     public ResponseEntity<CommonResponseDto> declineApply(
             @PathVariable("groupId") long groupId,
+            @PathVariable("userId") long userId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        invitedBoardService.declineApply(groupId, userDetails.getUser());
+        invitedBoardService.declineApply(groupId, userId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.DECLINE_APPLY_SUCCESS));
     }
 

@@ -2,8 +2,8 @@ package com.pallow.pallow.domain.profile.entity;
 
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.global.enums.Gender;
 import com.pallow.pallow.global.enums.Mbti;
+import com.pallow.pallow.global.enums.Region;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -37,9 +37,9 @@ public class Profile {
     @Column(nullable = false)
     private String birth;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
-    private Gender gender;
+    private Region position;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -53,20 +53,21 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, String birth, Gender gender, Mbti mbti, User createdBy,
-            String hobby) {
+    public Profile(String content, String birth, Region position, Mbti mbti, User createdBy,
+            String hobby, String photo) {
         this.content = content;
         this.birth = birth;
-        this.gender = gender;
         this.mbti = mbti;
+        this.position = position;
         this.hobby = hobby;
+        this.photo = photo;
         this.user = createdBy;
     }
 
     public void update(ProfileRequestDto requestDto) {
         this.content = requestDto.getContent();
         this.birth = requestDto.getBirth();
-        this.gender = requestDto.getGender();
+        this.position = requestDto.getPosition();
         this.mbti = requestDto.getMbti();
         this.hobby = requestDto.getHobby();
     }

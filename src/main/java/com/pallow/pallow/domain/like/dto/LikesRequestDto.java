@@ -1,6 +1,5 @@
 package com.pallow.pallow.domain.like.dto;
 
-import com.pallow.pallow.global.enums.ContentType;
 import lombok.Getter;
 
 @Getter

@@ -1,7 +1,7 @@
 package com.pallow.pallow.domain.chat.controller;
 
-import com.pallow.pallow.domain.chat.model.WebSocketChatMessage;
 import com.pallow.pallow.domain.chat.model.MessageType;
+import com.pallow.pallow.domain.chat.model.WebSocketChatMessage;
 import com.pallow.pallow.domain.chat.service.ChatService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;

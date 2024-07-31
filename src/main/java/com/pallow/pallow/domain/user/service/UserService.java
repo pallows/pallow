@@ -1,20 +1,19 @@
 package com.pallow.pallow.domain.user.service;
 
-import com.pallow.pallow.domain.user.Dto.UserRequestDto;
-import com.pallow.pallow.domain.user.Dto.UserResponseDto;
+import com.pallow.pallow.domain.user.dto.UserRequestDto;
+import com.pallow.pallow.domain.user.dto.UserResponseDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +49,7 @@ public class UserService {
     public UserResponseDto updateUser(Long userId, UserRequestDto requestDto) {
         User user = findUserById(userId);
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-        user.updateUser(requestDto.getNickname(), requestDto.getPosition(), encodedPassword);
+        user.updateUser(requestDto.getNickname(), encodedPassword);
         userRepository.save(user);
         return new UserResponseDto(user);
     }
