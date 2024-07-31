@@ -108,10 +108,11 @@ public class ChatService {
     }
 
     private ChatRoomDto convertToChatRoomDto(ChatRoom chatRoom) {
-        ChatRoomDto dto = new ChatRoomDto();
-        dto.setId(chatRoom.getId());
-        dto.setName(chatRoom.getName());
-        return dto;
+        return ChatRoomDto.builder()
+                .id(chatRoom.getId())
+                .name(chatRoom.getName())
+                .creatorNickname(chatRoom.getSender().getNickname())
+                .build();
     }
 
     public ChatMessageDto convertToChatMessageDto(ChatMessage message) {
