@@ -42,6 +42,7 @@ public enum ErrorType {
 
     // InvitedBoard
     NOT_GROUP_CREATOR(HttpStatus.FORBIDDEN, "모임장이 아닙니다."),
+    YES_GROUP_CREATOR(HttpStatus.CONFLICT, "모임장은 모임 신청을 할 수 없습니다."),
 
     // UserBoard
     NOT_FOUND_BOARD(HttpStatus.NOT_FOUND, "해당 게시물을 찾을 수 없습니다."),
