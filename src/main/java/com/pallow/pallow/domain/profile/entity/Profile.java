@@ -41,6 +41,10 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Region position;
 
+    // 인트로 받아와서 스트링으로 변환해야함
+    @Column
+    private int districtCode;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
@@ -53,12 +57,13 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, String birth, Region position, Mbti mbti, User createdBy,
+    public Profile(String content, String birth, Region position, int districtCode, Mbti mbti, User createdBy,
             String hobby, String photo) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
         this.position = position;
+        this.districtCode = districtCode;
         this.hobby = hobby;
         this.photo = photo;
         this.user = createdBy;
@@ -68,6 +73,7 @@ public class Profile {
         this.content = requestDto.getContent();
         this.birth = requestDto.getBirth();
         this.position = requestDto.getPosition();
+        this.districtCode = requestDto.getDistrictCode();
         this.mbti = requestDto.getMbti();
         this.hobby = requestDto.getHobby();
     }

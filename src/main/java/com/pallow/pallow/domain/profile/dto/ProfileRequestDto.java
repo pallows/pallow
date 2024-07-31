@@ -19,9 +19,11 @@ public class ProfileRequestDto {
     private Mbti mbti;
     private String hobby;
     private String photo;
+    private int districtCode;
 
     public Profile toEntity(User foundUser) {
-        return Profile.builder().birth(birth).content(content).position(position).mbti(mbti)
+        return Profile.builder().birth(birth).content(content).position(position)
+                .districtCode(districtCode).mbti(mbti)
                 .hobby(hobby).photo(photo).createdBy(foundUser).build();
     }
 }
