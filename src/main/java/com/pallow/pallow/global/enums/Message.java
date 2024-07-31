@@ -52,6 +52,9 @@ public enum Message {
     MEET_READ_SUCCESS(HttpStatus.OK, "그룹을 조회하였습니다."),
     MEET_UPDATE_SUCCESS(HttpStatus.OK, "그룹을 수정하였습니다."),
     MEET_DELETE_SUCCESS(HttpStatus.OK, "그룹을 삭제하였습니다."),
+    MEET_MEMBER_READ_SUCCESS(HttpStatus.OK, "그룹의 전체 회원을 조회하였습니다."),
+    MEET_WITHDRAW_MEMBER_SUCCESS(HttpStatus.OK, "회원을 성공적으로 퇴장시켰습니다."),
+
 
     // meetsReview
     REVIEW_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다."),
@@ -60,7 +63,7 @@ public enum Message {
     REVIEW_DELETE_SUCCESS(HttpStatus.OK, "리뷰를 삭제하였습니다."),
 
     // Likes
-    LIKES_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다.");
+    LIKES_TOGGLE_SUCCESS(HttpStatus.OK, "❤️");
 
 
     private final HttpStatus status;
