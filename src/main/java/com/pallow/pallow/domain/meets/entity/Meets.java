@@ -7,6 +7,7 @@ import com.pallow.pallow.domain.meetsreview.entity.MeetsReview;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.CommonStatus;
+import com.pallow.pallow.global.enums.InviteStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,7 +43,9 @@ public class Meets extends TimeStamp {
     @Column(nullable = false)
     private String content;
 
-    private int memberCount;
+    private String image;
+
+    private long memberCount;
 
     private String position;
 
@@ -64,30 +67,44 @@ public class Meets extends TimeStamp {
     private ChatRoom chatRoom;
 
     @Builder
-    public Meets(String title, String content, int memberCount, String position,
+    public Meets(String title, String content, String image, String position,
             CommonStatus status, User user) {
         this.title = title;
         this.content = content;
-        this.memberCount = memberCount;
+        this.image = image;
+        this.memberCount = calculatedMemberList().size();
         this.position = position;
         this.status = status;
         this.groupCreator = user;
     }
 
-    public Meets update(MeetsRequestDto requestDto) {
+    public void update(MeetsRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        return this;
+        this.image = requestDto.getImage();
     }
 
     public void delete() {
         this.status = CommonStatus.DELETED;
     }
 
+    // todo - 사용하지 않는 매서드
     public void setChatRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
         if (chatRoom != null) {
             chatRoom.setMeets(this);
         }
+    }
+
+    // 멤버 리스트의 수를 계산하는 메서드
+    private List<InvitedBoard> calculatedMemberList() {
+        return usersInvitedBoards.stream()
+                .filter(invite -> invite.getMeets().getId().equals(id) && invite.getStatus().equals(InviteStatus.ACCEPTED) )
+                .toList();
+    }
+
+    // 멤버 리스트를 업데이트하는 메서드
+    public void updateMemberList() {
+        this.memberCount = calculatedMemberList().size();
     }
 }

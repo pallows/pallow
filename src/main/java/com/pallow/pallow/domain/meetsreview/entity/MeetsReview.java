@@ -1,9 +1,11 @@
 package com.pallow.pallow.domain.meetsreview.entity;
 
+import com.pallow.pallow.domain.like.entity.Likeable;
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.meetsreview.dto.ReviewRequestDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.entity.TimeStamp;
+import com.pallow.pallow.global.enums.ContentType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class MeetsReview extends TimeStamp {
+public class MeetsReview extends TimeStamp implements Likeable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,10 +50,17 @@ public class MeetsReview extends TimeStamp {
         return this;
     }
 
+    @Override
+    public ContentType contentType() {
+        return ContentType.MEETS_REVIEW;
+    }
+
+    @Override
     public void addLikesCount() {
         this.likesCount++;
     }
 
+    @Override
     public void minusLikesCount() {
         this.likesCount--;
     }
