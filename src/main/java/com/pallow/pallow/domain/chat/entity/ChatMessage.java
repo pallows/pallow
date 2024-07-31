@@ -42,11 +42,6 @@ public class ChatMessage extends TimeStamp {
     @Column(nullable = false)
     private MessageType type;
 
-    @Column
-    public LocalDateTime getTimestamp() {
-        return getCreatedAt();
-    }
-
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id", nullable = false)

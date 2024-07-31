@@ -12,6 +12,7 @@ import com.pallow.pallow.domain.chat.repository.ChatRoomRepository;
 import com.pallow.pallow.domain.chat.repository.UserAndChatRoomRepository;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -115,6 +116,12 @@ public class ChatService {
                 .build();
     }
 
+    /**
+     * 메시지 말풍선에 시간 설정
+     * ex) 08:30 PM 혹은 12:00 AM 이런 식으로 시간 설정이 됨
+     * 프론트에선 ChatMessageDto의 formattedTime을 활용해 시간 표시 할 수 있음.
+     */
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm a");
     public ChatMessageDto convertToChatMessageDto(ChatMessage message) {
         return ChatMessageDto.builder()
                 .id(message.getId())
@@ -123,7 +130,7 @@ public class ChatService {
                 .content(message.getContent())
                 .type(message.getType())
                 .createdAt(message.getCreatedAt())
-                .modifiedAt(message.getModifiedAt())
+                .formattedTime(message.getCreatedAt().format(TIME_FORMATTER))
                 .build();
     }
 }

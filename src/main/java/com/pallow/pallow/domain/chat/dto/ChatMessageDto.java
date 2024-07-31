@@ -21,6 +21,6 @@ public class ChatMessageDto {
         private String content;
         private MessageType type;
         private LocalDateTime createdAt;
-        private LocalDateTime modifiedAt;
+        private String formattedTime;
 
 }
