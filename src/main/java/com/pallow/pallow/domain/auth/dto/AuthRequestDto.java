@@ -1,7 +1,9 @@
 package com.pallow.pallow.domain.auth.dto;
 
+import com.pallow.pallow.global.enums.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
@@ -20,6 +22,9 @@ public class AuthRequestDto {
     private String email;
 
     @NotBlank
-    private String gender;
+    private String name;
+
+    @NotNull
+    private Gender gender;
 
 }

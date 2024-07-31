@@ -3,6 +3,7 @@ package com.pallow.pallow.domain.profile.entity;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.enums.Mbti;
+import com.pallow.pallow.global.enums.Region;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +35,11 @@ public class Profile {
     private String content;
 
     @Column(nullable = false)
-    private LocalDate birth;
+    private String birth;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Region position;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -44,31 +48,27 @@ public class Profile {
     @Column(nullable = false)
     private String hobby;
 
-    @Column
-    private String position;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
     @Builder
-    public Profile(String content, LocalDate birth, Mbti mbti, User createdBy,
-            String hobby, String position, String photo) {
+    public Profile(String content, String birth, Region position, Mbti mbti, User createdBy,
+            String hobby, String photo) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
-        this.hobby = hobby;
-        this.user = createdBy;
         this.position = position;
+        this.hobby = hobby;
         this.photo = photo;
+        this.user = createdBy;
     }
 
     public void update(ProfileRequestDto requestDto) {
         this.content = requestDto.getContent();
         this.birth = requestDto.getBirth();
+        this.position = requestDto.getPosition();
         this.mbti = requestDto.getMbti();
         this.hobby = requestDto.getHobby();
-        this.position = requestDto.getPosition();
-        this.photo = requestDto.getPhoto();
     }
 }
