@@ -3,9 +3,9 @@ package com.pallow.pallow.domain.auth.service;
 
 import com.pallow.pallow.domain.auth.dto.AuthRequestDto;
 import com.pallow.pallow.domain.auth.dto.AuthResponseDto;
-import com.pallow.pallow.domain.auth.dto.EmailCodeRequestDto;
-import com.pallow.pallow.domain.auth.dto.EmailInputRequestDto;
 import com.pallow.pallow.domain.auth.dto.LoginRequestDto;
+import com.pallow.pallow.domain.email.dto.EmailCodeRequestDto;
+import com.pallow.pallow.domain.email.dto.EmailInputRequestDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.CommonStatus;
