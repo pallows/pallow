@@ -1,9 +1,9 @@
 package com.pallow.pallow.domain.profile.dto;
 
 import com.pallow.pallow.domain.profile.entity.Profile;
-import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.enums.Region;
+import com.pallow.pallow.domain.user.entity.User;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 

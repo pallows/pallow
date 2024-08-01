@@ -6,14 +6,14 @@ import com.pallow.pallow.domain.profile.enums.Education;
 import com.pallow.pallow.domain.profile.enums.IDEAL;
 import com.pallow.pallow.domain.profile.enums.Interest;
 import com.pallow.pallow.domain.profile.enums.Jobs;
+import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.enums.Personality;
 import com.pallow.pallow.domain.profile.enums.Pros;
+import com.pallow.pallow.domain.profile.enums.Region;
 import com.pallow.pallow.domain.profile.enums.Relationship;
 import com.pallow.pallow.domain.profile.enums.Religion;
 import com.pallow.pallow.domain.profile.enums.Smoking;
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.domain.profile.enums.Mbti;
-import com.pallow.pallow.domain.profile.enums.Region;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -56,33 +56,43 @@ public class Profile {
     private Mbti mbti;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Interest interest;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Alcohol alcohol;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Education education;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private IDEAL ideal;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Jobs jobs;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Personality personality;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Pros pros;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Relationship relationship;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Religion religion;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private Smoking smoking;
 
     @OneToOne(fetch = FetchType.LAZY)

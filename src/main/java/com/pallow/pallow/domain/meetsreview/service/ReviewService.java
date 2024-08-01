@@ -10,7 +10,6 @@ import com.pallow.pallow.domain.meetsreview.entity.MeetsReview;
 import com.pallow.pallow.domain.meetsreview.repository.ReviewRepository;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.enums.CommonStatus;
-import com.pallow.pallow.global.enums.ContentType;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import java.util.List;
