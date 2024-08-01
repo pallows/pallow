@@ -34,15 +34,15 @@ public class ChatController {
     }
 
     @MessageMapping("/chat.createRoom")
-    public ChatRoomDto createRoom(@Payload String roomName, @Payload String nickname) {
-        ChatRoomDto chatRoomDto = chatService.createChatRoom(roomName, nickname);
+    public ChatRoomDto createRoom(@Payload String roomName, @Payload String username) {
+        ChatRoomDto chatRoomDto = chatService.createChatRoom(roomName, username);
         messagingTemplate.convertAndSend("/topic/room/" + chatRoomDto.getId(), chatRoomDto);
         return chatRoomDto;
     }
 
     @MessageMapping("/chat.enterRoom")
-    public ChatRoomResponseDto enterRoom(@Payload Long roomId, @Payload String nickname) {
-        ChatRoomResponseDto responseDto = chatService.enterChatRoom(roomId, nickname);
+    public ChatRoomResponseDto enterRoom(@Payload Long roomId, @Payload String username) {
+        ChatRoomResponseDto responseDto = chatService.enterChatRoom(roomId, username);
         messagingTemplate.convertAndSend("/topic/room/" + roomId, responseDto);
         return responseDto;
     }
@@ -51,7 +51,7 @@ public class ChatController {
     @SendTo("/topic/public")
     public WebSocketChatMessage addUser(@Payload WebSocketChatMessage webSocketChatMessage,
             SimpMessageHeaderAccessor headerAccessor) {
-        headerAccessor.getSessionAttributes().put("nickname", webSocketChatMessage.getSender()); // 닉네임을 처음에 굳이 받지 않아도 userImpl에서 회원가입할 때 설정한 Nickname으로 자동참여 할 수 있게 하는게 어떨까..
+        headerAccessor.getSessionAttributes().put("username", webSocketChatMessage.getSender());
         webSocketChatMessage.setType(MessageType.JOIN);
         messagingTemplate.convertAndSend("/topic/room/" + webSocketChatMessage.getRoomId(), webSocketChatMessage);
         return webSocketChatMessage;
@@ -65,12 +65,12 @@ public class ChatController {
     }
 
     @MessageMapping("/chat.getRooms")
-    public List<ChatRoomDto> getChatRooms(@Payload String nickname) {
+    public List<ChatRoomDto> getChatRooms(@Payload String username) {
         try {
-            logger.info("Fetching chat rooms for user: {}", nickname);
-            return chatService.getChatRoomsForUser(nickname);
+            logger.info("Fetching chat rooms for user: {}", username);
+            return chatService.getChatRoomsForUser(username);
         } catch (Exception e) {
-            logger.error("Error fetching chat rooms for user: {}", nickname, e);
+            logger.error("Error fetching chat rooms for user: {}", username, e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching chat rooms", e);
         }
     }
