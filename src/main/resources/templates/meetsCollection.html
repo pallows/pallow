@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Piallow</title>
+  <title>Pallow</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -19,8 +19,7 @@
     <div class="flex items-center space-x-4">
       <img src="https://via.placeholder.com/100x50?text=Piallow" alt="Piallow Logo" class="h-10">
       <nav class="space-x-4">
-        <a href="#" class="text-gray-700 hover:text-gray-900">이벤트</a>
-        <a href="#" class="text-gray-700 hover:text-gray-900">인기 급 상승 모임</a>
+        <a href="#" class="text-gray-700 hover:text-gray-900">오늘의 동친</a>
         <a href="#" class="text-gray-700 hover:text-gray-900">내 주변 모임</a>
       </nav>
     </div>
@@ -37,66 +36,11 @@
     <button class="bg-black text-white px-4 py-2 rounded">모임 생성 하기</button>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-    <div class="bg-white p-4 rounded shadow-md flex items-center space-x-4">
+    <div th:each="meet : ${meets}" class="bg-white p-4 rounded shadow-md flex items-center space-x-4">
       <img src="https://via.placeholder.com/100" alt="Profile Image" class="w-24 h-24 rounded-full">
       <div>
-        <h2 class="text-lg font-bold">돼지 국밥 소스 한잔</h2>
-        <p class="text-gray-600">개인활동 거래장 시장에 오르며 세계적 글옥을 담아가며 2000원짜리 글로 존재해 있습니다. 같이 가보실 구해요.</p>
-        <div class="mt-4 space-x-2">
-          <button class="bg-black text-white px-4 py-2 rounded">상세 보기</button>
-          <button class="bg-black text-white px-4 py-2 rounded">모임 참가</button>
-        </div>
-      </div>
-    </div>
-    <div class="bg-white p-4 rounded shadow-md flex items-center space-x-4">
-      <img src="https://via.placeholder.com/100" alt="Profile Image" class="w-24 h-24 rounded-full">
-      <div>
-        <h2 class="text-lg font-bold">스트롱 형사랑</h2>
-        <p class="text-gray-600">스트롱 형사랑</p>
-        <div class="mt-4 space-x-2">
-          <button class="bg-black text-white px-4 py-2 rounded">상세 보기</button>
-          <button class="bg-black text-white px-4 py-2 rounded">모임 참가</button>
-        </div>
-      </div>
-    </div>
-    <div class="bg-white p-4 rounded shadow-md flex items-center space-x-4">
-      <img src="https://via.placeholder.com/100" alt="Profile Image" class="w-24 h-24 rounded-full">
-      <div>
-        <h2 class="text-lg font-bold">내 머리 어떡딘</h2>
-        <p class="text-gray-600">다 같이 머리에 대해서 고민하는 모임</p>
-        <div class="mt-4 space-x-2">
-          <button class="bg-black text-white px-4 py-2 rounded">상세 보기</button>
-          <button class="bg-black text-white px-4 py-2 rounded">모임 참가</button>
-        </div>
-      </div>
-    </div>
-    <div class="bg-white p-4 rounded shadow-md flex items-center space-x-4">
-      <img src="https://via.placeholder.com/100" alt="Profile Image" class="w-24 h-24 rounded-full">
-      <div>
-        <h2 class="text-lg font-bold">다시 태어나본분</h2>
-        <p class="text-gray-600">저와 함께 여행을 떠나요</p>
-        <div class="mt-4 space-x-2">
-          <button class="bg-black text-white px-4 py-2 rounded">상세 보기</button>
-          <button class="bg-black text-white px-4 py-2 rounded">모임 참가</button>
-        </div>
-      </div>
-    </div>
-    <div class="bg-white p-4 rounded shadow-md flex items-center space-x-4">
-      <img src="https://via.placeholder.com/100" alt="Profile Image" class="w-24 h-24 rounded-full">
-      <div>
-        <h2 class="text-lg font-bold">저 100미터 자유형 3초</h2>
-        <p class="text-gray-600">수영이 편지 알려드립니다.</p>
-        <div class="mt-4 space-x-2">
-          <button class="bg-black text-white px-4 py-2 rounded">상세 보기</button>
-          <button class="bg-black text-white px-4 py-2 rounded">모임 참가</button>
-        </div>
-      </div>
-    </div>
-    <div class="bg-white p-4 rounded shadow-md flex items-center space-x-4">
-      <img src="https://via.placeholder.com/100" alt="Profile Image" class="w-24 h-24 rounded-full">
-      <div>
-        <h2 class="text-lg font-bold">영정 사진 찍으실분</h2>
-        <p class="text-gray-600">제가 아는 사진을 있어요.</p>
+        <h2 class="text-lg font-bold" th:text="${meet.title}">모임 제목</h2>
+        <p class="text-gray-600" th:text="${meet.content}">모임설명</p>
         <div class="mt-4 space-x-2">
           <button class="bg-black text-white px-4 py-2 rounded">상세 보기</button>
           <button class="bg-black text-white px-4 py-2 rounded">모임 참가</button>
@@ -104,6 +48,7 @@
       </div>
     </div>
   </div>
+
   <div class="mt-8">
     <div class="relative">
       <input type="text" placeholder="제목 및 작성자 입력" class="w-full p-4 rounded shadow-md">
@@ -115,11 +60,11 @@
     </div>
   </div>
   <div class="mt-8 bg-white p-4 rounded shadow-md">
-    <p class="text-gray-600">회원가입만 해도 받는 엘리트 멤버십 혜택</p>
-    <p class="text-gray-600">로그인 하면 멤버십 혜택과 함께 할 수 있어요.</p>
+    <p class="text-gray-600">유료결제만 해도 받는 엘리트 멤버십 혜택</p>
+    <p class="text-gray-600">결제만 했다면 멤버십 혜택과 함께 할 수 있어요.</p>
     <div class="mt-4 space-x-2">
-      <button class="bg-blue-500 text-white px-4 py-2 rounded">로그인/회원가입</button>
-      <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded">혜택 자세히 보기</button>
+      <a href="/payments" class="bg-blue-500 text-white px-4 py-2 rounded">결제 창</a>
+      <a href="/benefits" class="bg-gray-200 text-gray-700 px-4 py-2 rounded">혜택 자세히 보기</a>
     </div>
   </div>
 </main>

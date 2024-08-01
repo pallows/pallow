@@ -60,8 +60,7 @@
   <div class="flex items-center">
     <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
     <nav>
-      <a href="#" class="mr-4">오늘의 동친</a>
-      <a href="#" class="mr-4">인기 급 상승 모임</a>
+      <a href="/meetsCollection" class="mr-4">오늘의 동친</a>
       <a href="#" class="mr-4">내 주변 모임</a>
     </nav>
   </div>
@@ -75,7 +74,7 @@
   <section class="mb-8">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-bold">오늘의 동친</h2>
-      <a href="dongchin.html" class="text-blue-500">더보기</a>
+      <a href="/meetsCollection" class="text-blue-500">더보기</a>
     </div>
     <div class="relative">
       <div class="carousel" id="carousel1"></div>
@@ -112,11 +111,10 @@
   </section>
 
   <section class="bg-blue-100 p-4 rounded shadow">
-    <h2 class="text-xl font-bold mb-4">회원가입만 해도 받는 엘리트 멤버십 혜택</h2>
-    <p class="mb-4">로그인 하면 멤버십 할인가로 예약할 수 있어요.</p>
-    <button id="loginSignupBtn" class="bg-blue-500 text-white px-4 py-2 rounded mb-4">로그인/회원가입</button>
-    <br>
-    <a href="#" class="text-blue-500 inline-block">혜택 자세히 보기</a>
+    <h2 class="text-xl font-bold mb-4">유료결제만 해도 받는 엘리트 멤버십 혜택</h2>
+    <p class="mb-4">결제만 했다면 멤버십 할인가로 예약할 수 있어요.</p>
+    <a href="/payments" class="bg-blue-500 text-white px-4 py-2 rounded">결제 창</a>
+    <a href="/benefits" class="bg-gray-200 text-gray-700 px-4 py-2 rounded">혜택 자세히 보기</a>
   </section>
 </main>
 
@@ -194,20 +192,6 @@
     window.location.href = 'userboard.html';
   });
 
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    // Perform logout logic here
-    window.location.href = '/';
-  });
-
-  document.getElementById('loginSignupBtn').addEventListener('click', () => {
-    // Check if user is logged in
-    const isLoggedIn = false; // Replace with actual login check
-    if (isLoggedIn) {
-      alert('이미 엘리트 멤버십 혜택을 받고 계십니다!');
-    } else {
-      window.location.href = 'login.html';
-    }
-  });
 
   document.getElementById('chatBtn').addEventListener('click', () => {
     window.location.href = '/chat';
