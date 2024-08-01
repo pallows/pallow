@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * API 경로를 구분하기 위해 @Requestmapping에 "/api" 접두사 추가
+ */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/meets")
+@RequestMapping("/api/meets")
 public class MeetsController {
 
     private final MeetsService meetsService;
