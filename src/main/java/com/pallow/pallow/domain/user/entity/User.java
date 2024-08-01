@@ -66,6 +66,7 @@ public class User extends TimeStamp {
     private Gender gender;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private CommonStatus status;
 
     @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
