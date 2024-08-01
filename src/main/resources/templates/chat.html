@@ -5,155 +5,164 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat Application</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Arial', sans-serif;
+    }
+    .chat-container {
+      height: 90vh;
+    }
+    .chat-list, .chat-window {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .chat-list-item {
+      cursor: pointer;
+    }
+    .chat-list-item:hover {
+      background-color: #f0f0f0;
+    }
+    .chat-bubble {
+      max-width: 70%;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .chat-bubble.sent {
+      background-color: #d1e7ff;
+      align-self: flex-end;
+    }
+    .chat-bubble.received {
+      background-color: #fff3cd;
+      align-self: flex-start;
+    }
+    .chat-date {
+      text-align: center;
+      margin: 20px 0;
+      color: #888;
     }
   </style>
 </head>
 <body class="bg-gray-100">
-<header class="bg-black text-white p-4">
-  <div class="container mx-auto flex justify-between items-center">
-    <h1 class="text-2xl" id="chatTitle" th:text="${username} + '\'s Chatting Room'">채팅 목록 / 채팅</h1>
-    <div>
-      <button class="bg-gray-800 px-4 py-2 rounded">My Page</button>
-      <button class="bg-gray-800 px-4 py-2 rounded ml-2">LogOut</button>
+<div class="container mx-auto p-4">
+  <div class="chat-container flex border rounded-lg shadow-lg bg-white">
+    <!-- Chat List -->
+    <div class="chat-list w-1/3 border-r p-4">
+      <h2 class="text-xl font-bold mb-4">나의 채팅 목록</h2>
+      <div class="chat-list-item p-2 border-b" onclick="openChat('chat1')">
+        <div class="flex justify-between">
+          <span>배드민턴 청주 체육관 앞</span>
+        </div>
+        <p class="text-gray-600">지영: 조심히 와!</p>
+      </div>
+      <div class="chat-list-item p-2 border-b" onclick="openChat('chat2')">
+        <div class="flex justify-between">
+          <span>밥먹자 논현동에서 짜장면으로.</span>
+          <span class="text-red-500">3</span>
+        </div>
+        <p class="text-gray-600">미호: 언니 나 배고파 ㅠ</p>
+      </div>
+      <div class="chat-list-item p-2 border-b" onclick="openChat('chat3')">
+        <div class="flex justify-between">
+          <span>스트롱 형사랑 미제사건 해결하자</span>
+          <span class="text-red-500">1</span>
+        </div>
+        <p class="text-gray-600">형사: 스트롱 ㅋ</p>
+      </div>
+    </div>
+    <!-- Chat Window -->
+    <div class="chat-window w-2/3 p-4 flex flex-col">
+      <h2 id="chat-title" class="text-xl font-bold mb-4">배드민턴 청주 체육관 앞</h2>
+      <div id="chat-content" class="flex flex-col flex-grow">
+        <div class="chat-date">2024.07.31</div>
+        <div class="chat-bubble received">
+          <div class="text-sm text-gray-500">지영</div>
+          <div>조심히 와!</div>
+          <div class="text-xs text-gray-500 text-right">pm 8:30</div>
+        </div>
+        <div class="chat-bubble sent">
+          <div class="text-sm text-gray-500 text-right">나의 닉네임</div>
+          <div>어디야?</div>
+          <div class="text-xs text-gray-500 text-right">pm 8:31</div>
+        </div>
+        <div class="chat-bubble received">
+          <div class="text-sm text-gray-500">지영</div>
+          <div>나 지금 가는 중!</div>
+          <div class="text-xs text-gray-500 text-right">pm 8:33</div>
+        </div>
+      </div>
+      <div class="mt-4 flex">
+        <input id="chat-input" type="text" class="flex-grow border rounded-l-lg p-2" placeholder="대화를 입력할 수 있는 창(최대 1000자까지 입력 가능)">
+        <button onclick="sendMessage()" class="bg-blue-500 text-white p-2 rounded-r-lg">전송</button>
+      </div>
     </div>
   </div>
-</header>
-<main class="container mx-auto mt-4 flex">
-  <aside class="w-1/4 bg-gray-800 text-white p-4">
-    <ul id="chatRoomsList">
-    </ul>
-  </aside>
-  <section class="w-3/4 bg-white p-4 flex flex-col">
-    <div id="chatSection" class="flex-1 overflow-y-auto mb-4">
-    </div>
-    <div class="flex items-center">
-      <input type="text" id="chatInput" class="flex-1 border border-gray-300 p-2 rounded" placeholder="Type a message...">
-      <button class="bg-blue-500 text-white px-4 py-2 rounded ml-2" id="sendButton">Send</button>
-    </div>
-  </section>
-</main>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    let username = localStorage.getItem('username');  // Retrieve stored username
-    if (username) {
-      document.getElementById('chatTitle').textContent = `${username}'s Chatting Room`;  // Update text
+</div>
+<script type="module">
+  function openChat(chatId) {
+    const chatTitle = document.getElementById('chat-title');
+    const chatContent = document.getElementById('chat-content');
+    chatContent.innerHTML = '';
+    if (chatId === 'chat1') {
+      chatTitle.textContent = '배드민턴 청주 체육관 앞';
+      chatContent.innerHTML = `
+                    <div class="chat-date">2024.07.31</div>
+                    <div class="chat-bubble received">
+                        <div class="text-sm text-gray-500">지영</div>
+                        <div>조심히 와!</div>
+                        <div class="text-xs text-gray-500 text-right">pm 8:30</div>
+                    </div>
+                    <div class="chat-bubble sent">
+                        <div class="text-sm text-gray-500 text-right">나의 닉네임</div>
+                        <div>어디야?</div>
+                        <div class="text-xs text-gray-500 text-right">pm 8:31</div>
+                    </div>
+                    <div class="chat-bubble received">
+                        <div class="text-sm text-gray-500">지영</div>
+                        <div>나 지금 가는 중!</div>
+                        <div class="text-xs text-gray-500 text-right">pm 8:33</div>
+                    </div>
+                `;
+    } else if (chatId === 'chat2') {
+      chatTitle.textContent = '밥먹자 논현동에서 짜장면으로.';
+      chatContent.innerHTML = `
+                    <div class="chat-date">2024.07.31</div>
+                    <div class="chat-bubble received">
+                        <div class="text-sm text-gray-500">미호</div>
+                        <div>언니 나 배고파 ㅠ</div>
+                        <div class="text-xs text-gray-500 text-right">pm 8:30</div>
+                    </div>
+                `;
+    } else if (chatId === 'chat3') {
+      chatTitle.textContent = '스트롱 형사랑 미제사건 해결하자';
+      chatContent.innerHTML = `
+                    <div class="chat-date">2024.07.31</div>
+                    <div class="chat-bubble received">
+                        <div class="text-sm text-gray-500">형사</div>
+                        <div>스트롱 ㅋ</div>
+                        <div class="text-xs text-gray-500 text-right">pm 8:30</div>
+                    </div>
+                `;
     }
+  }
 
-    function fetchChatRooms(username) {
-      return fetch(`/chat/getRooms`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(username)
-      })
-      .then(response => response.json())
-      .then(data => {
-        return data;
-      })
-      .catch(error => {
-        console.error('Error fetching chat rooms:', error);
-      });
+  function sendMessage() {
+    const chatInput = document.getElementById('chat-input');
+    const chatContent = document.getElementById('chat-content');
+    const message = chatInput.value.trim();
+    if (message) {
+      const messageBubble = document.createElement('div');
+      messageBubble.className = 'chat-bubble sent';
+      messageBubble.innerHTML = `
+                    <div class="text-sm text-gray-500 text-right">나의 닉네임</div>
+                    <div>${message}</div>
+                    <div class="text-xs text-gray-500 text-right">pm ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                `;
+      chatContent.appendChild(messageBubble);
+      chatInput.value = '';
+      chatContent.scrollTop = chatContent.scrollHeight;
     }
-
-    function renderChatRooms(chatRooms) {
-      const chatRoomsList = document.getElementById('chatRoomsList');
-      chatRoomsList.innerHTML = ''; // Clear any existing chat rooms
-
-      chatRooms.forEach(room => {
-        const li = document.createElement('li');
-        li.classList.add('mb-2');
-        const button = document.createElement('button');
-        button.classList.add('w-full', 'text-left');
-        button.innerText = room.name;
-        button.onclick = () => enterRoom(room.id); // Replace with actual navigation logic
-        li.appendChild(button);
-        chatRoomsList.appendChild(li);
-      });
-    }
-
-    function displayChatMessages(roomId) {
-      fetchChatMessages(roomId).then(messages => {
-        const chatSection = document.getElementById('chatSection');
-        chatSection.innerHTML = '';
-
-        messages.forEach(message => {
-          const messageDiv = document.createElement('div');
-          messageDiv.classList.add('p-2', 'rounded', 'mb-2');
-          messageDiv.classList.add(message.sender === username ? 'bg-blue-200' : 'bg-gray-200');
-          messageDiv.style.alignSelf = message.sender === username ? 'flex-end' : 'flex-start';
-
-          const messageContent = document.createElement('p');
-          messageContent.innerText = message.content;
-
-          const messageTimestamp = document.createElement('span');
-          messageTimestamp.classList.add('text-gray-500', 'text-sm');
-          messageTimestamp.innerText = new Date(message.createdAt).toLocaleString();
-
-          messageDiv.appendChild(messageContent);
-          messageDiv.appendChild(messageTimestamp);
-          chatSection.appendChild(messageDiv);
-        });
-      });
-    }
-
-    function fetchChatMessages(roomId) {
-      return fetch(`/chat/getMessages`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ roomId })
-      })
-      .then(response => response.json())
-      .then(data => data)
-      .catch(error => {
-        console.error('Error fetching chat messages:', error);
-      });
-    }
-
-    function sendMessage() {
-      const chatInput = document.getElementById('chatInput');
-      const message = chatInput.value;
-
-      if (message && currentRoomId) {
-        const chatMessage = {
-          content: message,
-          sender: username,
-          chatRoomId: currentRoomId,
-          type: 'CHAT'
-        };
-
-        fetch(`/chat/sendMessage`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(chatMessage)
-        })
-        .then(response => response.json())
-        .then(data => {
-          chatInput.value = '';
-          displayChatMessages(currentRoomId);
-        })
-        .catch(error => {
-          console.error('Error sending message:', error);
-        });
-      }
-    }
-
-    document.getElementById('sendButton').addEventListener('click', sendMessage);
-
-    fetchChatRooms(username).then(chatRooms => {
-      renderChatRooms(chatRooms);
-    });
-  });
+  }
 </script>
-
 </body>
 </html>
