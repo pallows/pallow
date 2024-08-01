@@ -5,10 +5,13 @@ import com.pallow.pallow.domain.email.dto.EmailInputRequestDto;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import jakarta.mail.internet.MimeMessage;
+
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,7 +25,10 @@ import org.springframework.stereotype.Service;
 public class MailService {
 
     private final JavaMailSender mailSender;
-    private static final String senderEmail = "pallow-company@gmail.com";
+
+    @Value("${spring.mail.username}")
+    private static final String senderEmail = "pallow-company@gmail.com"; //
+
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Async

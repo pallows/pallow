@@ -160,23 +160,23 @@ public class OauthService {
         }
     }
 
-    public String oauthSignUp(AuthRequestDto requestDto, HttpServletResponse response) {
-        if (userRepository.findByNickname(requestDto.getNickname()).isPresent()) {
-            throw new CustomException(ErrorType.DUPLICATE_ACCOUNT_ID);
-        }
-
-        User user = User.createdUser(
-                requestDto.getUsername(),
-                requestDto.getNickname(),
-                requestDto.getEmail(),
-                passwordEncoder.encode(requestDto.getPassword()),
-                requestDto.getGender(),
-                Role.USER,
-                CommonOauth.KAKAO
-        );
-        userRepository.save(user);
-        return authService.issueTokenAndSave(user, response);
-    }
+//    public String oauthSignUp(AuthRequestDto requestDto, HttpServletResponse response) {
+//        if (userRepository.findByNickname(requestDto.getNickname()).isPresent()) {
+//            throw new CustomException(ErrorType.DUPLICATE_ACCOUNT_ID);
+//        }
+//
+//        User user = User.createdUser(
+//                requestDto.getUsername(),
+//                requestDto.getNickname(),
+//                requestDto.getEmail(),
+//                passwordEncoder.encode(requestDto.getPassword()),
+//                requestDto.getGender(),
+//                Role.USER,
+//                CommonOauth.KAKAO
+//        );
+//        userRepository.save(user);
+//        return authService.issueTokenAndSave(user, response);
+//    }
 
 
 }

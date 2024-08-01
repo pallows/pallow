@@ -30,6 +30,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final OauthService oauthService;
+    private final JwtProvider jwtProvider;
 
     /**
      * 유지영 수정 @Valid 추가
@@ -46,18 +47,12 @@ public class AuthController {
     // 로컬 로그인
     @PostMapping("/login")
     public ResponseEntity<CommonResponseDto> login(
-            @Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response,
-            HttpSession session) {
-        log.info("로그인 리퀘스트{}", loginRequestDto);
-        log.info("로그인시 리스폰스{}", response);
+            @Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         try {
-            authService.login(loginRequestDto, response);
-            return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGIN_SUCCESS,
-                    loginRequestDto.getUsername()));
+            return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGIN_SUCCESS, authService.login(loginRequestDto, response)));
         } catch (Exception e) {
-            session.setAttribute("error", "Invalid username or password");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new CommonResponseDto(Message.USER_LOGIN_FAIL, null));
+                    .body(new CommonResponseDto(Message.USER_LOGIN_FAIL, "Invalid username or password"));
         }
     }
 
@@ -65,9 +60,10 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<CommonResponseDto> refreshToken(HttpServletRequest request,
                                                           HttpServletResponse response) {
-        authService.tokenReIssue(request, response);
-        String RefreshToken = response.getHeader(JwtProvider.REFRESH_HEADER);
-        return ResponseEntity.ok(new CommonResponseDto(Message.TOKEN_CREATE_REFRESH, RefreshToken));
+        String newAccessToken = authService.tokenReIssue(request, response);
+
+        log.info("리프레시 토큰 재생성 : {}", newAccessToken);
+        return ResponseEntity.ok(new CommonResponseDto(Message.TOKEN_CREATE_REFRESH, newAccessToken));
     }
 
     // 로그아웃
@@ -95,6 +91,12 @@ public class AuthController {
         String token = oauthService.login("kakao", code, response);
         response.setStatus(HttpStatus.OK.value());
         response.getWriter().write(new CommonResponseDto(Message.USER_LOGIN_SUCCESS, token).toString());
+    }
+
+    @GetMapping("/jwttoken")
+    public void getToken(HttpServletRequest request) {
+        String token = jwtProvider.getJwtFromHeader(request, JwtProvider.ACCESS_HEADER);
+
     }
 
 //    @PostMapping("/oauth/signup")

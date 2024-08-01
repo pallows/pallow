@@ -22,7 +22,7 @@
         <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png"
              alt="Team Logo" class="mx-auto mb-4">
     </div>
-    <form id="loginForm">
+    <form id="loginForm" method="post">
         <div class="mb-4">
             <label for="username" class="block text-gray-700">ID</label>
             <input type="text" id="username" name="username"
@@ -44,12 +44,24 @@
     <a href="/auth/oauth/login/kakao"
        class="block w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 text-center">카카오 로그인</a>
     <div id="error" class="alert alert-danger mt-4" style="display: none;">
-        <p class="text-red-500 text-center">Invalid username or password.</p>
+        <p id="errorMessage" class="text-red-500 text-center">비밀번호 혹은 아이디가 잘못되었습니다.</p>
     </div>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function (event) {
+    <script type="module">
+        // 스테틱은 접근 불가
+        import {setToken} from "/js/auth.js";
 
+        //  helloWorld();
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            if (error === "Unauthorized") {
+                alert("로그인 후 이용해주세요")
+            }
+        });
+
+
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
             event.preventDefault();
 
             const username = document.getElementById('username').value;
@@ -60,14 +72,24 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({username, password})
+                body: JSON.stringify({username, password}),
+                credentials: 'include'
             })
                 .then(response => {
-
+                    console.log('로그인 응답 상태:', response.status);
                     if (response.ok) {
-                        window.location.href = '/main';
+                        return response.json();
+                        // window.location.href = '/main';
                     } else {
                         document.getElementById('error').style.display = 'block';
+                    }
+                })
+                .then(data => {
+                    console.log('Response JSON:', data);
+                    if (data && data.data.token) {
+                        setToken(data.data.token);
+                        console.log("로그인 성공")
+                        window.location.href = "/main.html"
                     }
                 })
                 .catch(error => {
@@ -76,8 +98,6 @@
                 });
         });
     </script>
-
 </div>
-
 </body>
 </html>

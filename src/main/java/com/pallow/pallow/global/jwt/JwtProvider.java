@@ -9,7 +9,9 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,28 +97,41 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String getJwtFromHeader(HttpServletRequest request, String headerName) {
-        System.out.println("요청 받은 URL : " + request.getRequestURL());
-        String token = request.getHeader(headerName);
+    public void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        String tokenWithoutBearer = refreshToken.replace(JwtProvider.BEARER_PREFIX, "");
+        Cookie cookie = new Cookie(REFRESH_HEADER, tokenWithoutBearer);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(jwtRefreshExpiration / 1000); // in seconds
+        cookie.setSecure(false);  // localhost에서는 false; 실제 배포 환경에서는 true로 설정 필요
+        response.addCookie(cookie);
+    }
 
-        // TODO: 각각 엔드포인트에 대한 개별 설정 수정 요망.. ㅠㅠ
-        //String requestUrl = request.getRequestURI();
-        // if (!request.getMethod().equals("GET") // 모든 요청에 대해서 필터를 돌지만  GET 이 아니면서
-        //        && !(requestUrl.equals("http://localhost:8080/auth/local") // local 로그인이 아니거나
-        //        || requestUrl.equals("http://localhost:8080/auth/signup") // local 회원 가입이 아니거나
-        //        || requestUrl.equals("http://localhost:8080/email/send") // 이메일 전송이 아니거나
-        //        || requestUrl.equals("http://localhost:8080/email/verify"))// 이메일 인증이 아닐때
-        //        && (!StringUtils.hasText(token) // 면서 토큰이 비었거나
-        //        || !token.startsWith(BEARER_PREFIX))) //Bearer 로 시작하지 않으면
-        // { //카카오 로그인일 경우에도 토큰 제외 해야함
-        //    throw new CustomException(ErrorType.TOKEN_CHECK_INVALID); // 이 토큰은 잘못되었다고 예외를 던진다.
-        // }
+    public String getRefreshTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (REFRESH_HEADER.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public String getJwtFromHeader(HttpServletRequest request, String headerName) {
+        String token = request.getHeader(headerName);
+        System.out.println("요청 받은 URL : " + request.getRequestURL());
+        System.out.println("요청 받은 헤더 : " + request.getHeader(headerName));
+        System.out.println("추출된 토큰 : " + token);
+
         if (StringUtils.hasText(token) && token.startsWith(BEARER_PREFIX)) {
-            return token.substring(7);
+            String actualToken = token.substring(BEARER_PREFIX.length()).trim();
+            System.out.println("Bearer 접두어 제거 후 토큰 : " + actualToken);
+            return actualToken;
         }
         // ->> 필터
         return null;
-        // RuntimeException 수정 요망 **
     }
 
     // JWT 토큰에서 사용자 이름 추출

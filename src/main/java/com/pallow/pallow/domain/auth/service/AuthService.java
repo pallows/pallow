@@ -2,18 +2,14 @@ package com.pallow.pallow.domain.auth.service;
 
 
 import com.pallow.pallow.domain.auth.dto.*;
-import com.pallow.pallow.domain.email.dto.EmailCodeRequestDto;
-import com.pallow.pallow.domain.email.dto.EmailInputRequestDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.common.CommonOauth;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
-import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.enums.Role;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.jwt.JwtProvider;
-import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -21,11 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,6 +26,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -49,6 +43,15 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final RedisTemplate<String, Object> redisTemplate;
     private final JavaMailSender javaMailSender;
+
+
+    private boolean isValidUsername(String username) {
+        return username.matches("^[a-z0-9]{4,10}$");
+    }
+
+    private boolean isValidPassword(String password) {
+        return password.matches("^[a-zA-Z0-9]{8,15}$");
+    }
 
     @Transactional
     public AuthResponseDto signUp(AuthRequestDto authRequestDto) {
@@ -71,8 +74,6 @@ public class AuthService {
         if ("KAKAO".equals(String.valueOf(authRequestDto.getOauth()))) {
             oauth = CommonOauth.KAKAO;
         }
-
-
         User creadtedUser = User.createdUser(
                 authRequestDto.getUsername(),
                 authRequestDto.getNickname(),
@@ -85,60 +86,77 @@ public class AuthService {
         return new AuthResponseDto(creadtedUser.getNickname(), creadtedUser.getEmail());
     }
 
-    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
-        System.out.println(loginRequestDto + "  //// " + response);
+    // authenticationManager 는 authenticate 메서드를 통해
+    // UsernamePasswordAuthenticationToken 객체를 받아들이고,
+    // 설정된 AuthenticationProvider 들을 사용하여 인증을 시도
+    public Map<String, String> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
 
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             loginRequestDto.getUsername(),
                             loginRequestDto.getPassword())
-            );
-            // authenticationManager 는 authenticate 메서드를 통해
-            // UsernamePasswordAuthenticationToken 객체를 받아들이고,
-            // 설정된 AuthenticationProvider 들을 사용하여 인증을 시도
+            ); //
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = findByUsername(loginRequestDto.getUsername());
-            issueTokenAndSave(user, response);
+
+            String token = issueTokenAndSave(user, response);
+
+            Map<String, String> responseData = new HashMap<>();
+            responseData.put("token", token);
+            responseData.put("username", loginRequestDto.getUsername());
+
+            return responseData;
         } catch (AuthenticationException e) {
             throw new CustomException(ErrorType.LOGIN_FAILED);
         }
     }
 
-    private boolean isValidUsername(String username) {
-        return username.matches("^[a-z0-9]{4,10}$");
-    }
-
-    private boolean isValidPassword(String password) {
-        return password.matches("^[a-zA-Z0-9]{8,15}$");
-    }
 
     public String issueTokenAndSave(User user, HttpServletResponse response) {
-        String newAccessToken = jwtProvider.createdAccessToken(user.getUsername(), user.getUserRole());
+        String newAccessToken = jwtProvider.createdAccessToken(user.getUsername(), user.getUserRole()); //
         String newRefreshToken = jwtProvider.createdRefreshToken(user.getUsername());
         // Access 토큰을 응답 헤더에 설정
         response.setHeader(JwtProvider.ACCESS_HEADER, newAccessToken);
-        response.setHeader(JwtProvider.REFRESH_HEADER, newRefreshToken);
+
+        jwtProvider.setRefreshTokenCookie(response, newRefreshToken);
         // Refresh Token 을 Redis 에 저장
         saveRefreshToken(user.getUsername(), newRefreshToken, jwtProvider.getJwtRefreshExpiration());
         return newAccessToken;
     } // Refresh Token 만료 시간을 가져오기 위해서 JwtProvider 에서 생성자를 생성해서 가져옴
 
-    public void tokenReIssue(HttpServletRequest request, HttpServletResponse response) {
-        String refreshToken = jwtProvider.getJwtFromHeader(request, JwtProvider.REFRESH_HEADER);
-        jwtProvider.checkJwtToken(refreshToken); // 토큰 유효성 검사
+    public String tokenReIssue(HttpServletRequest request, HttpServletResponse response) {
+        // 쿠키에서 리프레시 토큰 가져오기
+        String refreshToken = jwtProvider.getRefreshTokenFromCookie(request);
+
+        // 토큰 유효성 검사
+        jwtProvider.checkJwtToken(refreshToken);
+
         String refreshUsername = jwtProvider.getUserNameFromJwtToken(refreshToken);
+
         User user = findByUsername(refreshUsername);
-        String storedRefreshToken = getRefreshToken(refreshUsername);
-        log.info("현재있는 토큰 {}", refreshToken);
-        log.info("저장된리프레시 토큰 {}", storedRefreshToken);
-        String token = storedRefreshToken.substring(7);
-        //TODO: 포스트맨에서 확인시 "Bearer " 삭제를 위해 substring 사용, 프론트 구현 후
-        // 정상작동 하는지, 확인 요함
-        if (!token.equals(refreshToken)) {
+
+        String storedRefreshToken = getRefreshToken(refreshUsername); // 리프레시토큰이 만료됬을경우 Null 을 반환
+
+        // 저장된 리프레시 토큰이 null인 경우 (만료되었거나 존재하지 않음)
+        if (storedRefreshToken == null) {
+            throw new CustomException(ErrorType.TOKEN_CHECK_EXPIRED);
+        }
+
+        // Redis 에 저장된 리프레시 토큰이 "Bearer "로 시작하는지 확인하고 제거
+        if (storedRefreshToken.startsWith("Bearer ")) {
+            storedRefreshToken = storedRefreshToken.substring(7);
+        }
+
+        // 저장된 리프레시 토큰과 현재 리프레시 토큰 비교
+        if (!refreshToken.equals(storedRefreshToken)) {
             throw new CustomException(ErrorType.TOKEN_MISMATCH);
         }
-        issueTokenAndSave(user, response);
+
+        // 새로운 액세스 토큰 발급
+        String newAccessToken = issueTokenAndSave(user, response);
+        response.setHeader(JwtProvider.ACCESS_HEADER, newAccessToken);
+        return newAccessToken;
     }
 
     public void logout(HttpServletRequest request) {

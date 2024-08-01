@@ -99,6 +99,7 @@ public class User extends TimeStamp {
         userAndChatRoom.setUser(this);
     }
 
+    //TODO : 빌더타입으로 싹다 변경해야합니다.
     public static User createdUser(String username, String nickname, String email, String password, String gender, Role role, CommonOauth commonOauth) {
         User user = new User();
         user.username = username;
