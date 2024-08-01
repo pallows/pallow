@@ -60,4 +60,8 @@ public class UserDetailsImpl implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
+    public String getNickname() {
+        return user.getNickname();
+    }
+
 }

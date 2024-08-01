@@ -6,17 +6,21 @@ import com.pallow.pallow.domain.chat.entity.ChatMessage;
 import com.pallow.pallow.domain.chat.model.MessageType;
 import com.pallow.pallow.domain.chat.model.WebSocketChatMessage;
 import com.pallow.pallow.domain.chat.service.ChatService;
+import com.pallow.pallow.global.security.UserDetailsImpl;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -34,14 +38,19 @@ public class ChatWebsocketController {
     }
 
     @MessageMapping("/chat.createRoom")
-    public ChatRoomDto createRoom(@Payload String roomName, @Payload String nickname) {
-        ChatRoomDto chatRoomDto = chatService.createChatRoom(roomName, nickname);
-        messagingTemplate.convertAndSend("/topic/room/" + chatRoomDto.getId(), chatRoomDto);
-        return chatRoomDto;
+    public ChatRoomDto createRoom(@Payload ChatRoomDto chatRoomDto, SimpMessageHeaderAccessor headerAccessor) {
+        Authentication auth = (Authentication) headerAccessor.getUser();
+        String nickname = ((UserDetailsImpl) auth.getPrincipal()).getNickname();
+       ChatRoomDto createdChatRoom = chatService.createChatRoom(chatRoomDto, nickname);
+       messagingTemplate.convertAndSend("/topic/room/" + createdChatRoom.getId(), createdChatRoom);
+       return createdChatRoom;
     }
 
     @MessageMapping("/chat.enterRoom")
-    public ChatRoomResponseDto enterRoom(@Payload Long roomId, @Payload String nickname) {
+    public ChatRoomResponseDto enterRoom(@Payload Long roomId, SimpMessageHeaderAccessor headerAccessor) {
+        Authentication auth = (Authentication) headerAccessor.getUser();
+        String nickname = ((UserDetailsImpl) auth.getPrincipal()).getNickname();
+        // 사용자의 채팅방 입장 권한 확인 로직 추가
         ChatRoomResponseDto responseDto = chatService.enterChatRoom(roomId, nickname);
         messagingTemplate.convertAndSend("/topic/room/" + roomId, responseDto);
         return responseDto;
@@ -73,5 +82,16 @@ public class ChatWebsocketController {
             logger.error("Error fetching chat rooms for user: {}", nickname, e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching chat rooms", e);
         }
+    }
+
+    /**
+     * WebSocket 메시지 처리 중 발생하는 예외를 적절히 처리하고 클라이언트에 알림
+     * @param exception
+     * @return
+     */
+    @MessageExceptionHandler
+    @SendToUser("/queue/errors")
+    public String handleException(Throwable exception) {
+        return exception.getMessage();
     }
 }
