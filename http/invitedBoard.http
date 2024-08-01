@@ -4,7 +4,7 @@ Authorization: {{Authorization}}
 Content-Type: application/json
 
 {
-  "userId": 2
+  "userId": 3
 }
 
 ### 그룹 신청서 수락
