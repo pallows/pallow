@@ -10,7 +10,6 @@ import com.pallow.pallow.domain.meetsreview.entity.MeetsReview;
 import com.pallow.pallow.domain.meetsreview.repository.ReviewRepository;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.enums.CommonStatus;
-import com.pallow.pallow.global.enums.ContentType;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import java.util.List;
@@ -43,6 +42,7 @@ public class ReviewService {
 
         MeetsReview meetsReview = MeetsReview.builder()
                 .content(requestDto.getContent())
+                .starRating(requestDto.getStarRating())
                 .likesCount(0)
                 .user(user)
                 .meets(meets)
@@ -84,8 +84,9 @@ public class ReviewService {
             throw new CustomException(ErrorType.NOT_AUTHORIZED_UPDATE);
         }
 
-        MeetsReview updatedReview = review.update(requestDto);
-        return new ReviewResponseDto(updatedReview);
+        review.update(requestDto);
+
+        return new ReviewResponseDto(review);
     }
 
     /**

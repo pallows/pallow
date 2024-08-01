@@ -28,6 +28,7 @@ public enum Message {
     PROFILE_CREATE_SUCCESS(HttpStatus.OK, "프로필을 생성하였습니다."),
     PROFILE_UPDATE_SUCCESS(HttpStatus.OK, "프로필을 수정하였습니다."),
     PROFILE_DELETE_SUCCESS(HttpStatus.OK, "프로필을 삭제하였습니다."),
+    PROFILE_RECOMMENDATION_SUCCESS(HttpStatus.OK, "랜덤 프로필 추천"),
 
     // USER BOARD
     USERBOARD_CREATE_SUCCESS(HttpStatus.OK, "유저 게시글을 생성하였습니다."),
@@ -62,8 +63,18 @@ public enum Message {
     REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "리뷰를 수정하였습니다."),
     REVIEW_DELETE_SUCCESS(HttpStatus.OK, "리뷰를 삭제하였습니다."),
 
-    // Likes
-    LIKES_TOGGLE_SUCCESS(HttpStatus.OK, "❤️");
+    //chatroom
+    ROOM_CREATE_SUCCESS(HttpStatus.OK, "채팅방을 생성하였습니다."),
+    ROOM_READ_SUCCESS(HttpStatus.OK, "채팅방을 조회하였습니다."),
+    ROOM_ENTER_SUCCESS(HttpStatus.OK, "채팅방에 입장하였습니다."),
+
+    //chatmessage
+    MESSAGE_CREATE_SUCCESS(HttpStatus.OK, "메시지를 생성하였습니다."),
+
+    //message reaction
+    LIKES_TOGGLE_SUCCESS(HttpStatus.OK, "좋아요 생성에 성공하였습니다.")
+
+   ;
 
 
     private final HttpStatus status;

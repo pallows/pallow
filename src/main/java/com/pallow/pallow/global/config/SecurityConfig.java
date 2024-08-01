@@ -43,6 +43,7 @@ public class SecurityConfig {
                                 "/auth/email/**",
                                 "/profiles",
                                 "/",
+                                "/api/chat/**",
                                 "/index.html",
                                 "/css/**",
                                 "/js/**",

@@ -26,9 +26,16 @@ spring:
           starttls:
             enable: 'true'
             required: 'true'
+data:
   redis:
-    host:localhost
-    port:6379
+    host: localhost
+    port: 6379
+
+  web:
+    resources:
+      add-mappings: true
+  mvc:
+    static-path-pattern: /static/**
 
 jwt:
   secret:
@@ -49,9 +56,7 @@ custom:
     authorization: "auth"
     bearer: "Bearer "
 
-    spring:
-      web:
-        resources:
-          add-mappings: true
-      mvc:
-        static-path-pattern: /static/**
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.pallow.pallow: DEBUG
