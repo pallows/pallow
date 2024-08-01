@@ -1,7 +1,7 @@
 package com.pallow.pallow.domain.email.service;
 
-import com.pallow.pallow.domain.email.dto.EmailCodeRequestDto;
-import com.pallow.pallow.domain.email.dto.EmailInputRequestDto;
+import com.pallow.pallow.domain.auth.dto.EmailCodeRequestDto;
+import com.pallow.pallow.domain.auth.dto.EmailInputRequestDto;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import jakarta.mail.internet.MimeMessage;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MailService {
+
 
     private final JavaMailSender mailSender;
 

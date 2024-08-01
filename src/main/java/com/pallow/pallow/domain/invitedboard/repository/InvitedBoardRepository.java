@@ -1,6 +1,5 @@
 package com.pallow.pallow.domain.invitedboard.repository;
 
-import com.pallow.pallow.domain.invitedboard.dto.InvitedBoardResponseDto;
 import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.user.entity.User;
@@ -13,7 +12,11 @@ public interface InvitedBoardRepository extends JpaRepository<InvitedBoard, Long
 
     boolean existsByUserAndMeets(User user, Meets meets);
 
-    Optional<InvitedBoard> findByUserAndMeetsAndStatus(User user, Meets meets, InviteStatus status);
+    Optional<InvitedBoard> findByUserIdAndMeetsIdAndStatus(Long userId, Long meetsId, InviteStatus status);
 
     List<InvitedBoard> findAllByStatus(InviteStatus status);
+
+    Optional<InvitedBoard> findByUserId(long userId);
+
+    List<InvitedBoard> findAllByMeetsAndStatus(Meets meets, InviteStatus status);
 }

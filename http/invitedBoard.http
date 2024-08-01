@@ -4,16 +4,16 @@ Authorization: {{Authorization}}
 Content-Type: application/json
 
 {
-  "userId": 2
+  "userId": 3
 }
 
 ### 그룹 신청서 수락
-POST http://localhost:8080/groups/1/invitation/accept
+POST http://localhost:8080/groups/1/invitation/3/accept
 Authorization: {{Authorization}}
 Content-Type: application/json
 
 ### 그룹 신청서 거절
-POST http://localhost:8080/groups/1/invitation/decline
+POST http://localhost:8080/groups/1/invitation/4/decline
 Authorization: {{Authorization}}
 Content-Type: application/json
 

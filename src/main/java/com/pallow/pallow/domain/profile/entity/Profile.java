@@ -1,8 +1,19 @@
 package com.pallow.pallow.domain.profile.entity;
 
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
+import com.pallow.pallow.domain.profile.enums.Alcohol;
+import com.pallow.pallow.domain.profile.enums.Education;
+import com.pallow.pallow.domain.profile.enums.IDEAL;
+import com.pallow.pallow.domain.profile.enums.Interest;
+import com.pallow.pallow.domain.profile.enums.Jobs;
+import com.pallow.pallow.domain.profile.enums.Mbti;
+import com.pallow.pallow.domain.profile.enums.Personality;
+import com.pallow.pallow.domain.profile.enums.Pros;
+import com.pallow.pallow.domain.profile.enums.Region;
+import com.pallow.pallow.domain.profile.enums.Relationship;
+import com.pallow.pallow.domain.profile.enums.Religion;
+import com.pallow.pallow.domain.profile.enums.Smoking;
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.global.enums.Mbti;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,7 +24,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
-import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,40 +45,77 @@ public class Profile {
     private String content;
 
     @Column(nullable = false)
-    private LocalDate birth;
+    private String birth;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Region position;
+
+    // 인트로 받아와서 스트링으로 변환해야함
+    @Column
+    private String district;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
-    @Column(nullable = false)
-    private String hobby;
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Interest interest;
 
     @Column
-    private String position;
+    @Enumerated(EnumType.STRING)
+    private Alcohol alcohol;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Education education;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private IDEAL ideal;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Jobs jobs;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Personality personality;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Pros pros;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Relationship relationship;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Religion religion;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Smoking smoking;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
     @Builder
-    public Profile(String content, LocalDate birth, Mbti mbti, User createdBy,
-            String hobby, String position, String photo) {
+    public Profile(String content, String birth, Region position, Mbti mbti, User createdBy,
+            Interest interest, String photo) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
-        this.hobby = hobby;
-        this.user = createdBy;
         this.position = position;
         this.photo = photo;
+        this.user = createdBy;
     }
 
     public void update(ProfileRequestDto requestDto) {
         this.content = requestDto.getContent();
-        this.birth = requestDto.getBirth();
         this.mbti = requestDto.getMbti();
-        this.hobby = requestDto.getHobby();
-        this.position = requestDto.getPosition();
-        this.photo = requestDto.getPhoto();
     }
 }

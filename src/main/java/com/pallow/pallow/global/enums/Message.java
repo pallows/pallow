@@ -21,7 +21,7 @@ public enum Message {
 
     // USER
     USER_LOGIN_SUCCESS(HttpStatus.OK, "로그인 ! 완료 ❤️."),
-    USER_LOGIN_FAIL(HttpStatus.BAD_REQUEST, "로그인 ! 실패 💔."),
+    USER_LOGIN_FAIL(HttpStatus.OK, "로그인 실패! ❤️."),
     USER_LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 되었습니다."),
     USER_DELETE_SUCCESS(HttpStatus.OK, "회원 정보를 삭제하였습니다."),
     USER_READ_ALL_SUCCESS(HttpStatus.OK, "회원 전체 조회를 하였습니다."),
@@ -33,6 +33,7 @@ public enum Message {
     PROFILE_CREATE_SUCCESS(HttpStatus.OK, "프로필을 생성하였습니다."),
     PROFILE_UPDATE_SUCCESS(HttpStatus.OK, "프로필을 수정하였습니다."),
     PROFILE_DELETE_SUCCESS(HttpStatus.OK, "프로필을 삭제하였습니다."),
+    PROFILE_RECOMMENDATION_SUCCESS(HttpStatus.OK, "랜덤 프로필 추천"),
 
     // USER BOARD
     USERBOARD_CREATE_SUCCESS(HttpStatus.OK, "유저 게시글을 생성하였습니다."),
@@ -57,6 +58,9 @@ public enum Message {
     MEET_READ_SUCCESS(HttpStatus.OK, "그룹을 조회하였습니다."),
     MEET_UPDATE_SUCCESS(HttpStatus.OK, "그룹을 수정하였습니다."),
     MEET_DELETE_SUCCESS(HttpStatus.OK, "그룹을 삭제하였습니다."),
+    MEET_MEMBER_READ_SUCCESS(HttpStatus.OK, "그룹의 전체 회원을 조회하였습니다."),
+    MEET_WITHDRAW_MEMBER_SUCCESS(HttpStatus.OK, "회원을 성공적으로 퇴장시켰습니다."),
+
 
     // meetsReview
     REVIEW_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다."),
@@ -64,9 +68,20 @@ public enum Message {
     REVIEW_UPDATE_SUCCESS(HttpStatus.OK, "리뷰를 수정하였습니다."),
     REVIEW_DELETE_SUCCESS(HttpStatus.OK, "리뷰를 삭제하였습니다."),
 
+    //chatroom
+    ROOM_CREATE_SUCCESS(HttpStatus.OK, "채팅방을 생성하였습니다."),
+    ROOM_READ_SUCCESS(HttpStatus.OK, "채팅방을 조회하였습니다."),
+    ROOM_ENTER_SUCCESS(HttpStatus.OK, "채팅방에 입장하였습니다."),
+
+    //chatmessage
+    MESSAGE_CREATE_SUCCESS(HttpStatus.OK, "메시지를 생성하였습니다."),
+
+    //message reaction
+    LIKES_TOGGLE_SUCCESS(HttpStatus.OK, "좋아요 생성에 성공하였습니다."),
+
+
     // Likes
-    LIKES_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다."),
-    ;
+    LIKES_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다.");
 
 
     private final HttpStatus status;

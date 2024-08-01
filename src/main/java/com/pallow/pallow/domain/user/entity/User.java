@@ -6,7 +6,9 @@ import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.global.common.CommonOauth;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.CommonStatus;
+import com.pallow.pallow.global.enums.Gender;
 import com.pallow.pallow.global.enums.Role;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,14 +21,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
+
 
 @Entity
 @Getter
@@ -57,11 +57,15 @@ public class User extends TimeStamp {
     private String nickname;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role userRole;
 
     @Column(nullable = false)
-    private String gender;
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column
     private String position;
@@ -69,7 +73,7 @@ public class User extends TimeStamp {
     //  ACTIVE("active"), CommonStatus.ACTIVE
     //  DELETED("deleted"); CommonStatus.DELETED
     @Column
-    private CommonStatus status = CommonStatus.ACTIVE;
+    private CommonStatus status;
 
     @Column
     private CommonOauth oauth;
@@ -81,7 +85,9 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAndChatRoom> userAndChatRooms = new ArrayList<>();
 
-    public User(Long id, Profile profile, String username, String password, String email, String nickname, Role userRole, String position, List<Meets> meets) {
+
+    public User(Long id, Profile profile, String username, String password, String email,
+            String nickname, Role userRole, String name, List<Meets> meets, Gender gender) {
         this.id = id;
         this.profile = profile;
         this.username = username;
@@ -89,8 +95,9 @@ public class User extends TimeStamp {
         this.email = email;
         this.nickname = nickname;
         this.userRole = userRole;
-        this.position = position;
         this.meets = meets;
+        this.name = name;
+        this.gender = gender;
         this.userAndChatRooms = new ArrayList<>();
     }
 
@@ -99,15 +106,16 @@ public class User extends TimeStamp {
         userAndChatRoom.setUser(this);
     }
 
-    //TODO : 빌더타입으로 싹다 변경해야합니다.
-    public static User createdUser(String username, String nickname, String email, String password, String gender, Role role, CommonOauth commonOauth) {
+    public static User createdUser(String username, String nickname, String name, String email,
+            String password, Gender gender, Role role,CommonOauth commonOauth) {
         User user = new User();
         user.username = username;
         user.nickname = nickname;
         user.password = password;
         user.email = email;
-        user.gender = gender;
         user.userRole = role;
+        user.name = name;
+        user.gender = gender;
         user.status = CommonStatus.ACTIVE;
         user.oauth = commonOauth;
         return user;

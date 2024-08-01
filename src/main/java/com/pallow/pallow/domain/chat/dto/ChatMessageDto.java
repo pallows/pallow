@@ -1,7 +1,6 @@
 package com.pallow.pallow.domain.chat.dto;
 
 import com.pallow.pallow.domain.chat.model.MessageType;
-import com.pallow.pallow.global.entity.TimeStamp;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,6 +21,12 @@ public class ChatMessageDto {
         private String content;
         private MessageType type;
         private LocalDateTime createdAt;
-        private LocalDateTime modifiedAt;
+        private String formattedTime;
+        private int ChatReactionCount;
+
+        /**
+         * 현재 사용자의 반응 여부
+         */
+        private boolean hasChatReacted;
 
 }

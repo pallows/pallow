@@ -13,11 +13,13 @@ import com.pallow.pallow.global.jwt.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+
+import java.util.concurrent.TimeUnit;
+
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,7 +44,6 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final AuthenticationManager authenticationManager;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final JavaMailSender javaMailSender;
 
 
     private boolean isValidUsername(String username) {
@@ -57,18 +58,6 @@ public class AuthService {
     public AuthResponseDto signUp(AuthRequestDto authRequestDto) {
         if (userRepository.findByUsername(authRequestDto.getUsername()).isPresent()) {
             throw new CustomException(ErrorType.DUPLICATE_ACCOUNT_ID);
-        }
-        /**
-         * 유지영 수정
-         * 유효성 검사 로직 추가
-         * - `username`은  `최소 4자 이상, 10자 이하이며 알파벳 소문자(a~z), 숫자(0~9)`로 구성되어야 한다.
-         * - `password`는  `최소 8자 이상, 15자 이하이며 알파벳 대소문자(a~z, A~Z), 숫자(0~9)`로 구성되어야 한다.
-         */
-        if (!isValidUsername(authRequestDto.getUsername())) {
-            throw new CustomException(ErrorType.INVALID_USERNAME);
-        }
-        if (!isValidPassword(authRequestDto.getPassword())) {
-            throw new CustomException(ErrorType.INVALID_PASSWORD);
         } // 닉네임 유저아이디 유저네임 이메일 다 고유해야함
         CommonOauth oauth = CommonOauth.LOCAL;
         if ("KAKAO".equals(String.valueOf(authRequestDto.getOauth()))) {
@@ -77,6 +66,7 @@ public class AuthService {
         User creadtedUser = User.createdUser(
                 authRequestDto.getUsername(),
                 authRequestDto.getNickname(),
+                authRequestDto.getName(),
                 authRequestDto.getEmail(),
                 passwordEncoder.encode(authRequestDto.getPassword()),
                 authRequestDto.getGender(),

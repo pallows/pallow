@@ -30,11 +30,23 @@ public class InvitedBoardService {
     private final MeetsRepository meetsRepository;
 
     public void applyForGroup(long groupId, InvitedBoardRequestDto requestDto, User user) {
+        if (!requestDto.getUserId().equals(user.getId())) {
+            throw new CustomException(ErrorType.USER_MISMATCH_ID);
+        }
+
+        if (isUserGroupCreator(groupId, user)) {
+            throw new CustomException(ErrorType.YES_GROUP_CREATOR);
+        }
+
         User wantToApplyUser = userRepository.findById(requestDto.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
 
         Meets meet = meetsRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+
+        if (meet.getMemberCount() >= meet.getMaxMemberCount()) {
+            throw new CustomException(ErrorType.MAX_MEMBER_REACHED);
+        }
 
         if (isAppliedUser(wantToApplyUser, meet)) {
             throw new CustomException(ErrorType.ALREADY_APPLIED_GROUP);
@@ -54,29 +66,37 @@ public class InvitedBoardService {
     }
 
     @Transactional
-    public void acceptApply(long groupId, long invitationId, User user) {
-        InvitedBoard invitedBoard = invitedBoardRepository.findById(invitationId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
+    public void acceptApply(long groupId, long userId, User user) {
+        Meets meets = meetsRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+
         if (!isUserGroupCreator(groupId, user)) {
             throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
         }
-        invitedBoard.acceptInvite();
+
+        if (meets.getMemberCount() >= meets.getMaxMemberCount()) {
+            throw new CustomException(ErrorType.MAX_MEMBER_REACHED);
+        }
+
+        InvitedBoard invitedUser = invitedBoardRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
+        invitedUser.acceptInvite();
     }
 
     @Transactional
-    public void declineApply(long groupId, long invitationId, User user) {
-        InvitedBoard invitedBoard = invitedBoardRepository.findById(invitationId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
+    public void declineApply(long groupId, long userId, User user) {
         if (!isUserGroupCreator(groupId, user)) {
             throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
         }
-        invitedBoard.rejectInvite();
+        InvitedBoard invitedUser = invitedBoardRepository.findByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
+        invitedUser.rejectInvite();
     }
 
     // 유저가 그룹에 포함되있는지 검사
     public boolean isUserInGroup(User user, Meets meets) {
-        Optional<InvitedBoard> invitedBoard = invitedBoardRepository.findByUserAndMeetsAndStatus(
-                user, meets, InviteStatus.ACCEPTED);
+        Optional<InvitedBoard> invitedBoard = invitedBoardRepository.findByUserIdAndMeetsIdAndStatus(
+                user.getId(), meets.getId(), InviteStatus.ACCEPTED);
         return invitedBoard.isPresent();
     }
 

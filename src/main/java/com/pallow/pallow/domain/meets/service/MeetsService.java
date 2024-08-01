@@ -1,13 +1,17 @@
 package com.pallow.pallow.domain.meets.service;
 
+import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
+import com.pallow.pallow.domain.invitedboard.repository.InvitedBoardRepository;
 import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
 import com.pallow.pallow.domain.meets.dto.MeetsResponseDto;
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.meets.repository.MeetsRepository;
+import com.pallow.pallow.domain.user.dto.UserResponseDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
+import com.pallow.pallow.global.enums.InviteStatus;
 import com.pallow.pallow.global.exception.CustomException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,25 +25,23 @@ public class MeetsService {
 
     private final MeetsRepository meetsRepository;
     private final UserRepository userRepository;
+    private final InvitedBoardRepository invitedBoardRepository;
 
     /**
      * 그룹 생성
      */
-    public MeetsResponseDto create(Long userId, MeetsRequestDto requestDto, User user) {
+    public MeetsResponseDto create(MeetsRequestDto requestDto, User user) {
         //userId가 존재하는지 확인
-        User existUser = userRepository.findById(userId).orElseThrow(
+        User existUser = userRepository.findById(user.getId()).orElseThrow(
                 () -> new CustomException(ErrorType.NOT_FOUND_USER)
         );
-
-        // 로그인된 유저와 요청의 유저가 일치하는지 확인
-        if (!existUser.getId().equals(user.getId())) {
-            throw new CustomException(ErrorType.UNAPPROVED_USER);
-        }
 
         // requestDto -> entity
         Meets meets = Meets.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
+                .image(requestDto.getImage())
+                .maxMemberCount(requestDto.getMaxMemberCount())
                 .user(existUser)
                 .status(CommonStatus.ACTIVE)
                 .build();
@@ -54,8 +56,8 @@ public class MeetsService {
      * 그룹 선택 조회
      */
     public MeetsResponseDto getMeets(Long meetsId) {
-        Meets meets = findByMeetsIdAndStatus(meetsId);
-
+        Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
         return new MeetsResponseDto(meets);
     }
 
@@ -74,16 +76,17 @@ public class MeetsService {
      */
     @Transactional
     public MeetsResponseDto update(Long meetsId, MeetsRequestDto requestDto, User user) {
-        Meets meets = findByMeetsIdAndStatus(meetsId);
+        Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
 
         // 로그인된 유저와 그룹 생성자가 일치하는지 확인
         if (!user.getId().equals(meets.getGroupCreator().getId())) {
             throw new CustomException(ErrorType.UNAPPROVED_USER);
         }
 
-        Meets updatedMeets = meets.update(requestDto);
+        meets.update(requestDto);
 
-        return new MeetsResponseDto(updatedMeets);
+        return new MeetsResponseDto(meets);
     }
 
     /**
@@ -91,7 +94,8 @@ public class MeetsService {
      */
     @Transactional
     public void delete(Long meetsId, User user) {
-        Meets meets = findByMeetsIdAndStatus(meetsId);
+        Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
 
         // 로그인된 유저와 그룹 생성자가 일치하는지 확인
         if (!user.getId().equals(meets.getGroupCreator().getId())) {
@@ -102,12 +106,45 @@ public class MeetsService {
     }
 
     /**
-     * 그룹 ID 와 상태 검사
+     * 그룹에 존재하는 회원 전체 조회 (그룹생성자 포함)
+     * @param meetsId
+     * @return
      */
-    public Meets findByMeetsIdAndStatus(Long meetsId) {
-        return meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_GROUP)
-        );
+    @Transactional
+    public List<UserResponseDto> getAllMeetsMembers(Long meetsId) {
+        Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+
+        List<InvitedBoard> invitedMemberList = invitedBoardRepository.findAllByMeetsAndStatus(
+                meets, InviteStatus.ACCEPTED);
+
+        return invitedMemberList.stream()
+                .map(InvitedBoard::getUser)
+                .map(UserResponseDto::new)
+                .collect(Collectors.toList());
     }
 
+    /**
+     * 맴버 강퇴
+     * @param meetsId
+     * @param userId
+     * @param user
+     */
+    public void withdrawMember(Long meetsId, Long userId, User user) {
+        Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+
+        // 로그인된 유저와 그룹 생성자가 일치하는지 확인
+        if (!user.getId().equals(meets.getGroupCreator().getId())) {
+            throw new CustomException(ErrorType.UNAPPROVED_USER);
+        }
+
+        // 그룹에 맴버가 존재하는지 확인
+        InvitedBoard invitedMember = invitedBoardRepository.findByUserIdAndMeetsIdAndStatus(
+                userId, meetsId, InviteStatus.ACCEPTED).orElseThrow(
+                () -> new RuntimeException("회원이 존재하지 않습니다.")
+        );
+
+        invitedBoardRepository.delete(invitedMember);
+    }
 }

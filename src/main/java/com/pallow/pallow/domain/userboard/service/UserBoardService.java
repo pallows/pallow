@@ -1,8 +1,6 @@
 package com.pallow.pallow.domain.userboard.service;
 
-import com.pallow.pallow.domain.invitedboard.dto.InvitedBoardResponseDto;
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.domain.user.service.UserService;
 import com.pallow.pallow.domain.userboard.dto.UserBoardRequestDto;
 import com.pallow.pallow.domain.userboard.dto.UserBoardResponseDto;
@@ -38,9 +36,6 @@ public class UserBoardService {
     public UserBoardResponseDto getBoard(long userId, long userBoardId, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
-        if (!isSameIdAndUser(userId, user)) {
-            throw new CustomException(ErrorType.USER_MISMATCH_ID);
-        }
         return new UserBoardResponseDto(userBoard);
     }
 

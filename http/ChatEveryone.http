@@ -1,0 +1,199 @@
+### User1 회원가입
+POST {{baseUrl}}/auth/local/signup
+Content-Type: application/json
+
+{
+  "username": "{{username1}}",
+  "password": "{{password1}}",
+  "nickname": "{{nickname1}}",
+  "email": "{{email1}}",
+  "name": "{{name1}}",
+  "gender": "{{gender1}}"
+}
+
+### User2 회원가입
+POST {{baseUrl}}/auth/local/signup
+Content-Type: application/json
+
+{
+  "username": "{{username2}}",
+  "password": "{{password2}}",
+  "nickname": "{{nickname2}}",
+  "email": "{{email2}}",
+  "name": "{{name2}}",
+  "gender": "{{gender2}}"
+}
+
+### User3 회원가입
+POST {{baseUrl}}/auth/local/signup
+Content-Type: application/json
+
+{
+  "username": "{{username3}}",
+  "password": "{{password3}}",
+  "nickname": "{{nickname3}}",
+  "email": "{{email3}}",
+  "name": "{{name3}}",
+  "gender": "{{gender3}}"
+}
+
+### User1 로그인
+# @name loginUser1
+POST {{baseUrl}}/auth/local
+Content-Type: application/json
+
+{
+  "username": "{{username1}}",
+  "password": "{{password1}}"
+}
+
+> {%
+  client.global.set("auth_token_user1", response.headers.valueOf("Authorization"));
+%}
+
+### User2 로그인
+# @name loginUser2
+POST {{baseUrl}}/auth/local
+Content-Type: application/json
+
+{
+  "username": "{{username2}}",
+  "password": "{{password2}}"
+}
+
+> {%
+  client.global.set("auth_token_user2", response.headers.valueOf("Authorization"));
+%}
+
+### User3 로그인
+# @name loginUser3
+POST {{baseUrl}}/auth/local
+Content-Type: application/json
+
+{
+  "username": "{{username3}}",
+  "password": "{{password3}}"
+}
+
+> {%
+  client.global.set("auth_token_user3", response.headers.valueOf("Authorization"));
+%}
+
+### User1이 채팅방 생성
+# @name createRoom
+POST {{baseUrl}}/api/chat/rooms
+Content-Type: application/json
+Authorization: {{auth_token_user1}}
+
+{
+  "name": "Test Chat Room"
+}
+
+> {%
+  client.global.set("roomId", response.body.data.id);
+%}
+
+### User1이 메시지 전송
+# @name sendMessageUser1
+POST {{baseUrl}}/api/chat/messages
+Content-Type: application/json
+Authorization: {{auth_token_user1}}
+
+{
+  "chatRoomId": {{roomId}},
+  "content": "Hello from User1!",
+  "type": "CHAT"
+}
+
+> {%
+  client.global.set("messageId1", response.body.data.id);
+  client.log("Message ID 1: " + client.global.get("messageId1"));
+%}
+
+### 잠시 대기 (1초)
+GET {{baseUrl}}
+Content-Type: application/json
+
+> {%
+  client.test("Delay", function() {});
+  client.global.set("start", new Date().getTime());
+  while (new Date().getTime() < client.global.get("start") + 1000);
+%}
+
+### User2가 채팅방 입장
+GET {{baseUrl}}/api/chat/rooms/{{roomId}}
+Authorization: {{auth_token_user2}}
+
+### User2가 메시지 전송
+# @name sendMessageUser2
+POST {{baseUrl}}/api/chat/messages
+Content-Type: application/json
+Authorization: {{auth_token_user2}}
+
+{
+  "chatRoomId": {{roomId}},
+  "content": "Hi User1, this is User2!",
+  "type": "CHAT"
+}
+
+> {%
+  client.global.set("messageId2", response.body.data.id);
+  client.log("Message ID 2: " + client.global.get("messageId2"));
+%}
+
+### 잠시 대기 (1초)
+GET {{baseUrl}}
+Content-Type: application/json
+
+> {%
+  client.test("Delay", function() {});
+  client.global.set("start", new Date().getTime());
+  while (new Date().getTime() < client.global.get("start") + 1000);
+%}
+
+### User3가 채팅방 입장
+GET {{baseUrl}}/api/chat/rooms/{{roomId}}
+Authorization: {{auth_token_user3}}
+
+### User3가 메시지 전송
+# @name sendMessageUser3
+POST {{baseUrl}}/api/chat/messages
+Content-Type: application/json
+Authorization: {{auth_token_user3}}
+
+{
+  "chatRoomId": {{roomId}},
+  "content": "Hello everyone, User3 here!",
+  "type": "CHAT"
+}
+
+> {%
+  client.global.set("messageId3", response.body.data.id);
+  client.log("Message ID 3: " + client.global.get("messageId3"));
+%}
+
+### 잠시 대기 (1초)
+GET {{baseUrl}}
+Content-Type: application/json
+
+> {%
+  client.test("Delay", function() {});
+  client.global.set("start", new Date().getTime());
+  while (new Date().getTime() < client.global.get("start") + 1000);
+%}
+
+### User2가 User1의 메시지에 좋아요 토글
+POST {{baseUrl}}/api/chat/Messages/{{messageId1}}/react/1
+Authorization: {{auth_token_user2}}
+
+### User3가 User1의 메시지에 좋아요 토글
+POST {{baseUrl}}/api/chat/Messages/{{messageId1}}/react/1
+Authorization: {{auth_token_user3}}
+
+### User2가 자신의 좋아요 취소
+POST {{baseUrl}}/api/chat/Messages/{{messageId1}}/react/1
+Authorization: {{auth_token_user2}}
+
+### User1이 채팅방 메시지 조회 (좋아요 상태 확인)
+GET {{baseUrl}}/api/chat/rooms/{{roomId}}
+Authorization: {{auth_token_user1}}

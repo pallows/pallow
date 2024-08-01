@@ -1,7 +1,7 @@
 package com.pallow.pallow.domain.email.controller;
 
-import com.pallow.pallow.domain.email.dto.EmailCodeRequestDto;
-import com.pallow.pallow.domain.email.dto.EmailInputRequestDto;
+import com.pallow.pallow.domain.auth.dto.EmailCodeRequestDto;
+import com.pallow.pallow.domain.auth.dto.EmailInputRequestDto;
 import com.pallow.pallow.domain.email.service.MailService;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;

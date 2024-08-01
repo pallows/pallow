@@ -7,12 +7,25 @@ import com.pallow.pallow.domain.meetsreview.entity.MeetsReview;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.CommonStatus;
-import jakarta.persistence.*;
+import com.pallow.pallow.global.enums.InviteStatus;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -30,7 +43,12 @@ public class Meets extends TimeStamp {
     @Column(nullable = false)
     private String content;
 
+    private String image;
+
     private int memberCount;
+
+    @Column(nullable = false)
+    private int maxMemberCount;
 
     private String position;
 
@@ -52,30 +70,47 @@ public class Meets extends TimeStamp {
     private ChatRoom chatRoom;
 
     @Builder
-    public Meets(String title, String content, int memberCount, String position,
+    public Meets(String title, String content, String image, int maxMemberCount, String position,
             CommonStatus status, User user) {
         this.title = title;
         this.content = content;
-        this.memberCount = memberCount;
+        this.image = image;
+        this.memberCount = calculatedMemberList().size() + 1;
+        this.maxMemberCount = maxMemberCount;
         this.position = position;
         this.status = status;
         this.groupCreator = user;
     }
 
-    public Meets update(MeetsRequestDto requestDto) {
+    public void update(MeetsRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        return this;
+        this.image = requestDto.getImage();
+        this.maxMemberCount = requestDto.getMaxMemberCount();
+        this.position = requestDto.getPosition();
     }
 
     public void delete() {
         this.status = CommonStatus.DELETED;
     }
 
+    // todo - 사용하지 않는 매서드
     public void setChatRoom(ChatRoom chatRoom) {
         this.chatRoom = chatRoom;
         if (chatRoom != null) {
             chatRoom.setMeets(this);
         }
+    }
+
+    // 멤버 리스트의 수를 계산하는 메서드
+    private List<InvitedBoard> calculatedMemberList() {
+        return usersInvitedBoards.stream()
+                .filter(invite -> invite.getMeets().getId().equals(id) && invite.getStatus().equals(InviteStatus.ACCEPTED) )
+                .toList();
+    }
+
+    // 멤버 리스트를 업데이트하는 메서드
+    public void updateMemberList() {
+        this.memberCount = calculatedMemberList().size() + 1;
     }
 }

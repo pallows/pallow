@@ -25,14 +25,11 @@ public class UserBoardCommentService {
     private final UserService userService;
     private final UserBoardRepository userBoardRepository;
 
-    public UserBoardCommentResponseDto createComment(long userId, long boardId, User user,
+    public UserBoardCommentResponseDto createComment(long boardId, User user,
             UserBoardCommentRequestDto requestDto) {
         User createdBy = userService.findUserById(user.getId());
         UserBoard userBoard = userBoardRepository.findById(boardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_BOARD));
-        if (!isSameIdAndUser(userId, user)) {
-            throw new CustomException(ErrorType.USER_MISMATCH_ID);
-        }
         UserBoardComment comment = userBoardCommentRepository.save(
                 requestDto.toEntity(createdBy, userBoard));
         return new UserBoardCommentResponseDto(comment);
@@ -45,23 +42,23 @@ public class UserBoardCommentService {
     }
 
     @Transactional
-    public UserBoardCommentResponseDto updateComment(long userId, long commentId,
+    public UserBoardCommentResponseDto updateComment(long commentId,
             User user, UserBoardCommentRequestDto requestDto) {
-        UserBoardComment userBoardComment = userBoardCommentRepository.findById(commentId)
+        UserBoardComment comment = userBoardCommentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(
                         ErrorType.NOT_FOUND_USER_BOARD_COMMENT));
-        if (!isSameIdAndUser(userId, user)) {
+        if (!isSameIdAndUser(comment.getUser().getId(), user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
-        userBoardComment.update(requestDto);
-        return new UserBoardCommentResponseDto(userBoardComment);
+        comment.update(requestDto);
+        return new UserBoardCommentResponseDto(comment);
     }
 
     @Transactional
-    public void deleteComment(long commentId, long userId, User user) {
+    public void deleteComment(long commentId, User user) {
         UserBoardComment comment = userBoardCommentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD_COMMENT));
-        if (!isSameIdAndUser(userId, user)) {
+        if (!isSameIdAndUser(comment.getUser().getId(), user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         userBoardCommentRepository.delete(comment);

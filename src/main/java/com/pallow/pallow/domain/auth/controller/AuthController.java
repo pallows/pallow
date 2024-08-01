@@ -1,8 +1,6 @@
 package com.pallow.pallow.domain.auth.controller;
 
 import com.pallow.pallow.domain.auth.dto.AuthRequestDto;
-import com.pallow.pallow.domain.email.dto.EmailCodeRequestDto;
-import com.pallow.pallow.domain.email.dto.EmailInputRequestDto;
 import com.pallow.pallow.domain.auth.dto.LoginRequestDto;
 import com.pallow.pallow.domain.auth.service.AuthService;
 import com.pallow.pallow.domain.auth.service.OauthService;
@@ -11,7 +9,6 @@ import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.jwt.JwtProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,11 +69,6 @@ public class AuthController {
         authService.logout(request);
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGOUT_SUCCESS));
     }
-
-    //TODO :  이메일 인증 로직
-    // 회원가입시 정보를 입력하고 이메일 발송후 인증 메일의 인증번호와 프론트에서 입력해서 넘겨주는 값이 일치할 경우
-    // 회원가입 완료 버튼을 클릭할 수 있다.
-
 
     //  소셜 로그인 엔드포인트
     @GetMapping("/oauth/login/{provider}")
