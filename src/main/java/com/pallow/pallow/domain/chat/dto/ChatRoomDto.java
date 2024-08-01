@@ -14,6 +14,15 @@ import lombok.Setter;
 public class ChatRoomDto {
 
     private Long id;
+
+    /**
+     * 채팅방 이름
+     */
     private String name;
+
+    /**
+     * 채팅방 생성자
+     */
+    private String creatorNickname;
 
 }

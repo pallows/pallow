@@ -22,27 +22,27 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Controller
-public class ChatController {
+public class ChatWebsocketController {
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
-    private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChatWebsocketController.class);
 
     @Autowired
-    public ChatController(ChatService chatService, SimpMessagingTemplate messagingTemplate) {
+    public ChatWebsocketController(ChatService chatService, SimpMessagingTemplate messagingTemplate) {
         this.chatService = chatService;
         this.messagingTemplate = messagingTemplate;
     }
 
     @MessageMapping("/chat.createRoom")
-    public ChatRoomDto createRoom(@Payload String roomName, @Payload String username) {
-        ChatRoomDto chatRoomDto = chatService.createChatRoom(roomName, username);
+    public ChatRoomDto createRoom(@Payload String roomName, @Payload String nickname) {
+        ChatRoomDto chatRoomDto = chatService.createChatRoom(roomName, nickname);
         messagingTemplate.convertAndSend("/topic/room/" + chatRoomDto.getId(), chatRoomDto);
         return chatRoomDto;
     }
 
     @MessageMapping("/chat.enterRoom")
-    public ChatRoomResponseDto enterRoom(@Payload Long roomId, @Payload String username) {
-        ChatRoomResponseDto responseDto = chatService.enterChatRoom(roomId, username);
+    public ChatRoomResponseDto enterRoom(@Payload Long roomId, @Payload String nickname) {
+        ChatRoomResponseDto responseDto = chatService.enterChatRoom(roomId, nickname);
         messagingTemplate.convertAndSend("/topic/room/" + roomId, responseDto);
         return responseDto;
     }
@@ -51,7 +51,7 @@ public class ChatController {
     @SendTo("/topic/public")
     public WebSocketChatMessage addUser(@Payload WebSocketChatMessage webSocketChatMessage,
             SimpMessageHeaderAccessor headerAccessor) {
-        headerAccessor.getSessionAttributes().put("username", webSocketChatMessage.getSender());
+        headerAccessor.getSessionAttributes().put("nickname", webSocketChatMessage.getSender()); // 닉네임을 처음에 굳이 받지 않아도 userImpl에서 회원가입할 때 설정한 Nickname으로 자동참여 할 수 있게 하는게 어떨까..
         webSocketChatMessage.setType(MessageType.JOIN);
         messagingTemplate.convertAndSend("/topic/room/" + webSocketChatMessage.getRoomId(), webSocketChatMessage);
         return webSocketChatMessage;
@@ -65,12 +65,12 @@ public class ChatController {
     }
 
     @MessageMapping("/chat.getRooms")
-    public List<ChatRoomDto> getChatRooms(@Payload String username) {
+    public List<ChatRoomDto> getChatRooms(@Payload String nickname) {
         try {
-            logger.info("Fetching chat rooms for user: {}", username);
-            return chatService.getChatRoomsForUser(username);
+            logger.info("Fetching chat rooms for user: {}", nickname);
+            return chatService.getChatRoomsForUser(nickname);
         } catch (Exception e) {
-            logger.error("Error fetching chat rooms for user: {}", username, e);
+            logger.error("Error fetching chat rooms for user: {}", nickname, e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching chat rooms", e);
         }
     }

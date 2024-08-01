@@ -42,6 +42,7 @@ public class ReviewService {
 
         MeetsReview meetsReview = MeetsReview.builder()
                 .content(requestDto.getContent())
+                .starRating(requestDto.getStarRating())
                 .likesCount(0)
                 .user(user)
                 .meets(meets)
@@ -83,8 +84,9 @@ public class ReviewService {
             throw new CustomException(ErrorType.NOT_AUTHORIZED_UPDATE);
         }
 
-        MeetsReview updatedReview = review.update(requestDto);
-        return new ReviewResponseDto(updatedReview);
+        review.update(requestDto);
+
+        return new ReviewResponseDto(review);
     }
 
     /**

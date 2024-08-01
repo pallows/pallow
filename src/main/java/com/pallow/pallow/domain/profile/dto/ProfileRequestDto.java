@@ -6,8 +6,10 @@ import com.pallow.pallow.domain.profile.enums.Region;
 import com.pallow.pallow.domain.user.entity.User;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class ProfileRequestDto {
 
     @NotNull(message = "본인 소개가 필요합니다.")
@@ -18,6 +20,9 @@ public class ProfileRequestDto {
     private Region position;
     private Mbti mbti;
     private String photo;
+    private int districtCode;
+    private String districtCodeString;
+
 
     public Profile toEntity(User foundUser) {
         return Profile.builder().birth(birth).content(content).position(position).mbti(mbti)

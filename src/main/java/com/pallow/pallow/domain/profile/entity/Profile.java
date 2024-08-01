@@ -51,6 +51,10 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Region position;
 
+    // 인트로 받아와서 스트링으로 변환해야함
+    @Column
+    private String district;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
@@ -112,8 +116,6 @@ public class Profile {
 
     public void update(ProfileRequestDto requestDto) {
         this.content = requestDto.getContent();
-        this.birth = requestDto.getBirth();
-        this.position = requestDto.getPosition();
         this.mbti = requestDto.getMbti();
     }
 }
