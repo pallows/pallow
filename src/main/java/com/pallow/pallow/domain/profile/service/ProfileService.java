@@ -8,6 +8,8 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -56,8 +58,60 @@ public class ProfileService {
         profileRepository.deleteById(userId);
     }
 
+    public List<Profile> recommendProfiles(Profile profile) {
+        List<Profile> allProfiles = profileRepository.findAll();
+
+        return allProfiles.stream()
+                .filter(p -> !p.getId().equals(profile.getId()))
+                .sorted((p1, p2) -> Double.compare(calculateSimilarity(profile, p2),
+                        calculateSimilarity(profile, p1)))
+                .limit(3)
+                .collect(Collectors.toList());
+    }
+
+
     private boolean isSameIdAndUser(Long userId, User user) {
         return user.getId().equals(userId);
+    }
+
+    private double calculateSimilarity(Profile p1, Profile p2) {
+        double score = 0;
+
+        if (p1.getMbti() == p2.getMbti()) {
+            score += 1;
+        }
+        if (p1.getInterest() == p2.getInterest()) {
+            score += 1;
+        }
+        if (p1.getAlcohol() == p2.getAlcohol()) {
+            score += 1;
+        }
+        if (p1.getEducation() == p2.getEducation()) {
+            score += 1;
+        }
+        if (p1.getIdeal() == p2.getIdeal()) {
+            score += 1;
+        }
+        if (p1.getJobs() == p2.getJobs()) {
+            score += 1;
+        }
+        if (p1.getPersonality() == p2.getPersonality()) {
+            score += 1;
+        }
+        if (p1.getPros() == p2.getPros()) {
+            score += 1;
+        }
+        if (p1.getRelationship() == p2.getRelationship()) {
+            score += 1;
+        }
+        if (p1.getReligion() == p2.getReligion()) {
+            score += 1;
+        }
+        if (p1.getSmoking() == p2.getSmoking()) {
+            score += 1;
+        }
+
+        return score;
     }
 
 }
