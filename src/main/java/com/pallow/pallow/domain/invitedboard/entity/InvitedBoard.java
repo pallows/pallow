@@ -44,9 +44,11 @@ public class InvitedBoard {
 
     public void acceptInvite() {
         this.status = InviteStatus.ACCEPTED;
+        meets.updateMemberList();
     }
 
     public void rejectInvite() {
         this.status = InviteStatus.DECLINED;
+        meets.updateMemberList();
     }
 }
