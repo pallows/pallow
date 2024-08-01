@@ -21,12 +21,6 @@ public class ChatMessageDto {
         private String content;
         private MessageType type;
         private LocalDateTime createdAt;
-        private String formattedTime;
-        private int ChatReactionCount;
-
-        /**
-         * 현재 사용자의 반응 여부
-         */
-        private boolean hasChatReacted;
+        private LocalDateTime modifiedAt;
 
 }

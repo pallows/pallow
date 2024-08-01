@@ -12,12 +12,9 @@ public class ReviewResponseDto {
 
     private int likesCount;
 
-    private int starRating;
-
     public ReviewResponseDto(MeetsReview meetsReview) {
         this.id = meetsReview.getId();
         this.content = meetsReview.getContent();
         this.likesCount = meetsReview.getLikesCount();
-        this.starRating = meetsReview.getStarRating();
     }
 }

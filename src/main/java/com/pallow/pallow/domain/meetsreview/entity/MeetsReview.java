@@ -29,12 +29,6 @@ public class MeetsReview extends TimeStamp implements Likeable {
 
     private int likesCount;
 
-    /**
-     * 유지영
-     * StarRating entity 추가
-     */
-    private int starRating;
-
     @ManyToOne
     @JoinColumn
     private User user;
@@ -44,17 +38,15 @@ public class MeetsReview extends TimeStamp implements Likeable {
     private Meets meets;
 
     @Builder
-    public MeetsReview(String content, int likesCount, int starRating, Meets meets, User user) {
+    public MeetsReview(String content, int likesCount, Meets meets, User user) {
         this.content = content;
         this.likesCount = likesCount;
-        this.starRating = starRating;
         this.meets = meets;
         this.user = user;
     }
 
     public MeetsReview update(ReviewRequestDto requestDto) {
         this.content = requestDto.getContent();
-        this.starRating  = requestDto.getStarRating();
         return this;
     }
 
