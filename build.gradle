@@ -79,6 +79,11 @@ dependencies {
     // Webjars
     implementation 'org.webjars:bootstrap:5.3.2'
     implementation 'org.webjars:jquery:3.7.1'
+
+    implementation('org.apache.mahout:mahout-integration:0.14.1') {
+        exclude group: 'log4j', module: 'log4j'
+        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+    }
 }
 
 tasks.named('test') {

@@ -1,9 +1,19 @@
 package com.pallow.pallow.domain.profile.entity;
 
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
+import com.pallow.pallow.domain.profile.enums.Alcohol;
+import com.pallow.pallow.domain.profile.enums.Education;
+import com.pallow.pallow.domain.profile.enums.IDEAL;
+import com.pallow.pallow.domain.profile.enums.Interest;
+import com.pallow.pallow.domain.profile.enums.Jobs;
+import com.pallow.pallow.domain.profile.enums.Personality;
+import com.pallow.pallow.domain.profile.enums.Pros;
+import com.pallow.pallow.domain.profile.enums.Relationship;
+import com.pallow.pallow.domain.profile.enums.Religion;
+import com.pallow.pallow.domain.profile.enums.Smoking;
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.global.enums.Mbti;
-import com.pallow.pallow.global.enums.Region;
+import com.pallow.pallow.domain.profile.enums.Mbti;
+import com.pallow.pallow.domain.profile.enums.Region;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -45,8 +55,35 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
-    @Column(nullable = false)
-    private String hobby;
+    @Column
+    private Interest interest;
+
+    @Column
+    private Alcohol alcohol;
+
+    @Column
+    private Education education;
+
+    @Column
+    private IDEAL ideal;
+
+    @Column
+    private Jobs jobs;
+
+    @Column
+    private Personality personality;
+
+    @Column
+    private Pros pros;
+
+    @Column
+    private Relationship relationship;
+
+    @Column
+    private Religion religion;
+
+    @Column
+    private Smoking smoking;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
@@ -54,12 +91,11 @@ public class Profile {
 
     @Builder
     public Profile(String content, String birth, Region position, Mbti mbti, User createdBy,
-            String hobby, String photo) {
+            Interest interest, String photo) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
         this.position = position;
-        this.hobby = hobby;
         this.photo = photo;
         this.user = createdBy;
     }
@@ -69,6 +105,5 @@ public class Profile {
         this.birth = requestDto.getBirth();
         this.position = requestDto.getPosition();
         this.mbti = requestDto.getMbti();
-        this.hobby = requestDto.getHobby();
     }
 }

@@ -1,4 +1,4 @@
-package com.pallow.pallow.global.enums;
+package com.pallow.pallow.domain.profile.enums;
 
 //시, 도
 public enum Region {
