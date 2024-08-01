@@ -46,7 +46,7 @@ public class ChatMessage extends TimeStamp {
     @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private MessageType type;
+    private MessageType type = MessageType.CHAT;
 
     /**
      * 기본 메시지의 공감 수를 0개로 초기화 해놓음
