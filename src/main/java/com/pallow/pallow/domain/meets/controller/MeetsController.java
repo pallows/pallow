@@ -78,7 +78,7 @@ public class MeetsController {
      */
     @PatchMapping("/{meets_id}")
     public ResponseEntity<CommonResponseDto> updateMeets(@PathVariable Long meets_id,
-            @RequestBody MeetsRequestDto requestDto,
+            @RequestBody @Valid MeetsRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_UPDATE_SUCCESS,
