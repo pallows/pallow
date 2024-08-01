@@ -41,13 +41,26 @@ public class SecurityConfig {
                                 "/auth/local/signup",
                                 "/auth/local",
                                 "/auth/email/**",
+                                "/chat",
+                                "/InvitationList",
+                                "/login",
+                                "/main",
+                                "/meets",
+                                "/meetsCollection",
+                                "/register",
+                                "/register_information",
+                                "/userboard",
+                                "/userboardCollection",
+                                "/benefits",
+                                "/payments",
                                 "/profiles",
                                 "/",
                                 "/api/chat/**",
-                                "/index.html",
+                                "/api/meets",
                                 "/css/**",
                                 "/js/**",
-                                "/ws/**").permitAll()
+                                "/ws/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
         ).authenticationProvider(authenticationProvider);
 //
