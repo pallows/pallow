@@ -47,9 +47,11 @@ public enum ErrorType {
     // UserBoard
     NOT_FOUND_BOARD(HttpStatus.NOT_FOUND, "해당 게시물을 찾을 수 없습니다."),
 
+    // Region
+    NOT_FOUND_REGION(HttpStatus.NOT_FOUND, "지역을 찾을 수 없습니다"),
+
     // Likes
     NOT_FOUND_CONTENT(HttpStatus.NOT_FOUND, "컨텐츠를 찾을 수 없습니다");
-
 
     private final HttpStatus status;
 

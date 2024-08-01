@@ -1,4 +1,4 @@
-package com.pallow.pallow.global.enums;
+package com.pallow.pallow.global.region;
 
 //시, 도
 public enum Region {
@@ -21,7 +21,7 @@ public enum Region {
     제주특별자치도(39);
 
     // 서울 - 구
-    public enum District_Seoul {
+    public enum District_Seoul implements District {
         종로구(11010),
         중구(11020),
         용산구(11030),
@@ -48,16 +48,20 @@ public enum Region {
         송파구(11240),
         강동구(11250);
 
-
         private int districtCode;
 
         District_Seoul(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 부산 - 구, 군
-    public enum District_Busan {
+    public enum District_Busan implements District {
         중구(21010),
         서구(21020),
         동구(21030),
@@ -81,10 +85,15 @@ public enum Region {
         District_Busan(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 대구 - 구, 군
-    public enum District_Daegu {
+    public enum District_Daegu implements District {
         중구(22010),
         동구(22020),
         서구(22030),
@@ -100,10 +109,15 @@ public enum Region {
         District_Daegu(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 인천 - 구, 군
-    public enum District_Incheon {
+    public enum District_Incheon implements District {
         중구(23010),
         동구(23020),
         연수구(23040),
@@ -120,10 +134,15 @@ public enum Region {
         District_Incheon(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 광주 - 구
-    public enum District_Gwangju {
+    public enum District_Gwangju implements District {
         동구(24010),
         서구(24020),
         남구(24030),
@@ -135,10 +154,15 @@ public enum Region {
         District_Gwangju(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 대전 - 구
-    public enum District_Daegeon {
+    public enum District_Daegeon implements District {
         동구(25010),
         중구(25020),
         서구(25030),
@@ -150,10 +174,15 @@ public enum Region {
         District_Daegeon(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 울산 - 구, 군
-    public enum District_Ulsan {
+    public enum District_Ulsan implements District {
         중구(26010),
         남구(26020),
         동구(26030),
@@ -165,10 +194,15 @@ public enum Region {
         District_Ulsan(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 경기 - 시, 구, 군
-    public enum District_Gyeongi {
+    public enum District_Gyeongi implements District {
         수원시(31010),
         장안구(31011),
         권선구(31012),
@@ -223,10 +257,15 @@ public enum Region {
         District_Gyeongi(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 강원 - 시, 군
-    public enum District_Gangwon {
+    public enum District_Gangwon implements District {
         춘천시(32010),
         원주시(32020),
         강릉시(32030),
@@ -251,10 +290,15 @@ public enum Region {
         District_Gangwon(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 충청북 - 시, 구, 군
-    public enum District_Chungcheongbuk {
+    public enum District_Chungcheongbuk implements District {
         충주시(33020),
         제천시(33030),
         청주시(33040),
@@ -276,10 +320,15 @@ public enum Region {
         District_Chungcheongbuk(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 충청남 - 시, 구, 군
-    public enum District_Chungcheongnam {
+    public enum District_Chungcheongnam implements District {
         천안시(34010),
         동남구(34011),
         서북구(34012),
@@ -303,10 +352,15 @@ public enum Region {
         District_Chungcheongnam(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 전라북 - 시, 군
-    public enum District_Jeollabuk {
+    public enum District_Jeollabuk implements District {
         전주시(35010),
         완산구(35011),
         덕진구(35012),
@@ -324,16 +378,20 @@ public enum Region {
         고창군(35370),
         부안군(35380);
 
-
         private int districtCode;
 
         District_Jeollabuk(int districtCode) {
             this.districtCode = districtCode;
         }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
+        }
     }
 
     // 전라남 - 시, 군
-    public enum Jeollanam {
+    public enum District_Jeollanam implements District {
         목포시(36010),
         여수시(36020),
         순천시(36030),
@@ -359,13 +417,18 @@ public enum Region {
 
         private int districtCode;
 
-        Jeollanam(int districtCode) {
+        District_Jeollanam(int districtCode) {
             this.districtCode = districtCode;
+        }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
         }
     }
 
     // 경상북 - 시, 구, 군
-    public enum Gyeongsangbuk {
+    public enum District_Gyeongsangbuk implements District {
         포항시(37010),
         남구(37011),
         북구(37012),
@@ -394,13 +457,18 @@ public enum Region {
 
         private int districtCode;
 
-        Gyeongsangbuk(int districtCode) {
+        District_Gyeongsangbuk(int districtCode) {
             this.districtCode = districtCode;
+        }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
         }
     }
 
     // 경상남 - 시, 구, 군
-    public enum Gyeongsangnam {
+    public enum District_Gyeongsangnam implements District {
         창원시(38110),
         의창구(38111),
         성산구(38112),
@@ -428,19 +496,29 @@ public enum Region {
 
         private int districtCode;
 
-        Gyeongsangnam(int districtCode) {
+        District_Gyeongsangnam(int districtCode) {
             this.districtCode = districtCode;
+        }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
         }
     }
 
-    public enum Jeju {
+    public enum District_Jeju implements District {
         제주시(39010),
         서귀포시(39020);
 
         private int districtCode;
 
-        Jeju(int districtCode) {
+        District_Jeju(int districtCode) {
             this.districtCode = districtCode;
+        }
+
+        @Override
+        public int getDistrictCode() {
+            return districtCode;
         }
 
     }
@@ -450,4 +528,5 @@ public enum Region {
     Region(int regionCode) {
         this.regionCode = regionCode;
     }
+
 }
