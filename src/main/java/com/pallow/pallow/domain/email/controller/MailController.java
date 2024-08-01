@@ -14,19 +14,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/email")
 @RequiredArgsConstructor
 public class MailController {
 
     private final MailService mailService;
 
-    @PostMapping("/email/send")
+    @PostMapping("/send")
     public ResponseEntity<CommonResponseDto> sendVerificationEmail(@Valid @RequestBody EmailInputRequestDto emailInputRequestDto) {
         mailService.sendMail(emailInputRequestDto);
         return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_SEND_SUCCESS));
     }
 
-    @PostMapping("/email/verify")
+    @PostMapping("/verify")
     public ResponseEntity<CommonResponseDto> verificationEmailCode(@Valid @RequestBody EmailCodeRequestDto emailCodeRequestDto) {
         String checkEmail = mailService.verifyCode(emailCodeRequestDto);
         return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_VERIFICATION_CODE_SUCCESS, checkEmail));

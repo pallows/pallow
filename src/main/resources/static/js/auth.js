@@ -46,7 +46,7 @@ function redirectToLogin() {
     window.location.href = "/login.html";
 }
 
-
+// TODO :  //  Html 접근시 토큰검증함수
 async function checkToken() {
     document.addEventListener("DOMContentLoaded", async function () {
         const token = getToken();
@@ -62,6 +62,7 @@ async function checkToken() {
     });
 }
 
+// TODO :  // API 요청 로그인유저 검증 입니다.
 export async function fetchWithJwtAuth(url, options = {}) {
     const token = getToken('jwt');
     console.log("fetchWithJwtAuth 의 토큰", token)
@@ -78,5 +79,19 @@ export async function fetchWithJwtAuth(url, options = {}) {
     return response;
 }
 
+// TODO :  // 로그아웃입니다.
+function logout() {
+    fetch('/logout', {
+        method: 'POST',
+        credentials: 'include'  // 쿠키 포함
+    }).then(response => {
+        if (response.ok) {
+            console.log('Logged out successfully');
+            window.location.href = 'login.html';
+        }
+    }).catch(error => {
+        console.error('Error during logout:', error);
+    });
+}
 
-export {getToken, setToken, handleTokenValidation, checkToken};
+export {getToken, setToken, handleTokenValidation, checkToken, logout};

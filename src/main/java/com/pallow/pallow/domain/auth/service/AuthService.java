@@ -7,9 +7,12 @@ import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.common.CommonOauth;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
+import com.pallow.pallow.global.enums.Gender;
 import com.pallow.pallow.global.enums.Role;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.jwt.JwtProvider;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -17,9 +20,12 @@ import jakarta.transaction.Transactional;
 import java.util.concurrent.TimeUnit;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,14 +37,13 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
@@ -54,6 +59,9 @@ public class AuthService {
         return password.matches("^[a-zA-Z0-9]{8,15}$");
     }
 
+    private final JavaMailSender mailSender;
+    private static final String senderEmail = "pallow-company@gmail.com";
+
     @Transactional
     public AuthResponseDto signUp(AuthRequestDto authRequestDto) {
         if (userRepository.findByUsername(authRequestDto.getUsername()).isPresent()) {
@@ -63,13 +71,16 @@ public class AuthService {
         if ("KAKAO".equals(String.valueOf(authRequestDto.getOauth()))) {
             oauth = CommonOauth.KAKAO;
         }
+
+        Gender gender = Gender.fromString(authRequestDto.getGender());
+
         User creadtedUser = User.createdUser(
                 authRequestDto.getUsername(),
                 authRequestDto.getNickname(),
                 authRequestDto.getName(),
                 authRequestDto.getEmail(),
                 passwordEncoder.encode(authRequestDto.getPassword()),
-                authRequestDto.getGender(),
+                gender,
                 Role.USER,
                 oauth);
         userRepository.save(creadtedUser);
@@ -149,44 +160,17 @@ public class AuthService {
         return newAccessToken;
     }
 
-    public void logout(HttpServletRequest request) {
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
         String accessToken = jwtProvider.getJwtFromHeader(request, JwtProvider.ACCESS_HEADER);
         String username = jwtProvider.getUserNameFromJwtToken(accessToken);
         deleteRefreshToken(username);
         SecurityContextHolder.clearContext();
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);  // 쿠키 만료
+        response.addCookie(cookie);
     }
-
-//    public String sendMail(EmailInputRequestDto emailInputRequestDto) {
-//        log.info("이메일 요청 받은것 {}", emailInputRequestDto.getEmail());
-//        String code = generateVerificationCode();
-//        ValueOperations<String, Object> emailAndCode = redisTemplate.opsForValue();
-//        emailAndCode.set(emailInputRequestDto.getEmail(), code, 5, TimeUnit.MINUTES);
-//
-//        try {
-//            SimpleMailMessage message = new SimpleMailMessage();
-//            message.setTo(emailInputRequestDto.getEmail());
-//            message.setSubject("Email 인증");
-//            message.setText("인증 코드 : " + code);
-//            javaMailSender.send(message);
-//        } catch (Exception e) {
-//            log.error("메일 전송 오류: ", e);
-//            throw new CustomException(ErrorType.MAIL_NOT_SEND); // CustomException 으로 적절한 에러 처리
-//        }
-//        return code;
-//    }
-
-//    public String verifyCode(EmailCodeRequestDto emailCodeRequestDto) {
-//        ValueOperations<String, Object> emailAndCode = redisTemplate.opsForValue();
-//        if ((emailAndCode.get(emailCodeRequestDto.getEmail())) instanceof String) {
-//            String storedCode = (String) emailAndCode.get(emailCodeRequestDto.getEmail());
-//            if (storedCode != null && storedCode.equals(emailCodeRequestDto.getCode())) {
-//                return "True";
-//            }
-//        }
-//        log.info("이메일 인증 실패");
-//        throw new CustomException(ErrorType.MAIL_MISMATCH_OR_CODE_FORBIDDEN);
-//    }
-
 
     //TODO : N+1 최적화 필요
     // --------------- 해당 클래스에서 사용되어지는 메서드 ---------------
@@ -211,16 +195,6 @@ public class AuthService {
 
     public void deleteRefreshToken(String username) {
         redisTemplate.delete(username);
-    }
-
-    private String generateVerificationCode() {
-        Random randomCode = new Random(); // Random 클래스 생성 무작위 수를 위한 유틸리티 클래스
-        int code = 100000 + randomCode.nextInt(900000);
-        // randomCode.nextInt(900000) : 0~899999 사이의 랜덤한 정수를 생성
-        // nextInt 는 지정된 범위 내 무작위 숫자 반환
-        // 앞에 있는 100000은 생성되는 랜덤 정수에 더하는 수 즉 100000~999999 까지의 랜덤한 정수 생성
-        return String.valueOf(code);
-        // 그 수를 문자열화 해서 return
     }
 
 

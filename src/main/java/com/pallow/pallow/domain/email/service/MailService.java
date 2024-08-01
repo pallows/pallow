@@ -32,12 +32,13 @@ public class MailService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
+    //메일 서비스인지 어쓰서비스인지 분간하기
     @Async
     public void sendMail(EmailInputRequestDto emailInputRequestDto) {
+        log.info("이메일 리퀘스트 DTO : {} ", emailInputRequestDto);
         String code = generateVerificationCode();
         ValueOperations<String, Object> emailAndCode = redisTemplate.opsForValue();
         emailAndCode.set(emailInputRequestDto.getEmail(), code, 5, TimeUnit.MINUTES);
-
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);

@@ -8,9 +8,11 @@ import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -49,7 +51,7 @@ public class UserService {
     public UserResponseDto updateUser(Long userId, UserRequestDto requestDto) {
         User user = findUserById(userId);
         String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-        user.updateUser(requestDto.getNickname(), encodedPassword, requestDto.getPosition());
+        user.updateUser(requestDto.getNickname(), encodedPassword);
         userRepository.save(user);
         return new UserResponseDto(user);
     }

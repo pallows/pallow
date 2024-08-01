@@ -65,8 +65,8 @@ public class AuthController {
 
     // 로그아웃
     @PostMapping("/logout")
-    public ResponseEntity<CommonResponseDto> userLogout(HttpServletRequest request) {
-        authService.logout(request);
+    public ResponseEntity<CommonResponseDto> userLogout(HttpServletRequest request, HttpServletResponse response) {
+        authService.logout(request, response);
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGOUT_SUCCESS));
     }
 
@@ -84,33 +84,10 @@ public class AuthController {
         response.setStatus(HttpStatus.OK.value());
         response.getWriter().write(new CommonResponseDto(Message.USER_LOGIN_SUCCESS, token).toString());
     }
-
-    @GetMapping("/jwttoken")
-    public void getToken(HttpServletRequest request) {
-        String token = jwtProvider.getJwtFromHeader(request, JwtProvider.ACCESS_HEADER);
-
-    }
-
 //    @PostMapping("/oauth/signup")
 //    public ResponseEntity<CommonResponseDto> oauthSignUp(@Valid @RequestBody AuthRequestDto requestDto, HttpServletResponse response) {
 //        String token = oauthService.oauthSignUp(requestDto, response);
 //        return ResponseEntity.ok(new CommonResponseDto(Message.USER_OAUTH_SIGNUP_SUCCESS, token));
 //    }
-
-//    // Email 전송
-//    @PostMapping("/email/send")
-//    public ResponseEntity<CommonResponseDto> sendVerificationEmail(@Valid @RequestBody EmailInputRequestDto emailInputRequestDto) {
-//        String code = authService.sendMail(emailInputRequestDto);
-//        return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_SEND_SUCCESS, code));
-//        // 임시로 code 를 Postman 을 통해서 확인하기 위해 인증 코드를 반환합니다. 추후 삭제 예정
-//    }
-
-
-//    @PostMapping("/email/verify")
-//    public ResponseEntity<CommonResponseDto> verificationEmailCode(@Valid @RequestBody EmailCodeRequestDto emailCodeRequestDto) {
-//        String checkEmail = authService.verifyCode(emailCodeRequestDto);
-//        return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_VERIFICATION_CODE_SUCCESS, checkEmail));
-//    }// True 혹은 False 를 반환 하게끔 만들어서 그걸 토대로 확인 후 다음 페이지로 접근하기 위한 문자열을 응답합니다.
-//    // Email 확인
 
 }

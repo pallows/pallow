@@ -40,8 +40,7 @@ public class User extends TimeStamp {
     @Column(nullable = false, unique = true)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Profile profile;
 
     @Column(nullable = false, unique = true)
@@ -53,7 +52,7 @@ public class User extends TimeStamp {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Column(nullable = false)
@@ -68,12 +67,7 @@ public class User extends TimeStamp {
     private Gender gender;
 
     @Column
-    private String position;
-
-    //  ACTIVE("active"), CommonStatus.ACTIVE
-    //  DELETED("deleted"); CommonStatus.DELETED
-    @Column
-    private CommonStatus status;
+    private CommonStatus status = CommonStatus.ACTIVE;
 
     @Column
     private CommonOauth oauth;
@@ -84,7 +78,6 @@ public class User extends TimeStamp {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAndChatRoom> userAndChatRooms = new ArrayList<>();
-
 
     public User(Long id, Profile profile, String username, String password, String email,
             String nickname, Role userRole, String name, List<Meets> meets, Gender gender) {
@@ -125,9 +118,8 @@ public class User extends TimeStamp {
         this.status = CommonStatus.DELETED;
     }
 
-    public void updateUser(String nickname, String position, String password) {
+    public void updateUser(String nickname, String password) {
         this.nickname = nickname;
-        this.position = position;
         this.password = password;
     }
 

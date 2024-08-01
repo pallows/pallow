@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
+    <title>Welcome to Pallow</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -11,18 +11,17 @@
             font-family: 'Roboto', sans-serif;
         }
     </style>
-    <link rel="icon"
-          href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png"
+    <link rel="icon" href="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96"
           type="image/x-icon">
 </head>
 
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
     <div class="mb-6 text-center">
-        <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png"
-             alt="Team Logo" class="mx-auto mb-4">
+        <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" alt="Team Logo"
+             class="mx-auto mb-4">
     </div>
-    <form id="loginForm" method="post">
+    <form id="loginForm">
         <div class="mb-4">
             <label for="username" class="block text-gray-700">ID</label>
             <input type="text" id="username" name="username"
@@ -44,7 +43,7 @@
     <a href="/auth/oauth/login/kakao"
        class="block w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 text-center">카카오 로그인</a>
     <div id="error" class="alert alert-danger mt-4" style="display: none;">
-        <p id="errorMessage" class="text-red-500 text-center">비밀번호 혹은 아이디가 잘못되었습니다.</p>
+        <p id="errorMessage" class="text-red-500 text-center">Invalid username or password.</p>
     </div>
 
     <script type="module">
@@ -97,7 +96,28 @@
                     document.getElementById('error').style.display = 'block';
                 });
         });
+        //  fetch('/auth/local', {
+        //       method: 'POST',
+        //       headers: {
+        //           'Content-Type': 'application/json'
+        //       },            body: JSON.stringify({ username, password })
+        //   })
+        //       .then(response => {
+        //           if (response.ok) {
+        //                       localStorage.setItem("username", username);
+        //                      window.location.href = '/main';
+        //           } else {
+        //              document.getElementById('error').style.display = 'block';
+        //           }           })
+        //       .catch(error => {
+        //           console.error('Error:', error);
+        //           document.getElementById('error').style.display = 'block';
+        //       });
+        //   });
+
     </script>
+
 </div>
+
 </body>
 </html>

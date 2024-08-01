@@ -40,6 +40,8 @@ public class SecurityConfig {
                                 .permitAll()
                                 .requestMatchers(HttpMethod.GET).permitAll() // 임시 get 모든 허용
                                 .requestMatchers(HttpMethod.POST).permitAll() // 위와같음
+                                .requestMatchers(HttpMethod.PUT).permitAll() // 위와같음
+                                .requestMatchers(HttpMethod.DELETE).permitAll() // 위와같음
                                 .requestMatchers("/**").permitAll()// 임시 모든 api 허용
 //                        .requestMatchers( TODO 임시 모든 URL 접근가능
 //                                "/auth/signup",
