@@ -3,7 +3,6 @@ package com.pallow.pallow.domain.profile.entity;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.enums.Mbti;
-import com.pallow.pallow.global.enums.Region;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -39,8 +38,7 @@ public class Profile {
     private LocalDate birth;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private Region position;
+    private String position;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -54,7 +52,7 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, LocalDate birth, Region position, Mbti mbti, User createdBy,
+    public Profile(String content, LocalDate birth, String position, Mbti mbti, User createdBy,
             String hobby, String photo) {
         this.content = content;
         this.birth = birth;

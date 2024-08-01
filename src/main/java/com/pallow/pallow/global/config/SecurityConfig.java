@@ -41,6 +41,7 @@ public class SecurityConfig {
                                 "/auth/local/signup",
                                 "/auth/local",
                                 "/auth/email/**",
+                                "/profiles",
                                 "/",
                                 "/index.html",
                                 "/css/**",

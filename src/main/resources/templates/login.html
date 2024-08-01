@@ -45,7 +45,7 @@
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
 
-      fetch('/auth/login', {
+      fetch('/auth/local', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

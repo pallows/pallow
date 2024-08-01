@@ -2,7 +2,6 @@ package com.pallow.pallow.domain.profile.dto;
 
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.global.enums.Mbti;
-import com.pallow.pallow.global.enums.Region;
 import java.time.LocalDate;
 import lombok.Getter;
 
@@ -11,7 +10,7 @@ public class ProfileResponseDto {
 
     private String content;
     private LocalDate birth;
-    private Region position;
+    private String position;
     private Mbti mbti;
     private String hobby;
     private String photo;

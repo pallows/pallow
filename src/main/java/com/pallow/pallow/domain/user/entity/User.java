@@ -38,8 +38,7 @@ public class User extends TimeStamp {
     @Column(nullable = false, unique = true)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Profile profile;
 
     @Column(nullable = false, unique = true)
@@ -115,7 +114,4 @@ public class User extends TimeStamp {
         this.nickname = nickname;
         this.password = password;
     }
-
 }
-//객체의 생성이 복잡하고 필드가 많을 경우: 빌더 패턴을 사용하여 유연하고 가독성 높은 객체 생성.
-//단순한 객체 생성 및 서브클래싱을 통한 다형성이 필요한 경우: 팩토리 메서드 패턴을 사용하여 객체 생성 로직을 캡슐화.
