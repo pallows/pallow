@@ -2,16 +2,22 @@ package com.pallow.pallow.domain.profile.controller;
 
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
+import com.pallow.pallow.domain.profile.entity.Profile;
+import com.pallow.pallow.domain.profile.repository.ProfileRepository;
 import com.pallow.pallow.domain.profile.service.ProfileService;
 import com.pallow.pallow.global.common.CommonResponseDto;
+import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.Message;
+import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProfileController {
 
     private final ProfileService profileService;
+    private final ProfileRepository profileRepository;
 
     /**
      * 프로필 조회
@@ -82,6 +89,18 @@ public class ProfileController {
             @PathVariable Long userId) {
         profileService.deleteProfile(userId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_DELETE_SUCCESS));
+    }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<CommonResponseDto> getRecommendedProfiles(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long userId) {
+        Profile profile = profileRepository.findById(userId).orElseThrow(() -> new CustomException(
+                ErrorType.NOT_FOUND_USER));
+        List<ProfileResponseDto> responseDto = profileService.recommendProfiles(profile,
+                userDetails.getUser());
+        return ResponseEntity.ok(
+                new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS, responseDto));
     }
 
 }

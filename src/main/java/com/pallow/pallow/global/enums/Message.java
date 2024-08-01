@@ -28,6 +28,7 @@ public enum Message {
     PROFILE_CREATE_SUCCESS(HttpStatus.OK, "프로필을 생성하였습니다."),
     PROFILE_UPDATE_SUCCESS(HttpStatus.OK, "프로필을 수정하였습니다."),
     PROFILE_DELETE_SUCCESS(HttpStatus.OK, "프로필을 삭제하였습니다."),
+    PROFILE_RECOMMENDATION_SUCCESS(HttpStatus.OK, "랜덤 프로필 추천"),
 
     // USER BOARD
     USERBOARD_CREATE_SUCCESS(HttpStatus.OK, "유저 게시글을 생성하였습니다."),

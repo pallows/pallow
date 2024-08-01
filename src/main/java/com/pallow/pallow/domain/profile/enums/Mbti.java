@@ -1,4 +1,4 @@
-package com.pallow.pallow.global.enums;
+package com.pallow.pallow.domain.profile.enums;
 
 public enum Mbti {
     ISTJ("현실주의자"),
