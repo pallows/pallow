@@ -83,8 +83,8 @@ public class InvitedBoardService {
 
     // 유저가 그룹에 포함되있는지 검사
     public boolean isUserInGroup(User user, Meets meets) {
-        Optional<InvitedBoard> invitedBoard = invitedBoardRepository.findByUserIdAndMeetsIdAndStatus(
-                user.getId(), meets.getId(), InviteStatus.ACCEPTED);
+        Optional<InvitedBoard> invitedBoard = invitedBoardRepository.findByUserAndMeetsAndStatus(
+                user, meets, InviteStatus.ACCEPTED);
         return invitedBoard.isPresent();
     }
 

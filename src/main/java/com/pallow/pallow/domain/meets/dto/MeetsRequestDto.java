@@ -8,6 +8,4 @@ public class MeetsRequestDto {
     private String title;
 
     private String content;
-
-    private String image;
 }

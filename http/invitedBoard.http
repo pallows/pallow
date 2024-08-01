@@ -8,12 +8,12 @@ Content-Type: application/json
 }
 
 ### 그룹 신청서 수락
-POST http://localhost:8080/groups/1/invitation/3/accept
+POST http://localhost:8080/groups/1/invitation/2/accept
 Authorization: {{Authorization}}
 Content-Type: application/json
 
 ### 그룹 신청서 거절
-POST http://localhost:8080/groups/1/invitation/4/decline
+POST http://localhost:8080/groups/1/invitation/2/decline
 Authorization: {{Authorization}}
 Content-Type: application/json
 

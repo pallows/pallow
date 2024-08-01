@@ -13,7 +13,7 @@ public class MeetsResponseDto {
 
     private String content;
 
-    private long memberCount;
+    private int memberCount;
 
     private String position;
 
@@ -23,8 +23,8 @@ public class MeetsResponseDto {
         this.id = meets.getId();
         this.title = meets.getTitle();
         this.content = meets.getContent();
-        this.memberCount = meets.getMemberCount();
-        this.position = meets.getPosition();
+//        this.memberCount = meets.getMemberCount();
+//        this.position = meets.getPosition();
         this.status = meets.getStatus();
     }
 }

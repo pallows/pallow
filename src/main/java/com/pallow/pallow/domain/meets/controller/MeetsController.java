@@ -29,23 +29,23 @@ public class MeetsController {
 
     /**
      * 모임 생성
-     *
+     * @param user_id  유저 ID
      * @param requestDto  생성 데이터 [title, content]
      * @param userDetails 유저 데이터
      * @return 생성 성공 메시지 + 생성된 리뷰 데이터
      */
     @PostMapping("/{user_id}")
-    public ResponseEntity<CommonResponseDto> createMeets(@RequestBody MeetsRequestDto requestDto,
+    public ResponseEntity<CommonResponseDto> createMeets(@PathVariable Long user_id,
+            @RequestBody MeetsRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_CREATE_SUCCESS,
-                        meetsService.create(requestDto, userDetails.getUser())));
+                        meetsService.create(user_id, requestDto, userDetails.getUser())));
     }
 
     /**
      * 모임 선택 조회
-     *
-     * @param meets_id 그룹 ID
+     * @param meets_id  그룹 ID
      * @return 생성 성공 메시지 + 그룹 데이터
      */
     @GetMapping("/{meets_id}")
@@ -67,9 +67,8 @@ public class MeetsController {
 
     /**
      * 모임 업데이트
-     *
-     * @param meets_id    그룹 ID
-     * @param requestDto  변경할 데이터 [title, content]
+     * @param meets_id  그룹 ID
+     * @param requestDto 변경할 데이터 [title, content]
      * @param userDetails 유저 데이터
      * @return 업데이트 성공 메시지 + 변경된 리뷰 데이터
      */
@@ -85,8 +84,7 @@ public class MeetsController {
 
     /**
      * 모임 삭제
-     *
-     * @param meets_id    그룹 ID
+     * @param meets_id  그룹 ID
      * @param userDetails 유저 데이터
      * @return 삭제 성공 메시지
      */
@@ -96,38 +94,6 @@ public class MeetsController {
         meetsService.delete(meets_id, userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_DELETE_SUCCESS)
-        );
-    }
-
-    /**
-     * 그룹 맴버 조회
-     *
-     * @param meets_id
-     * @return List<UserResponseDto>
-     */
-    @GetMapping("/{meets_id}/memberList")
-    public ResponseEntity<CommonResponseDto> getAllMeetsMembers(@PathVariable Long meets_id) {
-        return ResponseEntity.ok(
-                new CommonResponseDto(Message.MEET_MEMBER_READ_SUCCESS,
-                        meetsService.getAllMeetsMembers(meets_id))
-        );
-    }
-
-    /**
-     * 회원 강퇴
-     *
-     * @param meets_id
-     * @param user_id
-     * @param userDetails
-     * @return success message
-     */
-    @GetMapping("/{meets_id}/withdraw/{user_id}")
-    public ResponseEntity<CommonResponseDto> withdrawMember(@PathVariable Long meets_id,
-            @PathVariable Long user_id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        meetsService.withdrawMember(meets_id, user_id, userDetails.getUser());
-        return ResponseEntity.ok(
-                new CommonResponseDto(Message.MEET_WITHDRAW_MEMBER_SUCCESS)
         );
     }
 }

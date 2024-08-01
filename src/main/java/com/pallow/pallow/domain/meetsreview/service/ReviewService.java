@@ -1,16 +1,13 @@
 package com.pallow.pallow.domain.meetsreview.service;
 
 import com.pallow.pallow.domain.invitedboard.service.InvitedBoardService;
-import com.pallow.pallow.domain.like.service.LikeService;
 import com.pallow.pallow.domain.meets.entity.Meets;
-import com.pallow.pallow.domain.meets.repository.MeetsRepository;
+import com.pallow.pallow.domain.meets.service.MeetsService;
 import com.pallow.pallow.domain.meetsreview.dto.ReviewRequestDto;
 import com.pallow.pallow.domain.meetsreview.dto.ReviewResponseDto;
 import com.pallow.pallow.domain.meetsreview.entity.MeetsReview;
 import com.pallow.pallow.domain.meetsreview.repository.ReviewRepository;
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.global.enums.CommonStatus;
-import com.pallow.pallow.global.enums.ContentType;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import java.util.List;
@@ -24,17 +21,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final MeetsRepository meetsRepository;
+    private final MeetsService meetsService;
     private final InvitedBoardService invitedBoardService;
-    private final LikeService likeService;
 
     /**
      * 리뷰 생성
      */
     public ReviewResponseDto create(Long meetsId, ReviewRequestDto requestDto, User user) {
         // 그룹이 존재하는지 확인
-        Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+        Meets meets = meetsService.findByMeetsIdAndStatus(meetsId);
 
         // 유저가 그룹에 속해있는지 확인
         if (!meets.getGroupCreator().getId().equals(user.getId()) && !invitedBoardService.isUserInGroup(user, meets)) {
@@ -107,8 +102,7 @@ public class ReviewService {
      */
     private MeetsReview getValidatedMeetsAndReview(Long meetsId, Long reviewId) {
         // 모임의 존재, 상태 검사
-        meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+        Meets meets = meetsService.findByMeetsIdAndStatus(meetsId);
 
         // 리뷰가 존재하는지 확인
         MeetsReview review = reviewRepository.findById(reviewId).orElseThrow(
@@ -123,13 +117,10 @@ public class ReviewService {
         return review;
     }
 
-    /**
-     * 리뷰 좋아요 토글
-     * @param reviewId
-     * @param user
-     */
-    @Transactional
-    public void toggleLike(Long reviewId, User user) {
-        likeService.toggleLike(reviewId, user, reviewRepository);
-    }
+//    public MeetsReview findById(Long contentId) {
+//        return reviewRepository.findById(contentId).orElseThrow(
+//                () -> new CustomException(ErrorType.NOT_FOUND_REVIEW)
+//        );
+//    }
+
 }

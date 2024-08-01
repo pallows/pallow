@@ -35,12 +35,3 @@ Authorization: {{Authorization}}
 Content-Type: application/json
 
 
-### 회원 조회
-GET http://localhost:8080/meets/1/memberList
-Authorization: {{Authorization}}
-Content-Type: application/json
-
-### 회원 강퇴
-GET http://localhost:8080/meets/1/withdraw/2
-Authorization: {{Authorization}}
-Content-Type: application/json
