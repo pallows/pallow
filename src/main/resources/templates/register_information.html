@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Registration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .profile-pic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+  <link rel="icon" href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png" type="image/x-icon">
+</head>
+<body class="bg-gray-100 p-6">
+<div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg">
+  <h1 class="text-2xl font-bold mb-4">추가 정보 입력란</h1>
+  <form id="profileForm" method="POST" enctype="multipart/form-data">
+    <div class="mb-4">
+      <label for="location" class="block text-gray-700">현재 위치</label>
+      <input type="text" id="location" name="position"
+             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+             readonly>
+    </div>
+    <div class="mb-4">
+      <label for="hobby" class="block text-gray-700">취미</label>
+      <input type="text" id="hobby" name="hobby" placeholder="취미를 입력하세요"
+             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+    </div>
+    <div class="mb-4">
+      <label for="birthday" class="block text-gray-700">생일</label>
+      <input type="date" id="birthday" name="birth"
+             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+    </div>
+    <div class="mb-4">
+      <label for="mbti" class="block text-gray-700">MBTI</label>
+      <select id="mbti" name="mbti"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        <option value="INTJ">INTJ</option>
+        <option value="INTP">INTP</option>
+        <option value="ENTJ">ENTJ</option>
+        <option value="ENTP">ENTP</option>
+        <option value="INFJ">INFJ</option>
+        <option value="INFP">INFP</option>
+        <option value="ENFJ">ENFJ</option>
+        <option value="ENFP">ENFP</option>
+        <option value="ISTJ">ISTJ</option>
+        <option value="ISFJ">ISFJ</option>
+        <option value="ESTJ">ESTJ</option>
+        <option value="ESFJ">ESFJ</option>
+        <option value="ISTP">ISTP</option>
+        <option value="ISFP">ISFP</option>
+        <option value="ESTP">ESTP</option>
+        <option value="ESFP">ESFP</option>
+      </select>
+    </div>
+    <div class="mb-4">
+      <label for="introduction" class="block text-gray-700">본인 소개글</label>
+      <textarea id="introduction" name="content" rows="4"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"></textarea>
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700">사진 선택</label>
+      <div class="flex items-center">
+        <div class="profile-pic mr-4" id="profilePic">
+          <img src="https://github.com/user-attachments/assets/bce3db08-6dfc-4ccb-b3dd-38d75a465955" alt="Default Profile Image">
+        </div>
+        <input type="file" id="photoInput" name="photo"
+               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+      </div>
+    </div>
+    <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
+      추가 정보 입력 완료!
+    </button>
+  </form>
+</div>
+
+<script type="module">
+  document.getElementById('photoInput').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        const profilePic = document.getElementById('profilePic');
+        profilePic.innerHTML = '';
+        profilePic.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  document.getElementById('profileForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const form = document.getElementById('profileForm');
+    const formData = new FormData(form);
+    const username = localStorage.getItem('username');
+    formData.append('username', username);
+
+    const photoInput = document.getElementById('photoInput');
+    if (photoInput.files.length === 0) {
+      formData.append('photo', '');
+      formData.append('defaultPhoto', 'https://github.com/user-attachments/assets/bce3db08-6dfc-4ccb-b3dd-38d75a465955');
+    }
+
+    try {
+      const response = await fetch('/profiles', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      alert('정상적으로 처리되었습니다.');
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error:', error);
+      alert('프로필 생성에 실패했습니다.');
+    }
+  });
+
+  function getAddr(lat, lng) {
+    let geocoder = new kakao.maps.services.Geocoder();
+    let coord = new kakao.maps.LatLng(lat, lng);
+    let callback = function (result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        let regionName = result[0].address.region_1depth_name;
+
+        let isSeoul = regionName.includes("서울");
+
+        if (isSeoul) {
+          document.getElementById('location').value = result[0].address.region_1depth_name + " "
+              + result[0].address.region_2depth_name;
+        } else {
+          document.getElementById('location').value = result[0].address.region_2depth_name + " "
+              + result[0].address.region_3depth_name;
+        }
+      }
+    }
+    geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+  }
+
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        getAddr(position.coords.latitude, position.coords.longitude);
+      }, function (error) {
+        console.error(error);
+        alert('위치 정보를 가져오는 데 실패했습니다.');
+      }, {
+        enableHighAccuracy: false,
+        maximumAge: 0,
+        timeout: Infinity
+      });
+    } else {
+      alert('현재 브라우저에서는 geolocation을 지원하지 않습니다');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    getLocation();
+  });
+</script>
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f4c83d9a4b318776896b44ad0eaf0ff8&libraries=services"></script>
+</body>
+</html>
