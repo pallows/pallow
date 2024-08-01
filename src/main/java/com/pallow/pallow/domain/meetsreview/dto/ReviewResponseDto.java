@@ -10,9 +10,9 @@ public class ReviewResponseDto {
 
     private String content;
 
-    private int likesCount;
-
     private int starRating;
+
+    private int likesCount;
 
     public ReviewResponseDto(MeetsReview meetsReview) {
         this.id = meetsReview.getId();

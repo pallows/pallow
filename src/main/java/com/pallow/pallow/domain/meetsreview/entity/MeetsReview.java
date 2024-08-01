@@ -29,10 +29,6 @@ public class MeetsReview extends TimeStamp implements Likeable {
 
     private int likesCount;
 
-    /**
-     * 유지영
-     * StarRating entity 추가
-     */
     private int starRating;
 
     @ManyToOne
@@ -52,10 +48,9 @@ public class MeetsReview extends TimeStamp implements Likeable {
         this.user = user;
     }
 
-    public MeetsReview update(ReviewRequestDto requestDto) {
+    public void update(ReviewRequestDto requestDto) {
         this.content = requestDto.getContent();
         this.starRating  = requestDto.getStarRating();
-        return this;
     }
 
     @Override

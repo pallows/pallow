@@ -21,6 +21,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
@@ -45,7 +46,10 @@ public class Meets extends TimeStamp {
 
     private String image;
 
-    private long memberCount;
+    private int memberCount;
+
+    @Column(nullable = false)
+    private int maxMemberCount;
 
     private String position;
 
@@ -67,12 +71,13 @@ public class Meets extends TimeStamp {
     private ChatRoom chatRoom;
 
     @Builder
-    public Meets(String title, String content, String image, String position,
+    public Meets(String title, String content, String image, int maxMemberCount, String position,
             CommonStatus status, User user) {
         this.title = title;
         this.content = content;
         this.image = image;
-        this.memberCount = calculatedMemberList().size();
+        this.memberCount = calculatedMemberList().size() + 1;
+        this.maxMemberCount = maxMemberCount;
         this.position = position;
         this.status = status;
         this.groupCreator = user;
@@ -82,6 +87,8 @@ public class Meets extends TimeStamp {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.image = requestDto.getImage();
+        this.maxMemberCount = requestDto.getMaxMemberCount();
+        this.position = requestDto.getPosition();
     }
 
     public void delete() {
@@ -105,6 +112,6 @@ public class Meets extends TimeStamp {
 
     // 멤버 리스트를 업데이트하는 메서드
     public void updateMemberList() {
-        this.memberCount = calculatedMemberList().size();
+        this.memberCount = calculatedMemberList().size() + 1;
     }
 }

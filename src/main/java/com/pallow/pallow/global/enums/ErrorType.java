@@ -10,6 +10,7 @@ public enum ErrorType {
 
     //MAIL
     MAIL_MISMATCH_OR_CODE_FORBIDDEN(HttpStatus.FORBIDDEN, "입력한 이메일과 다르거나, 코드가 일치하지 않습니다."),
+
     //TOKEN
     TOKEN_MISMATCH(HttpStatus.NOT_FOUND, "리프레쉬 토큰이 일치하지 않습니다."),
     TOKEN_CHECK_INVALID(HttpStatus.FORBIDDEN, "JWT 토큰을 확인할 수 없거나, 유효하지 않습니다."),
@@ -36,7 +37,6 @@ public enum ErrorType {
     INVALID_PASSWORD(HttpStatus.EXPECTATION_FAILED, "유효하지 않은 비밀번호입니다."),
     LOGIN_FAILED(HttpStatus.EXPECTATION_FAILED, "로그인에 실패하셨습니다."),
 
-
     // MeetsReview
     NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),
     INVALID_REVIEW_FOR_MEET(HttpStatus.UNAUTHORIZED, "해당 리뷰가 특정 모임에 유효하지 않다"),
@@ -47,6 +47,7 @@ public enum ErrorType {
     // InvitedBoard
     NOT_GROUP_CREATOR(HttpStatus.FORBIDDEN, "모임장이 아닙니다."),
     YES_GROUP_CREATOR(HttpStatus.CONFLICT, "모임장은 모임 신청을 할 수 없습니다."),
+    MAX_MEMBER_REACHED(HttpStatus.BAD_REQUEST, "신청인원이 다 찼습니다."),
 
     // UserBoard
     NOT_FOUND_BOARD(HttpStatus.NOT_FOUND, "해당 게시물을 찾을 수 없습니다."),

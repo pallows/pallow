@@ -6,7 +6,10 @@ Content-Type: application/json
 
 {
   "title": "title 1",
-  "content": "content 1"
+  "content": "content 1",
+  "image": "image",
+  "position": "position",
+  "maxMemberCount": 3
 }
 
 ### 그룹 선택 조회
@@ -26,7 +29,10 @@ Content-Type: application/json
 
 {
   "title": "updated title",
-  "content": "updated content"
+  "content": "updated content",
+  "image": "updated image",
+  "position": "updated position",
+  "maxMemberCount": 5
 }
 
 ### 그룹 삭제

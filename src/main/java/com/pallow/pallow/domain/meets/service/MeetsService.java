@@ -41,6 +41,7 @@ public class MeetsService {
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .image(requestDto.getImage())
+                .maxMemberCount(requestDto.getMaxMemberCount())
                 .user(existUser)
                 .status(CommonStatus.ACTIVE)
                 .build();
@@ -105,7 +106,7 @@ public class MeetsService {
     }
 
     /**
-     * 그룹에 존재하는 회원 전체 조회 (그룹생성자 미포함)
+     * 그룹에 존재하는 회원 전체 조회 (그룹생성자 포함)
      * @param meetsId
      * @return
      */

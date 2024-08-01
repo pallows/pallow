@@ -5,9 +5,11 @@ import com.pallow.pallow.domain.meets.service.MeetsService;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * API 경로를 구분하기 위해 @Requestmapping에 "/api" 접두사 추가
  */
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/meets")
@@ -35,7 +38,7 @@ public class MeetsController {
      * @return 생성 성공 메시지 + 생성된 리뷰 데이터
      */
     @PostMapping("/{user_id}")
-    public ResponseEntity<CommonResponseDto> createMeets(@RequestBody MeetsRequestDto requestDto,
+    public ResponseEntity<CommonResponseDto> createMeets(@RequestBody @Valid MeetsRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_CREATE_SUCCESS,
