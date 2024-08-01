@@ -8,23 +8,8 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
-import com.pallow.pallow.global.region.District;
-import com.pallow.pallow.global.region.Region.District_Busan;
-import com.pallow.pallow.global.region.Region.District_Chungcheongbuk;
-import com.pallow.pallow.global.region.Region.District_Chungcheongnam;
-import com.pallow.pallow.global.region.Region.District_Daegeon;
-import com.pallow.pallow.global.region.Region.District_Daegu;
-import com.pallow.pallow.global.region.Region.District_Gangwon;
-import com.pallow.pallow.global.region.Region.District_Gwangju;
-import com.pallow.pallow.global.region.Region.District_Gyeongi;
-import com.pallow.pallow.global.region.Region.District_Gyeongsangbuk;
-import com.pallow.pallow.global.region.Region.District_Gyeongsangnam;
-import com.pallow.pallow.global.region.Region.District_Incheon;
-import com.pallow.pallow.global.region.Region.District_Jeju;
-import com.pallow.pallow.global.region.Region.District_Jeollabuk;
-import com.pallow.pallow.global.region.Region.District_Jeollanam;
-import com.pallow.pallow.global.region.Region.District_Seoul;
-import com.pallow.pallow.global.region.Region.District_Ulsan;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -75,10 +60,65 @@ public class ProfileService {
         profileRepository.deleteById(userId);
     }
 
+    @Transactional
+    public List<ProfileResponseDto> recommendProfiles(Profile profile, User user) {
+        List<Profile> allProfiles = profileRepository.findAll();
+
+        return allProfiles.stream()
+                .filter(p -> !p.getId().equals(profile.getId()))
+                .sorted((p1, p2) -> Double.compare(calculateSimilarity(profile, p2),
+                        calculateSimilarity(profile, p1)))
+                .limit(9)
+                .map(ProfileResponseDto::new) // Convert Profile to ProfileResponseDto
+                .collect(Collectors.toList());
+    }
+
+
+
     private boolean isSameIdAndUser(Long userId, User user) {
         return user.getId().equals(userId);
     }
 
+    private double calculateSimilarity(Profile p1, Profile p2) {
+        double score = 0;
+
+        if (p1.getMbti() == p2.getMbti()) {
+            score += 10;
+        }
+        if (p1.getInterest() == p2.getInterest()) {
+            score += 10;
+        }
+        if (p1.getAlcohol() == p2.getAlcohol()) {
+            score += 10;
+        }
+        if (p1.getEducation() == p2.getEducation()) {
+            score += 10;
+        }
+        if (p1.getIdeal() == p2.getIdeal()) {
+            score += 10;
+        }
+        if (p1.getJobs() == p2.getJobs()) {
+            score += 10;
+        }
+        if (p1.getPersonality() == p2.getPersonality()) {
+            score += 10;
+        }
+        if (p1.getPros() == p2.getPros()) {
+            score += 10;
+        }
+        if (p1.getRelationship() == p2.getRelationship()) {
+            score += 10;
+        }
+        if (p1.getReligion() == p2.getReligion()) {
+            score += 10;
+        }
+        if (p1.getSmoking() == p2.getSmoking()) {
+            score += 10;
+        }
+
+        log.info(String.valueOf(score) + " " + p1.getId() + " " + p2.getId());
+
+        return score;
     /**
      * District Int -> String
      * @param code
