@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -90,12 +91,16 @@ public class ProfileController {
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_DELETE_SUCCESS));
     }
 
-//    @PostMapping("/{userId}/recommendations")
-//    public ResponseEntity<List<Profile>> getRecommendedProfiles(@PathVariable Long userId) {
-//        Profile profile = profileRepository.findById(userId).orElseThrow(() -> new CustomException(
-//                ErrorType.NOT_FOUND_USER));
-//        return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS,
-//                profileService.recommendProfiles(profile)));
-//    }
+    @GetMapping("/recommendations")
+    public ResponseEntity<CommonResponseDto> getRecommendedProfiles(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable Long userId) {
+        Profile profile = profileRepository.findById(userId).orElseThrow(() -> new CustomException(
+                ErrorType.NOT_FOUND_USER));
+        List<ProfileResponseDto> responseDto = profileService.recommendProfiles(profile,
+                userDetails.getUser());
+        return ResponseEntity.ok(
+                new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS, responseDto));
+    }
 
 }

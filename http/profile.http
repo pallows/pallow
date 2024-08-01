@@ -29,3 +29,8 @@ Content-Type: application/json
 ### 회원 프로필 삭제 ( 회원탈퇴 시 )
 DELETE http://localhost:8080/profiles/1
 Authorization: {{Authorization}}
+
+### 회원 추천 받기
+GET http://localhost:8080/profiles/1/recommendations
+Authorization: {{Authorization}}
+Content-Type: application/json

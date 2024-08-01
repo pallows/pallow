@@ -58,16 +58,19 @@ public class ProfileService {
         profileRepository.deleteById(userId);
     }
 
-    public List<Profile> recommendProfiles(Profile profile) {
+    @Transactional
+    public List<ProfileResponseDto> recommendProfiles(Profile profile, User user) {
         List<Profile> allProfiles = profileRepository.findAll();
 
         return allProfiles.stream()
                 .filter(p -> !p.getId().equals(profile.getId()))
                 .sorted((p1, p2) -> Double.compare(calculateSimilarity(profile, p2),
                         calculateSimilarity(profile, p1)))
-                .limit(3)
+                .limit(9)
+                .map(ProfileResponseDto::new) // Convert Profile to ProfileResponseDto
                 .collect(Collectors.toList());
     }
+
 
 
     private boolean isSameIdAndUser(Long userId, User user) {
@@ -78,38 +81,40 @@ public class ProfileService {
         double score = 0;
 
         if (p1.getMbti() == p2.getMbti()) {
-            score += 1;
+            score += 10;
         }
         if (p1.getInterest() == p2.getInterest()) {
-            score += 1;
+            score += 10;
         }
         if (p1.getAlcohol() == p2.getAlcohol()) {
-            score += 1;
+            score += 10;
         }
         if (p1.getEducation() == p2.getEducation()) {
-            score += 1;
+            score += 10;
         }
         if (p1.getIdeal() == p2.getIdeal()) {
-            score += 1;
+            score += 10;
         }
         if (p1.getJobs() == p2.getJobs()) {
-            score += 1;
+            score += 10;
         }
         if (p1.getPersonality() == p2.getPersonality()) {
-            score += 1;
+            score += 10;
         }
         if (p1.getPros() == p2.getPros()) {
-            score += 1;
+            score += 10;
         }
         if (p1.getRelationship() == p2.getRelationship()) {
-            score += 1;
+            score += 10;
         }
         if (p1.getReligion() == p2.getReligion()) {
-            score += 1;
+            score += 10;
         }
         if (p1.getSmoking() == p2.getSmoking()) {
-            score += 1;
+            score += 10;
         }
+
+        log.info(String.valueOf(score) + " " + p1.getId() + " " + p2.getId());
 
         return score;
     }
