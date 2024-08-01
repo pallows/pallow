@@ -13,7 +13,9 @@ public class MeetsResponseDto {
 
     private String content;
 
-    private long memberCount;
+    private int memberCount;
+
+    private int maxMemberCount;
 
     private String position;
 
@@ -24,6 +26,7 @@ public class MeetsResponseDto {
         this.title = meets.getTitle();
         this.content = meets.getContent();
         this.memberCount = meets.getMemberCount();
+        this.maxMemberCount = meets.getMaxMemberCount();
         this.position = meets.getPosition();
         this.status = meets.getStatus();
     }

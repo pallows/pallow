@@ -3,7 +3,7 @@ package com.pallow.pallow.domain.profile.entity;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.enums.Mbti;
-import com.pallow.pallow.global.enums.Region;
+import com.pallow.pallow.global.region.Region;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,6 +41,10 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Region position;
 
+    // 인트로 받아와서 스트링으로 변환해야함
+    @Column
+    private String district;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
@@ -53,12 +57,14 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, String birth, Region position, Mbti mbti, User createdBy,
+    public Profile(String content, String birth, Region position, String district, Mbti mbti,
+            User createdBy,
             String hobby, String photo) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
         this.position = position;
+        this.district = district;
         this.hobby = hobby;
         this.photo = photo;
         this.user = createdBy;
@@ -66,9 +72,9 @@ public class Profile {
 
     public void update(ProfileRequestDto requestDto) {
         this.content = requestDto.getContent();
-        this.birth = requestDto.getBirth();
-        this.position = requestDto.getPosition();
         this.mbti = requestDto.getMbti();
+        this.position = requestDto.getPosition();
+        this.district = requestDto.getDistrictCodeString();
         this.hobby = requestDto.getHobby();
     }
 }
