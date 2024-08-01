@@ -8,6 +8,7 @@ import com.pallow.pallow.domain.chat.entity.ChatMessage;
 import com.pallow.pallow.domain.chat.entity.ChatReaction;
 import com.pallow.pallow.domain.chat.entity.ChatRoom;
 import com.pallow.pallow.domain.chat.entity.UserAndChatRoom;
+import com.pallow.pallow.domain.chat.model.MessageType;
 import com.pallow.pallow.domain.chat.repository.ChatMessageRepository;
 import com.pallow.pallow.domain.chat.repository.ChatRoomRepository;
 import com.pallow.pallow.domain.chat.repository.UserAndChatRoomRepository;
@@ -18,12 +19,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class ChatService {
@@ -45,10 +48,10 @@ public class ChatService {
      * @param nickname 유저의 닉네임
      * @return
      */
-    public ChatRoomDto createChatRoom(String name, String nickname) {
+    public ChatRoomDto createChatRoom(ChatRoomDto chatRoomDto, String nickname) {
         User user = findUserByNickname(nickname);
         ChatRoom chatRoom = ChatRoom.builder()
-                .name(name)
+                .name(chatRoomDto.getName())
                 .sender(user)
                 .build();
         chatRoom = chatRoomRepository.save(chatRoom);
@@ -62,6 +65,7 @@ public class ChatService {
 
         return convertToChatRoomDto(chatRoom);
     }
+
 
     /**
      * 채팅방 입장
@@ -107,9 +111,9 @@ public class ChatService {
                 .chatRoom(chatRoom)
                 .sender(user.getNickname())
                 .content(messageDto.getContent())
-                .type(messageDto.getType())
+                .type(messageDto.getType() != null ? messageDto.getType() : MessageType.CHAT)
                 .build();
-
+        log.info("Saving message: {}", message);
         message = chatMessageRepository.save(message);
         return convertToChatMessageDto(message);
     }
