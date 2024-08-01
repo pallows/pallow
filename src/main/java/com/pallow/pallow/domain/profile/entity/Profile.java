@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,7 @@ public class Profile {
     private String content;
 
     @Column(nullable = false)
-    private String birth;
+    private LocalDate birth;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -53,7 +54,7 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, String birth, Region position, Mbti mbti, User createdBy,
+    public Profile(String content, LocalDate birth, Region position, Mbti mbti, User createdBy,
             String hobby, String photo) {
         this.content = content;
         this.birth = birth;

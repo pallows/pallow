@@ -66,7 +66,7 @@ public class User extends TimeStamp {
     private Gender gender;
 
     @Column
-    private CommonStatus status;
+    private CommonStatus status = CommonStatus.ACTIVE;
 
     @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
@@ -104,7 +104,6 @@ public class User extends TimeStamp {
         user.userRole = role;
         user.name = name;
         user.gender = gender;
-        user.status = CommonStatus.ACTIVE;
         return user;
     }
 

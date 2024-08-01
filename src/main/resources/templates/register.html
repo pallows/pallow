@@ -43,7 +43,12 @@
              placeholder="아이디를 입력해주세요" required>
     </div>
     <div class="mb-4">
-      <label for="nickname" class="block text-gray-700">이름</label>
+      <label for="username" class="block text-gray-700">이름</label>
+      <input type="text" id="name" class="w-full px-3 py-2 border rounded-lg"
+             placeholder="이름을 입력해주세요" required>
+    </div>
+    <div class="mb-4">
+      <label for="nickname" class="block text-gray-700">닉네임</label>
       <input type="text" id="nickname" class="w-full px-3 py-2 border rounded-lg"
              placeholder="닉네임을 입력해주세요" required>
     </div>
@@ -164,6 +169,7 @@
     e.preventDefault();
     const username = document.getElementById('username').value;
     const nickname = document.getElementById('nickname').value;
+    const name = document.getElementById("name").value;
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
     const email = document.getElementById('email').value;
@@ -180,15 +186,15 @@
       return;
     }
 
-    // Simulate form submission
     $.ajax({
-      url: "/auth/signup",
+      url: "/auth/local/signup",
       type: "post",
       contentType: "application/json",
       dataType: "json",
       data: JSON.stringify({
         username: username,
         nickname: nickname,
+        name:name,
         password: password,
         email: email,
         gender: gender

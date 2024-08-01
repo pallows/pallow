@@ -25,6 +25,6 @@ public class AuthRequestDto {
     private String name;
 
     @NotNull
-    private Gender gender;
+    private String gender;
 
 }

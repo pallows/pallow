@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-
     private final AuthService authService;
 
     // 회원 가입 1차 작성 AuthResponseDto
@@ -58,29 +57,15 @@ public class AuthController {
     // Email 전송
     @PostMapping("/email/send")
     public ResponseEntity<CommonResponseDto> sendVerificationEmail(@Valid @RequestBody EmailInputRequestDto emailInputRequestDto) {
-        String code = authService.sendMail(emailInputRequestDto);
-        return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_SEND_SUCCESS, code));
-        // 임시로 code 를 Postman 을 통해서 확인하기 위해 인증 코드를 반환합니다. 추후 삭제 예정
+        authService.sendMail(emailInputRequestDto);
+        return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_SEND_SUCCESS));
     }
-
 
     @PostMapping("/email/verify")
     public ResponseEntity<CommonResponseDto> verificationEmailCode(@Valid @RequestBody EmailCodeRequestDto emailCodeRequestDto) {
         String checkEmail = authService.verifyCode(emailCodeRequestDto);
         return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_VERIFICATION_CODE_SUCCESS, checkEmail));
-    }// True 혹은 False 를 반환 하게끔 만들어서 그걸 토대로 확인 후 다음 페이지로 접근하기 위한 문자열을 응답합니다.
-    // Email 확인
-
-    //TODO :  이메일 인증 로직
-    // 회원가입시 정보를 입력하고 이메일 발송후 인증 메일의 인증번호와 프론트에서 입력해서 넘겨주는 값이 일치할 경우
-    // 회원가입 완료 버튼을 클릭할 수 있다.
-
-    //카카오 소셜 로그인
-    //카카오 소셜 회원가입
-    //카카오 콜백
-
-    //로그아웃
-
+    }
 }
 
 
