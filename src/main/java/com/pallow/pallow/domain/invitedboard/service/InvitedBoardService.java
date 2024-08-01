@@ -44,6 +44,10 @@ public class InvitedBoardService {
         Meets meet = meetsRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_GROUP));
 
+        if (meet.getMemberCount() >= meet.getMaxMemberCount()) {
+            throw new CustomException(ErrorType.MAX_MEMBER_REACHED);
+        }
+
         if (isAppliedUser(wantToApplyUser, meet)) {
             throw new CustomException(ErrorType.ALREADY_APPLIED_GROUP);
         }
@@ -63,9 +67,17 @@ public class InvitedBoardService {
 
     @Transactional
     public void acceptApply(long groupId, long userId, User user) {
+        Meets meets = meetsRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+
         if (!isUserGroupCreator(groupId, user)) {
             throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
         }
+
+        if (meets.getMemberCount() >= meets.getMaxMemberCount()) {
+            throw new CustomException(ErrorType.MAX_MEMBER_REACHED);
+        }
+
         InvitedBoard invitedUser = invitedBoardRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
         invitedUser.acceptInvite();
