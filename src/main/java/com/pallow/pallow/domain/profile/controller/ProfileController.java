@@ -2,12 +2,12 @@ package com.pallow.pallow.domain.profile.controller;
 
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
+import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.service.ProfileService;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.ErrorType;
-import com.pallow.pallow.global.enums.Mbti;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.security.UserDetailsImpl;

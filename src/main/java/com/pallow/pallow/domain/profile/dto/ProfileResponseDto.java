@@ -1,7 +1,7 @@
 package com.pallow.pallow.domain.profile.dto;
 
 import com.pallow.pallow.domain.profile.entity.Profile;
-import com.pallow.pallow.global.enums.Mbti;
+import com.pallow.pallow.domain.profile.enums.Mbti;
 import java.time.LocalDate;
 import lombok.Getter;
 
