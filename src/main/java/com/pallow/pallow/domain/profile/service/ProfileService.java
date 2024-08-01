@@ -8,6 +8,23 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+import com.pallow.pallow.global.region.District;
+import com.pallow.pallow.global.region.Region.District_Busan;
+import com.pallow.pallow.global.region.Region.District_Chungcheongbuk;
+import com.pallow.pallow.global.region.Region.District_Chungcheongnam;
+import com.pallow.pallow.global.region.Region.District_Daegeon;
+import com.pallow.pallow.global.region.Region.District_Daegu;
+import com.pallow.pallow.global.region.Region.District_Gangwon;
+import com.pallow.pallow.global.region.Region.District_Gwangju;
+import com.pallow.pallow.global.region.Region.District_Gyeongi;
+import com.pallow.pallow.global.region.Region.District_Gyeongsangbuk;
+import com.pallow.pallow.global.region.Region.District_Gyeongsangnam;
+import com.pallow.pallow.global.region.Region.District_Incheon;
+import com.pallow.pallow.global.region.Region.District_Jeju;
+import com.pallow.pallow.global.region.Region.District_Jeollabuk;
+import com.pallow.pallow.global.region.Region.District_Jeollanam;
+import com.pallow.pallow.global.region.Region.District_Seoul;
+import com.pallow.pallow.global.region.Region.District_Ulsan;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +56,7 @@ public class ProfileService {
         Profile profile = profileRepository.save(requestDto.toEntity(foundUser));
         return new ProfileResponseDto(profile);
     }
+
 
     @Transactional
     public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
@@ -72,7 +90,6 @@ public class ProfileService {
                 .map(ProfileResponseDto::new) // Convert Profile to ProfileResponseDto
                 .collect(Collectors.toList());
     }
-
 
 
     private boolean isSameIdAndUser(Long userId, User user) {
@@ -119,8 +136,11 @@ public class ProfileService {
         log.info(String.valueOf(score) + " " + p1.getId() + " " + p2.getId());
 
         return score;
+    }
+
     /**
      * District Int -> String
+     *
      * @param code
      * @return String
      */
