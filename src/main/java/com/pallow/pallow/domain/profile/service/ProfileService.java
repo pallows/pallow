@@ -72,7 +72,7 @@ public class ProfileService {
     @Transactional
     public List<ProfileFlaskReseponseDto> recommendProfiles(User user) {
         Profile currentUserProfile = profileRepository.findByUserId(user.getId());
-        List<Profile> profileList = profileRepository.findAll();
+        List<Profile> profileList = profileRepository.findAllByPosition(user.getProfile().getPosition());
         List<ProfileItem> items = new ArrayList<>();
 
         profileList.forEach(profile -> items.add(profileMapper.toRequestItem(profile)));
