@@ -36,7 +36,6 @@ data:
       add-mappings: true
   mvc:
     static-path-pattern: /static/**
-
 jwt:
   secret:
     key: ${JWT_KEY}
@@ -56,6 +55,12 @@ custom:
     authorization: "auth"
     bearer: "Bearer "
 
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+kakao:
+  clientId: ${CLIENT_ID}
+  redirectUri: ${REDIRECT_URI}
 logging:
   level:
     org.springframework.security: DEBUG
