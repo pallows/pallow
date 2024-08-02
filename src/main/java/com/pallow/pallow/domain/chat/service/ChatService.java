@@ -14,8 +14,11 @@ import com.pallow.pallow.domain.chat.repository.ChatRoomRepository;
 import com.pallow.pallow.domain.chat.repository.UserAndChatRoomRepository;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +47,7 @@ public class ChatService {
 
     /**
      * 채팅방 생성
-     * @param name 채팅방 이름
+     * @param chatRoomDto 채팅방 정보
      * @param nickname 유저의 닉네임
      * @return
      */
@@ -128,7 +131,7 @@ public class ChatService {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
-        List<UserAndChatRoom> userChatRooms = userAndChatRoomRepository.findByUserAndIsActiveTrue(user);
+        List<UserAndChatRoom> userChatRooms = userAndChatRoomRepository.findByUserIdAndIsActiveTrue(user.getId());
         if (userChatRooms.isEmpty()) {
             logger.info("No chat rooms found for user: {}", user.getNickname());
         }
@@ -204,7 +207,7 @@ public class ChatService {
                 .type(message.getType())
                 .createdAt(message.getCreatedAt())
                 .formattedTime(message.getCreatedAt().format(TIME_FORMATTER))
-                .ChatReactionCount(message.getChatReactionCount());
+                .chatReactionCount(message.getChatReactionCount());
 
         if (userId != null) {
             builder.hasChatReacted(message.getChatReactions().stream()
@@ -212,6 +215,35 @@ public class ChatService {
         }
         return builder.build();
     }
+
+    public Map<Long, Integer> getUnreadCountsForUser(Long userId) {
+        Map<Long, Integer> unreadCounts = new HashMap<>();
+        List<UserAndChatRoom> userChatRooms = userAndChatRoomRepository.findByUserIdAndIsActiveTrue(userId);
+
+        for (UserAndChatRoom userChatRoom : userChatRooms) {
+            Long roomId = userChatRoom.getChatRoom().getId();
+            LocalDateTime lastReadTime = userChatRoom.getUpdatedAt();
+            int unreadCount = chatMessageRepository.countByCreatedAtAfterAndChatRoomId(lastReadTime, roomId);
+            unreadCounts.put(roomId, unreadCount);
+        }
+
+        return unreadCounts;
+    }
+
+    public void markRoomAsRead(Long roomId, Long userId) {
+        UserAndChatRoom userChatRoom = userAndChatRoomRepository
+                .findByUserIdAndChatRoomId(userId, roomId)
+                .orElseThrow(() -> new RuntimeException("User is not in this chat room"));
+
+        userChatRoom.setUpdatedAt(LocalDateTime.now());
+        userAndChatRoomRepository.save(userChatRoom);
+    }
+
+
+
+
+
+
 }
 
 /**
