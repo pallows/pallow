@@ -81,12 +81,18 @@ export async function fetchWithJwtAuth(url, options = {}) {
 
 // TODO :  // 로그아웃입니다.
 function logout() {
-    fetch('/logout', {
+    const token = getToken('jwt');
+    fetch('/auth/logout', {
         method: 'POST',
+        headers: {
+            'Authorization': token,
+            'Content-Type': 'application/json'
+        },
         credentials: 'include'  // 쿠키 포함
     }).then(response => {
         if (response.ok) {
-            console.log('Logged out successfully');
+            localStorage.removeItem('jwt'); // JWT 액세스 토큰 제거
+            console.log('로그아웃');
             window.location.href = 'login.html';
         }
     }).catch(error => {

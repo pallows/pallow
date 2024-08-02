@@ -162,10 +162,11 @@ public class AuthService {
 
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         String accessToken = jwtProvider.getJwtFromHeader(request, JwtProvider.ACCESS_HEADER);
+        log.info("로그아웃시 받아온 엑세스토큰{}", accessToken);
         String username = jwtProvider.getUserNameFromJwtToken(accessToken);
         deleteRefreshToken(username);
         SecurityContextHolder.clearContext();
-        Cookie cookie = new Cookie("refreshToken", null);
+        Cookie cookie = new Cookie(JwtProvider.REFRESH_HEADER, null);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(0);  // 쿠키 만료
