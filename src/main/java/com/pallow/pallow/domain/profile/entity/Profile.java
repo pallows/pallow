@@ -98,7 +98,7 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Smoking smoking;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 

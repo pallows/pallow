@@ -38,7 +38,7 @@ public class User extends TimeStamp {
     @Column(nullable = false, unique = true)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_id")
     private Profile profile;
 
