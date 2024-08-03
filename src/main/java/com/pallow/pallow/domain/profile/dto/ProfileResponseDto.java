@@ -17,7 +17,7 @@ public class ProfileResponseDto {
 
     public ProfileResponseDto(Profile foundUser) {
         this.content = foundUser.getContent();
-        this.birth = foundUser.getBirth();
+        this.birth = LocalDate.parse(foundUser.getBirth());
         this.position = foundUser.getPosition();
         this.mbti = foundUser.getMbti();
         this.hobby = foundUser.getHobby();

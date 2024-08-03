@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -80,9 +81,8 @@ public class ProfileController {
 
         ProfileRequestDto requestDto = new ProfileRequestDto();
         requestDto.setContent(content);
-        requestDto.setBirth(birthDate);
+        requestDto.setBirth(birth);
         requestDto.setMbti(mbtiEnum);
-        requestDto.setHobby(hobby);
         requestDto.setPhoto(photoPath);
         requestDto.setPosition(position);
 
@@ -90,7 +90,8 @@ public class ProfileController {
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
 
         ProfileResponseDto responseDto = profileService.createProfile(requestDto, user);
-        return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
+        return ResponseEntity.ok(
+                new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
     }
 
     private String saveFile(MultipartFile file) throws IOException {

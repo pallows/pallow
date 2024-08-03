@@ -13,6 +13,8 @@ import com.pallow.pallow.global.dtos.FlaskRequestDto;
 import com.pallow.pallow.global.dtos.FlaskResponseDto;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;

@@ -1,8 +1,6 @@
 package com.pallow.pallow.domain.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter

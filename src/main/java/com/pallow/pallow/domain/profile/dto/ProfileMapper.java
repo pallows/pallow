@@ -2,7 +2,6 @@ package com.pallow.pallow.domain.profile.dto;
 
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.domain.profile.entity.ProfileItem;
-import com.pallow.pallow.global.region.Region;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +39,6 @@ public class ProfileMapper {
         builder.id(profile.getId());
         builder.photo(profile.getPhoto());
         builder.birth(profile.getBirth());
-        builder.district(profile.getDistrict());
         builder.position(profile.getPosition());
         builder.mbti(profile.getMbti());
 

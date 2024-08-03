@@ -4,7 +4,6 @@ import com.pallow.pallow.domain.chat.dto.ApiResponse;
 import com.pallow.pallow.domain.chat.dto.ChatMessageDto;
 import com.pallow.pallow.domain.chat.dto.ChatRoomDto;
 import com.pallow.pallow.domain.chat.dto.ChatRoomResponseDto;
-import com.pallow.pallow.domain.chat.entity.ChatRoom;
 import com.pallow.pallow.domain.chat.service.ChatService;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.Message;
@@ -12,20 +11,17 @@ import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/chat")
 @RequiredArgsConstructor

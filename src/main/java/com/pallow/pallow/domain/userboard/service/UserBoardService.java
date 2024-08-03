@@ -2,7 +2,6 @@ package com.pallow.pallow.domain.userboard.service;
 
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
-import com.pallow.pallow.domain.user.service.UserService;
 import com.pallow.pallow.domain.userboard.dto.UserBoardRequestDto;
 import com.pallow.pallow.domain.userboard.dto.UserBoardResponseDto;
 import com.pallow.pallow.domain.userboard.entity.UserBoard;
