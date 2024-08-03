@@ -45,7 +45,7 @@ public class Profile {
     private String content;
 
     @Column(nullable = false)
-    private String birth;
+    private LocalDate birth;
 
     @Column
     private String position;
@@ -102,14 +102,15 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
-            Interest interest, String photo) {
+    public Profile(String content, LocalDate birth, String position, Mbti mbti, User createdBy,
+            Interest interest, String photo, String hobby) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
         this.position = position;
         this.photo = photo;
         this.user = createdBy;
+        this.hobby = hobby;
     }
 
     public void update(ProfileRequestDto requestDto) {

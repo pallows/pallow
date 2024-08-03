@@ -171,11 +171,11 @@
 </script>
 
 <script type="module">
-    const urlParams = new URLSearchParams(window.location.search);
-    const oauth = urlParams.get('oauth');
-    if (oauth) {
-        document.getElementById('oauth').value = oauth;
-    }
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const oauth = urlParams.get('oauth');
+    // if (oauth) {
+    //     document.getElementById('oauth').value = oauth;
+    // }
     document.getElementById('registerForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const username = document.getElementById('username').value;
@@ -184,7 +184,7 @@
         const confirmPassword = document.getElementById('confirmPassword').value;
         const email = document.getElementById('email').value;
         const name = document.getElementById("name").value;
-        const oauth = document.getElementById('oauth').value;
+        // const oauth = document.getElementById('oauth').value;
         const gender = document.querySelector('input[name="gender"]:checked').value;
         const isEmailVerified = $("#Confirm").val();
 
@@ -199,7 +199,7 @@
         }
 
         $.ajax({
-            url: "/api/v1/signup", // api
+            url: "/users/signup", // api
             type: "post",
             contentType: "application/json",
             dataType: "json",

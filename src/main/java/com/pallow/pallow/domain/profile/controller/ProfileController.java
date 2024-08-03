@@ -81,10 +81,12 @@ public class ProfileController {
 
         ProfileRequestDto requestDto = new ProfileRequestDto();
         requestDto.setContent(content);
-        requestDto.setBirth(birth);
+        requestDto.setBirth(birthDate);
         requestDto.setMbti(mbtiEnum);
         requestDto.setPhoto(photoPath);
         requestDto.setPosition(position);
+        requestDto.setUsername(username);
+        requestDto.setHobby(hobby);
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
@@ -140,13 +142,13 @@ public class ProfileController {
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_DELETE_SUCCESS));
     }
 
-    @GetMapping("/recommendations")
-    public ResponseEntity<CommonResponseDto> getRecommendedProfiles(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<ProfileFlaskReseponseDto> responseDto = profileService.recommendProfiles(
-                userDetails.getUser());
-        return ResponseEntity.ok(
-                new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS, responseDto));
-    }
+//    @GetMapping("/recommendations")
+//    public ResponseEntity<CommonResponseDto> getRecommendedProfiles(
+//            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        List<ProfileFlaskReseponseDto> responseDto = profileService.recommendProfiles(
+//                userDetails.getUser());
+//        return ResponseEntity.ok(
+//                new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS, responseDto));
+//    }
 
 }

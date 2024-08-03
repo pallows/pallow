@@ -133,7 +133,7 @@
 
     const form = document.getElementById('profileForm');
     const formData = new FormData(form);
-    const username = localStorage.getItem('username');
+    let username = localStorage.getItem('username');
     formData.append('username', username);
     formData.delete('region1');
     formData.delete('region2');
@@ -147,7 +147,7 @@
     try {
       const response = await fetch('/profiles', {
         method: 'POST',
-        body: formData
+        body: formData,
       });
 
       if (!response.ok) {

@@ -29,7 +29,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             RefreshTokenService refreshTokenService) {
         this.tokenProvider = tokenProvider;
         this.refreshTokenService = refreshTokenService;
-        setFilterProcessesUrl("/api/v1/login");
+        setFilterProcessesUrl("/users/login");
     }
 
     @Override
@@ -60,20 +60,13 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         log.info("로그인 성공 및 토큰 생성");
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
 
-        // 토큰 생성
         String accessToken = tokenProvider.createAccessToken(username);
         String refreshToken = UUID.randomUUID().toString();
 
-        // 헤더에 액세스 토큰 추가
         res.addHeader(TokenProvider.ACCESS_TOKEN_HEADER, accessToken);
 
-        // 쿠키에 리프레시 토큰 추가
         tokenProvider.saveRefreshTokenToCookie(refreshToken, res);
-
-        // DB에 리프레시 토큰이 이미 있으면 변경, 없으면 저장
         refreshTokenService.save(username, refreshToken);
-
-        // JSON 응답 생성
         res.setStatus(SC_OK);
         res.setCharacterEncoding("UTF-8");
         res.setContentType("application/json");

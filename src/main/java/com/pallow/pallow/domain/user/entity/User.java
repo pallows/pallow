@@ -68,7 +68,7 @@ public class User extends TimeStamp {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private CommonStatus status;
+    private CommonStatus status = CommonStatus.ACTIVE;
 
     @Column
     private CommonOauth oauth;
@@ -110,8 +110,17 @@ public class User extends TimeStamp {
         this.password = password;
     }
 
-    public static User of(SignupRequestDto dto, String encodedPassword) {
-        return new User(dto, encodedPassword);
+    public static User createdUser(String username, String nickname, String email, String name,Gender gender,
+            String password, Role role) {
+        User user = new User();
+        user.username = username;
+        user.nickname = nickname;
+        user.password = password;
+        user.email = email;
+        user.name = name;
+        user.gender = gender;
+        user.userRole = role;
+        user.status = CommonStatus.ACTIVE;
+        return user;
     }
-
 }
