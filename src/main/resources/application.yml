@@ -8,7 +8,7 @@ spring:
         format_sql: 'true'
         show_sql: 'true'
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
   datasource:
     password: ${DB_PASSWORD}
     username: ${DB_USERNAME}
@@ -38,22 +38,16 @@ data:
     static-path-pattern: /static/**
 jwt:
   secret:
-    key: ${JWT_KEY}
-  access:
-    expiration: ${JWT_ACCESS_EXPIRED_TIME}
-  refresh:
-    expiration: ${JWT_REFRESH_EXPIRED_TIME}
+    key: ${JWT_SECRET_KEY}
+  access-token:
+    ttl: ${ACCESS_TOKEN_TTL}
+  refresh-token:
+    ttl: ${REFRESH_TOKEN_TTL}
+
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
     password: ${REDIS_PASSWORD}
-
-custom:
-  headers:
-    access: "Authorization"
-    refresh: "X-Refresh-Token"
-    authorization: "auth"
-    bearer: "Bearer "
 
   thymeleaf:
     prefix: classpath:/templates/
@@ -61,7 +55,3 @@ custom:
 kakao:
   clientId: ${CLIENT_ID}
   redirectUri: ${REDIRECT_URI}
-logging:
-  level:
-    org.springframework.security: DEBUG
-    com.pallow.pallow: DEBUG
