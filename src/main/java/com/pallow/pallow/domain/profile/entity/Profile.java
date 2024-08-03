@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.yaml.snakeyaml.events.Event.ID;
 
 @Entity
 @Getter
@@ -50,7 +51,7 @@ public class Profile {
     @Column
     private String position;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
@@ -94,7 +95,7 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Smoking smoking;
 
-    @Column(nullable = false)
+    @Column
     private String hobby;
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -103,7 +104,9 @@ public class Profile {
 
     @Builder
     public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
-            Interest interest, String photo, String hobby) {
+            Interest interest, String photo, String hobby, Alcohol alcohol, Education education,
+            IDEAL ideal, Jobs jobs, Personality personality, Pros pros,
+            Relationship relationship, Religion religion, Smoking smoking) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
@@ -111,6 +114,16 @@ public class Profile {
         this.photo = photo;
         this.user = createdBy;
         this.hobby = hobby;
+        this.interest = interest;
+        this.alcohol = alcohol;
+        this.education = education;
+        this.ideal = ideal;
+        this.jobs = jobs;
+        this.personality = personality;
+        this.relationship = relationship;
+        this.religion = religion;
+        this.smoking = smoking;
+        this.pros = pros;
     }
 
     public void update(ProfileRequestDto requestDto) {
