@@ -67,7 +67,8 @@ public class User extends TimeStamp {
     private Gender gender;
 
     @Column
-    private CommonStatus status = CommonStatus.ACTIVE;
+    @Enumerated(EnumType.STRING)
+    private CommonStatus status;
 
     @Column
     private CommonOauth oauth;

@@ -1,5 +1,6 @@
 package com.pallow.pallow.domain.profile.controller;
 
+import com.pallow.pallow.domain.profile.dto.ProfileFlaskReseponseDto;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.enums.Mbti;
@@ -137,4 +138,14 @@ public class ProfileController {
         profileService.deleteProfile(userId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_DELETE_SUCCESS));
     }
+
+    @GetMapping("/recommendations")
+    public ResponseEntity<CommonResponseDto> getRecommendedProfiles(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<ProfileFlaskReseponseDto> responseDto = profileService.recommendProfiles(
+                userDetails.getUser());
+        return ResponseEntity.ok(
+                new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS, responseDto));
+    }
+
 }
