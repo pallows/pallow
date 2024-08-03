@@ -58,6 +58,12 @@ public class ProfileController {
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
     }
 
+    @GetMapping("/")
+    public ResponseEntity<CommonResponseDto> getMyProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        ProfileResponseDto responseDto = profileService.getMyProfile(userDetails.getUser().getId());
+        return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
+    }
+
     @PostMapping
     public ResponseEntity<CommonResponseDto> createProfile(
             @RequestParam("content") String content,
@@ -69,7 +75,6 @@ public class ProfileController {
             @RequestParam("position") String position,
             @RequestParam("username") String username) throws IOException {
 
-        LocalDate birthDate = LocalDate.parse(birth);
         Mbti mbtiEnum = Mbti.valueOf(mbti);
 
         String photoPath;
@@ -81,7 +86,7 @@ public class ProfileController {
 
         ProfileRequestDto requestDto = new ProfileRequestDto();
         requestDto.setContent(content);
-        requestDto.setBirth(birthDate);
+        requestDto.setBirth(birth);
         requestDto.setMbti(mbtiEnum);
         requestDto.setPhoto(photoPath);
         requestDto.setPosition(position);

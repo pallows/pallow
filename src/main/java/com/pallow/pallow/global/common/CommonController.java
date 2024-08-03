@@ -50,4 +50,9 @@ public class CommonController {
         model.addAttribute("meets", meetsService.getAllMeets());
         return "meetsCollection";
     }
+
+    @GetMapping("/userboardCollection")
+    public String userboardCollectionPage() {
+        return "userboardCollection";
+    }
 }

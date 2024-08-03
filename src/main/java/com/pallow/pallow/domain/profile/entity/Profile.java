@@ -45,7 +45,7 @@ public class Profile {
     private String content;
 
     @Column(nullable = false)
-    private LocalDate birth;
+    private String birth;
 
     @Column
     private String position;
@@ -102,7 +102,7 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, LocalDate birth, String position, Mbti mbti, User createdBy,
+    public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
             Interest interest, String photo, String hobby) {
         this.content = content;
         this.birth = birth;

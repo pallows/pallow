@@ -80,7 +80,7 @@
                 success: function(data, textStatus, xhr) {
                     const accessToken = xhr.getResponseHeader('Authorization');
                     if (accessToken) {
-                        localStorage.setItem('AccessToken', accessToken);
+                        localStorage.setItem('Authorization', accessToken);
                         localStorage.setItem('username', username);
                         alert('Login successful!');
                         window.location.href = '/main';

@@ -72,8 +72,8 @@
         <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70"
              height="70" alt="Logo" class="mr-4">
         <nav>
-            <a href="/meetsCollection" class="mr-4">오늘의 동친</a>
-            <a href="#" class="mr-4">내 주변 모임</a>
+            <a href="/userboardCollection" class="mr-4">오늘의 동친</a>
+            <a href="/meetsCollection" class="mr-4">내 주변 모임</a>
         </nav>
     </div>
     <div class="flex items-center">
@@ -86,7 +86,7 @@
     <section class="mb-8">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">오늘의 동친</h2>
-            <a href="/meetsCollection" class="text-blue-500">더보기</a>
+            <a href="/userboardCollection" class="text-blue-500">더보기</a>
         </div>
         <div class="relative">
             <div class="carousel" id="carousel1"></div>
@@ -145,7 +145,7 @@
 
 <script type="module">
     document.addEventListener('DOMContentLoaded', function() {
-        const accessToken = localStorage.getItem('AccessToken');
+        const accessToken = localStorage.getItem('Authorization');
         if (!accessToken) {
             window.location.href = '/login';
             return;
@@ -154,7 +154,7 @@
         function fetchWithAuth(url, options = {}) {
             options.headers = {
                 ...options.headers,
-                'Authorization': `Bearer ${accessToken}`,
+                'Authorization': accessToken,
                 'Content-Type': 'application/json'
             };
             return fetch(url, options);

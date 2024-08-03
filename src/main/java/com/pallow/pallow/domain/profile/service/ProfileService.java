@@ -31,14 +31,20 @@ public class ProfileService {
     public ProfileResponseDto getProfile(Long userId) {
         Profile foundUser = profileRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        return new ProfileResponseDto(foundUser);
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getUsername());
+    }
+
+    public ProfileResponseDto getMyProfile(Long userId) {
+        Profile foundUser = profileRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
     }
 
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user) {
         User foundUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         Profile profile = profileRepository.save(requestDto.toEntity(foundUser));
-        return new ProfileResponseDto(profile);
+        return new ProfileResponseDto(profile, profile.getUser().getName());
     }
 
     @Transactional
@@ -49,7 +55,7 @@ public class ProfileService {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         foundUser.update(requestDto);
-        return new ProfileResponseDto(foundUser);
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
     }
 
     @Transactional
