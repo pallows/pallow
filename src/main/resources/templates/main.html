@@ -144,107 +144,118 @@
 
 
 <script type="module">
-    import {checkToken, fetchWithJwtAuth, logout} from "/js/auth.js";
+    document.addEventListener('DOMContentLoaded', function() {
+        const accessToken = localStorage.getItem('AccessToken');
+        if (!accessToken) {
+            window.location.href = '/login';
+            return;
+        }
 
+        function fetchWithAuth(url, options = {}) {
+            options.headers = {
+                ...options.headers,
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            };
+            return fetch(url, options);
+        }
 
-    checkToken();
-
-    document.getElementById('goToIndexBtn').addEventListener('click', async () => {  // 버튼
-        try {
-            // Fetch the content of index.html and use it
-            const response = await fetchWithJwtAuth('/index.html');
-            if (response.ok) {
-                window.location.href = '/index.html'; // This will redirect the user to index.html
-            } else {
-                console.error('Failed to load index.html');
+        document.getElementById('goToIndexBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetchWithAuth('/index.html');
+                if (response.ok) {
+                    window.location.href = '/index.html'; // This will redirect the user to index.html
+                } else {
+                    console.error('Failed to load index.html');
+                }
+            } catch (error) {
+                console.error('Error loading index.html:', error);
             }
-        } catch (error) {
-            console.error('Error loading index.html:', error);
-        }
-    });
-
-
-    function createCarousel(containerId, dotsId, numCards) {
-        const container = document.getElementById(containerId);
-        const dotsContainer = document.getElementById(dotsId);
-        const numDots = Math.ceil(numCards / 3);
-
-        // Create cards
-        for (let i = 0; i < numCards; i++) {
-            const card = document.createElement('div');
-            card.className = 'carousel-item bg-white p-4 shadow mr-4';
-            card.style.width = '300px';
-            card.style.height = '200px';
-            card.innerHTML = `
-        <img src="https://via.placeholder.com/280x120" alt="Thumbnail" class="mb-2">
-        <h3 class="font-bold">Card ${i + 1}</h3>
-        <p>Description for Card ${i + 1}</p>
-      `;
-            container.appendChild(card);
-        }
-
-        // Create dots
-        for (let i = 0; i < numDots; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-            dotsContainer.appendChild(dot);
-        }
-
-        let currentIndex = 0;
-
-        function updateCarousel() {
-            container.style.transform = `translateX(-${currentIndex * 33.33}%)`;
-            Array.from(dotsContainer.children).forEach((dot, index) => {
-                dot.classList.toggle('active', index === Math.floor(currentIndex / 3));
-            });
-        }
-
-        // Arrow click handlers
-        container.parentElement.querySelector('.carousel-arrow.left').addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + numCards) % numCards;
-            updateCarousel();
         });
 
-        container.parentElement.querySelector('.carousel-arrow.right').addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % numCards;
-            updateCarousel();
-        });
+        function createCarousel(containerId, dotsId, numCards) {
+            const container = document.getElementById(containerId);
+            const dotsContainer = document.getElementById(dotsId);
+            const numDots = Math.ceil(numCards / 3);
 
-        // Dot click handlers
-        Array.from(dotsContainer.children).forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                currentIndex = index * 3;
+            // Create cards
+            for (let i = 0; i < numCards; i++) {
+                const card = document.createElement('div');
+                card.className = 'carousel-item bg-white p-4 shadow mr-4';
+                card.style.width = '300px';
+                card.style.height = '200px';
+                card.innerHTML = `
+            <img src="https://via.placeholder.com/280x120" alt="Thumbnail" class="mb-2">
+            <h3 class="font-bold">Card ${i + 1}</h3>
+            <p>Description for Card ${i + 1}</p>
+          `;
+                container.appendChild(card);
+            }
+
+            // Create dots
+            for (let i = 0; i < numDots; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                dotsContainer.appendChild(dot);
+            }
+
+            let currentIndex = 0;
+
+            function updateCarousel() {
+                container.style.transform = `translateX(-${currentIndex * 33.33}%)`;
+                Array.from(dotsContainer.children).forEach((dot, index) => {
+                    dot.classList.toggle('active', index === Math.floor(currentIndex / 3));
+                });
+            }
+
+            // Arrow click handlers
+            container.parentElement.querySelector('.carousel-arrow.left').addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + numCards) % numCards;
                 updateCarousel();
             });
-        });
-    }
 
-    // Initialize carousels
-    createCarousel('carousel1', 'dots1', 9);
-    createCarousel('carousel2', 'dots2', 9);
-    createCarousel('carousel3', 'dots3', 9);
+            container.parentElement.querySelector('.carousel-arrow.right').addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % numCards;
+                updateCarousel();
+            });
 
-    document.getElementById('profileBtn').addEventListener('click', () => {
-        window.location.href = 'userboard.html';
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        logout()
-    });
-
-    document.getElementById('loginSignupBtn').addEventListener('click', () => {
-        // Check if user is logged in
-        const isLoggedIn = false; // Replace with actual login check
-        if (isLoggedIn) {
-            alert('이미 엘리트 멤버십 혜택을 받고 계십니다!');
-        } else {
-            window.location.href = 'login.html';
+            // Dot click handlers
+            Array.from(dotsContainer.children).forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    currentIndex = index * 3;
+                    updateCarousel();
+                });
+            });
         }
-    });
 
-    document.getElementById('chatBtn').addEventListener('click', () => {
-        window.location.href = '/chat';
+        // Initialize carousels
+        createCarousel('carousel1', 'dots1', 9);
+        createCarousel('carousel2', 'dots2', 9);
+        createCarousel('carousel3', 'dots3', 9);
+
+        document.getElementById('profileBtn').addEventListener('click', () => {
+            window.location.href = 'userboard.html';
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            logout();
+        });
+
+        document.getElementById('loginSignupBtn').addEventListener('click', () => {
+            // Check if user is logged in
+            const isLoggedIn = false; // Replace with actual login check
+            if (isLoggedIn) {
+                alert('이미 엘리트 멤버십 혜택을 받고 계십니다!');
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        document.getElementById('chatBtn').addEventListener('click', () => {
+            window.location.href = '/chat';
+        });
     });
 </script>
+
 </body>
 </html>

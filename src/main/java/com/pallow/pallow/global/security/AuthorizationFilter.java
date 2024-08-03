@@ -36,7 +36,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             FilterChain filterChain) throws ServletException, IOException {
         String accessToken = tokenProvider.getAccessToken(req);
         String refreshToken = tokenProvider.getRefreshToken(req);
-
         if (StringUtils.hasText(accessToken)) {
             // 액세스 토큰 검증
             if (tokenProvider.validateAccessToken(accessToken)) {

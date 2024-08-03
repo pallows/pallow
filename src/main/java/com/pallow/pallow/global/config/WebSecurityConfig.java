@@ -32,7 +32,7 @@ public class WebSecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
 
     String[] WHITE_LIST = {"/", "/users/login", "/signup", "/email/send", "/email/verify", "/users/signup"
-    , "/register_information", "/profiles"};
+    , "/register_information", "/profiles", "/main"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {
