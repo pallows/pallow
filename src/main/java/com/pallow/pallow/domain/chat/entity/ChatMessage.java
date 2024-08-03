@@ -43,10 +43,13 @@ public class ChatMessage extends TimeStamp {
     @Column(nullable = false)
     private String content;
 
+    /**
+     * 추후 프론트에서 채팅에 참여했을 때 "{}, user의 nickname" join, 채팅방에서 나갔을 때 "{}, user의 nickname" leave 로 뜨게 해야설정
+     */
     @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private MessageType type;
+    private MessageType type = MessageType.CHAT;
 
     /**
      * 기본 메시지의 공감 수를 0개로 초기화 해놓음

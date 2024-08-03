@@ -44,6 +44,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             authenticationToken.setDetails(
                     new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            log.debug("Set Authentication to security context for '{}', uri: {}",authenticationToken.getName(), request.getRequestURI());
+        } else {
+            log.debug("No valid JWT token found, uri: {}", request.getRequestURI());
         }
         filterChain.doFilter(request, response);
     }

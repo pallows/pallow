@@ -50,6 +50,7 @@ public class ProfileService {
         return new ProfileResponseDto(profile);
     }
 
+
     @Transactional
     public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
         Profile foundUser = profileRepository.findById(userId)

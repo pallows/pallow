@@ -8,6 +8,9 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorType {
 
+    //error
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"INTERNAL_SERVER_ERROR떴음 고치셈."),
+
     //MAIL
     MAIL_MISMATCH_OR_CODE_FORBIDDEN(HttpStatus.FORBIDDEN, "입력한 이메일과 다르거나, 코드가 일치하지 않습니다."),
 
@@ -55,8 +58,14 @@ public enum ErrorType {
     // Region
     NOT_FOUND_REGION(HttpStatus.NOT_FOUND, "지역을 찾을 수 없습니다"),
 
-    // Likes
-    NOT_FOUND_CONTENT(HttpStatus.NOT_FOUND, "컨텐츠를 찾을 수 없습니다");
+    //like
+    NOT_FOUND_CONTENT(HttpStatus.NOT_FOUND, "컨텐츠를 찾을 수 없습니다."),
+
+    // message
+    NOT_FOUND_MESSAGE(HttpStatus.NOT_FOUND, "메시지를 찾을 수 없습니다."),
+    // Room
+    NOT_FOUND_CHATROOM(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다.")
+    ;
 
     private final HttpStatus status;
 
