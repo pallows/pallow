@@ -1,7 +1,7 @@
 ### 그룹생성
 POST http://localhost:8080/api/meets/1
-#Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VybmFtZTIiLCJhdXRoIjoiVVNFUiIsImlhdCI6MTcyMTgwOTk0NSwiZXhwIjoxNzIxODE2MzQ1fQ.MxwmYPjYt18snO0ixIFulq05uwBxBc9yCLbyNeU0JRYJlkBvcBvwMTt5-5rBMRgNRZGoW7n-I3RA0KlmJKXiIQ
 Authorization: {{Authorization}}
+Cookie: {{Cookie}}
 Content-Type: application/json
 
 {

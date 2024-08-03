@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+          rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .gender-container {
+            display: flex;
+            justify-content: left;
+        }
+
+        .gender-label {
+            margin-right: 100px;
+        }
+
+        #sendCode {
+            white-space: nowrap;
+        }
+
+    </style>
+    <link rel="icon"
+          href="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96"
+          type="image/x-icon">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <div class="mb-6">
+        <img
+                src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96"
+                alt="Team Logo" class="mx-auto mb-4">
+    </div>
+    <form id="registerForm">
+        <div class="mb-4">
+            <label for="username" class="block text-gray-700">아이디</label>
+            <input type="text" id="username" class="w-full px-3 py-2 border rounded-lg"
+                   placeholder="아이디를 입력해주세요" required>
+        </div>
+        <div class="mb-4">
+            <label for="username" class="block text-gray-700">이름</label>
+            <input type="text" id="name" class="w-full px-3 py-2 border rounded-lg"
+                   placeholder="이름을 입력해주세요" required>
+        </div>
+        <div class="mb-4">
+            <label for="nickname" class="block text-gray-700">닉네임</label>
+            <input type="text" id="nickname" class="w-full px-3 py-2 border rounded-lg"
+                   placeholder="닉네임을 입력해주세요" required>
+        </div>
+        <div class="mb-4">
+            <label for="password" class="block text-gray-700">비밀번호</label>
+            <input type="password" id="password" class="w-full px-3 py-2 border rounded-lg"
+                   placeholder="비밀번호를 입력해주세요" required>
+        </div>
+        <div class="mb-4">
+            <label for="confirmPassword" class="block text-gray-700">비밀번호 확인</label>
+            <input type="password" id="confirmPassword" class="w-full px-3 py-2 border rounded-lg"
+                   placeholder="비밀번호를 다시 입력해주세요" required>
+        </div>
+        <div class="mb-4">
+            <label for="email" class="block text-gray-700">이메일</label>
+            <div class="flex">
+                <input type="email" id="email" class="w-full px-3 py-2 border rounded-l-lg"
+                       placeholder="이메일을 입력해주세요" required>
+                <button onclick="sendNumber()" type="button" id="sendCode"
+                        class="bg-blue-500 text-white px-4 py-2 rounded-r-lg">인증 번호 전송
+                </button>
+            </div>
+        </div>
+        <div class="mb-4">
+            <label for="emailCode" class="block text-gray-700">이메일 인증 번호</label>
+            <input type="text" id="emailCode" class="w-full px-3 py-2 border rounded-lg"
+                   placeholder="인증 번호를 입력해주세요" required>
+        </div>
+        <div class="mb-4">
+            <button type="button" onclick="confirmNumber()" id="verifyCode"
+                    class="bg-blue-500 text-white w-full px-4 py-2 rounded-lg">인증 번호 확인
+            </button>
+            <input type="text" id="Confirm" name="Confirm" style="display: none" value="">
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 mb-2">성별</label>
+            <div class="gender-container">
+                <label class="flex items-center gender-label">
+                    <input type="radio" name="gender" value="MALE" class="mr-2" required> 남성
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="gender" value="FEMALE" class="mr-2" required> 여성
+                </label>
+            </div>
+        </div>
+        <div>
+            <button type="submit" class="bg-green-500 text-white w-full px-4 py-2 rounded-lg">회원가입
+            </button>
+        </div>
+        <input TYPE="hidden" id="oauth" value="LOCAL">
+    </form>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function sendNumber() {
+        const email = document.getElementById('email').value;
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (email.trim() === "") {
+            alert('이메일을 입력해주세요.');
+        } else if (!emailPattern.test(email)) {
+            alert('유효한 이메일 주소를 입력해주세요.');
+        } else {
+            const button = document.getElementById('sendCode');
+            button.disabled = true;
+            button.textContent = '전송 중...';
+
+            $.ajax({
+                url: "/email/send",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({email: email}),
+                success: function (data) {
+                    alert('인증 번호가 이메일로 전송되었습니다.');
+                    $("#Confirm").attr("value", data);
+                    button.disabled = false;
+                    button.textContent = '인증 번호 전송';
+                },
+                error: function (xhr, status, error) {
+                    alert('인증 번호 전송에 실패했습니다. 다시 시도해주세요.');
+                    button.disabled = false;
+                    button.textContent = '인증 번호 전송';
+                }
+            });
+        }
+    }
+
+    function confirmNumber() {
+        const email = document.getElementById('email').value;
+        const emailCode = document.getElementById('emailCode').value;
+
+        if (emailCode.trim() === "") {
+            alert('인증 번호를 입력해주세요.');
+            return;
+        }
+
+        $.ajax({
+            url: "/email/verify",
+            type: "post",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({email: email, code: emailCode}),
+            success: function (data) {
+                if (data.data === "True") {
+                    alert('정상적으로 처리되었습니다.');
+                    $("#Confirm").val("true");
+                } else {
+                    alert('인증번호가 일치하지 않습니다.');
+                    $("#Confirm").val("false");
+                }
+            },
+            error: function (xhr, status, error) {
+                alert('인증번호 확인에 실패했습니다. 다시 시도해주세요.');
+            }
+        });
+    }
+</script>
+
+<script type="module">
+    const urlParams = new URLSearchParams(window.location.search);
+    const oauth = urlParams.get('oauth');
+    if (oauth) {
+        document.getElementById('oauth').value = oauth;
+    }
+    document.getElementById('registerForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const nickname = document.getElementById('nickname').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const email = document.getElementById('email').value;
+        const name = document.getElementById("name").value;
+        const oauth = document.getElementById('oauth').value;
+        const gender = document.querySelector('input[name="gender"]:checked').value;
+        const isEmailVerified = $("#Confirm").val();
+
+        if (password !== confirmPassword) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
+        if (isEmailVerified !== "true") {
+            alert('이메일 인증이 완료되지 않았습니다.');
+            return;
+        }
+
+        $.ajax({
+            url: "/api/v1/signup", // api
+            type: "post",
+            contentType: "application/json",
+            dataType: "json",
+            data: JSON.stringify({
+                username: username,
+                nickname: nickname,
+                name: name,
+                password: password,
+                email: email,
+                oauth: oauth,
+                gender: gender
+            }),
+            success: function (response) {
+                alert('회원가입이 완료되었습니다.');
+                localStorage.setItem("username", username);
+                window.location.href = '/register_information';
+            },
+            error: function (xhr, status, error) {
+                alert('회원가입에 실패했습니다. 다시 시도해주세요.');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
