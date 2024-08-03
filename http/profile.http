@@ -1,7 +1,9 @@
 ### 회원 프로필 생성
-POST http://localhost:8080/profiles/2
+POST http://localhost:8080/profiles/1
 Authorization: {{Authorization}}
+Cookie: {{Cookie}}
 Content-Type: application/json
+
 
 {
   "content": "난 멋쟁이입니다.",
