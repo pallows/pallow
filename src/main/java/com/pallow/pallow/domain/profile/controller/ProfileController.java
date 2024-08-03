@@ -1,5 +1,6 @@
 package com.pallow.pallow.domain.profile.controller;
 
+import com.pallow.pallow.domain.profile.dto.ProfileFlaskReseponseDto;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.entity.Profile;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/profiles/{userId}")
+@RequestMapping("/profiles")
 @RequiredArgsConstructor
 public class ProfileController {
 
@@ -39,7 +40,7 @@ public class ProfileController {
      * @param userId 유저아이디
      * @return 조회 성공 메시지 + 조회 데이터
      */
-    @GetMapping
+    @GetMapping("/{userId}")
     public ResponseEntity<CommonResponseDto> getProfile(
             @PathVariable Long userId) {
         ProfileResponseDto responseDto = profileService.getProfile(userId);
@@ -53,7 +54,7 @@ public class ProfileController {
      * @param userDetails 유저 데이터
      * @return 생성 성공 메시지 + 생성된 프로필 데이터
      */
-    @PostMapping
+    @PostMapping("/{userId}")
     public ResponseEntity<CommonResponseDto> createProfile(
             @RequestBody @Valid ProfileRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -71,7 +72,7 @@ public class ProfileController {
      * @param userId      수정하려는 유저 데이터
      * @return 수정 성공 메시지 + 수정된 프로필 데이터
      */
-    @PatchMapping
+    @PatchMapping("/{userId}")
     public ResponseEntity<CommonResponseDto> updateProfile(
             @RequestBody @Valid ProfileRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -83,7 +84,7 @@ public class ProfileController {
 
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{userId}")
     public ResponseEntity<CommonResponseDto> deleteProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable Long userId) {
@@ -93,11 +94,8 @@ public class ProfileController {
 
     @GetMapping("/recommendations")
     public ResponseEntity<CommonResponseDto> getRecommendedProfiles(
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @PathVariable Long userId) {
-        Profile profile = profileRepository.findById(userId).orElseThrow(() -> new CustomException(
-                ErrorType.NOT_FOUND_USER));
-        List<ProfileResponseDto> responseDto = profileService.recommendProfiles(profile,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<ProfileFlaskReseponseDto> responseDto = profileService.recommendProfiles(
                 userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS, responseDto));
