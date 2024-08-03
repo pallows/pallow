@@ -31,6 +31,9 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
+    String[] WHITE_LIST = {"/", "/api/v1/login", "/signup", "/email/send", "/email/verify", "/api/v1/signup"
+    , "/register_information", "/profiles"};
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -65,7 +68,7 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                .requestMatchers("api/v1/signup").permitAll()
+                .requestMatchers(WHITE_LIST).permitAll()
                 .requestMatchers(HttpMethod.GET, "api/popups/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "api/coupons/**").permitAll()
                 .anyRequest().authenticated()
