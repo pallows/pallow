@@ -214,6 +214,7 @@
             }),
             success: function (response) {
                 alert('회원가입이 완료되었습니다.');
+                localStorage.setItem("username", username);
                 window.location.href = '/register_information';
             },
             error: function (xhr, status, error) {
