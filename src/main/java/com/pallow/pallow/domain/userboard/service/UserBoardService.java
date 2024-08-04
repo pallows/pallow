@@ -1,6 +1,7 @@
 package com.pallow.pallow.domain.userboard.service;
 
 import com.pallow.pallow.domain.user.entity.User;
+import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.domain.user.service.UserService;
 import com.pallow.pallow.domain.userboard.dto.UserBoardRequestDto;
 import com.pallow.pallow.domain.userboard.dto.UserBoardResponseDto;
@@ -20,12 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserBoardService {
 
-    private final UserService userService;
     private final UserBoardRepository userBoardRepository;
+    private final UserRepository userRepository;
 
     public UserBoardResponseDto createBoard(UserBoardRequestDto requestDto, User user,
             long userId) {
-        User createdBy = userService.findUserById(user.getId());
+        User createdBy = userRepository.findById(user.getId())
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
