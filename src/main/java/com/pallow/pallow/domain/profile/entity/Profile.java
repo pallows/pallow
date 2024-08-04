@@ -47,7 +47,7 @@ public class Profile {
     @Column(nullable = false)
     private String hobby;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 

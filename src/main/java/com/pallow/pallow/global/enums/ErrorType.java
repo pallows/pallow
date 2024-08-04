@@ -12,6 +12,7 @@ public enum ErrorType {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"INTERNAL_SERVER_ERROR떴음 고치셈."),
 
     //MAIL
+    MAIL_NOT_SEND(HttpStatus.NOT_FOUND, "메일이 전송되지 않았습니다."),
     MAIL_MISMATCH_OR_CODE_FORBIDDEN(HttpStatus.FORBIDDEN, "입력한 이메일과 다르거나, 코드가 일치하지 않습니다."),
 
     //TOKEN
@@ -39,6 +40,8 @@ public enum ErrorType {
     INVALID_USERNAME(HttpStatus.EXPECTATION_FAILED, "유효하지 않은 아이디입니다."),
     INVALID_PASSWORD(HttpStatus.EXPECTATION_FAILED, "유효하지 않은 비밀번호입니다."),
     LOGIN_FAILED(HttpStatus.EXPECTATION_FAILED, "로그인에 실패하셨습니다."),
+
+    UNSUPPORTED_PROVIDE_FORBIDDEN(HttpStatus.FORBIDDEN, "지원하지 않는 플랫폼입니다."),
 
     // MeetsReview
     NOT_FOUND_REVIEW(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다."),

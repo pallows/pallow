@@ -1,4 +1,4 @@
-package com.pallow.pallow.domain.auth.config;
+package com.pallow.pallow.global.config;
 
 import java.util.Properties;
 import org.springframework.beans.factory.annotation.Value;

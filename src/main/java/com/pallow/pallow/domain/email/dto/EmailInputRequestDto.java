@@ -1,4 +1,4 @@
-package com.pallow.pallow.domain.auth.dto;
+package com.pallow.pallow.domain.email.dto;
 
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
@@ -6,9 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class EmailCodeRequestDto {
+public class EmailInputRequestDto {
     @Email
     private String email;
-
-    private String code;
 }
