@@ -63,7 +63,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String accessToken = tokenProvider.createAccessToken(username);
         String refreshToken = UUID.randomUUID().toString();
 
-        res.addHeader(TokenProvider.ACCESS_TOKEN_HEADER, accessToken);
+//        res.addHeader(TokenProvider.ACCESS_TOKEN_HEADER, accessToken);
+        res.setHeader(TokenProvider.ACCESS_TOKEN_HEADER, accessToken);
         tokenProvider.saveRefreshTokenToCookie(refreshToken, res);
         refreshTokenService.save(username, refreshToken);
         res.setStatus(SC_OK);

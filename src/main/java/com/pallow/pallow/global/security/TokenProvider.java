@@ -14,6 +14,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.Console;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -63,6 +64,7 @@ public class TokenProvider {
                 .compact();
     }
 
+
     /**
      * Cookie에 Refresh 토큰 저장
      */
@@ -83,6 +85,7 @@ public class TokenProvider {
      */
     public String getAccessToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(ACCESS_TOKEN_HEADER);
+        log.info(bearerToken);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(JWT_PREFIX)) {
             return bearerToken.substring(7);
         } else {

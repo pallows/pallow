@@ -147,6 +147,7 @@
 <script type="module">
     document.addEventListener('DOMContentLoaded', function() {
         const accessToken = localStorage.getItem('Authorization');
+        console.log("어쩌구", accessToken)
         if (!accessToken) {
             window.location.href = '/login';
             return;
