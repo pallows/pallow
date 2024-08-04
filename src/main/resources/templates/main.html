@@ -163,14 +163,14 @@
 
         document.getElementById('goToIndexBtn').addEventListener('click', async () => {
             try {
-                const response = await fetchWithAuth('/index.html');
+                const response = await fetchWithAuth('/chat.html');
                 if (response.ok) {
-                    window.location.href = '/index.html'; // This will redirect the user to index.html
+                    window.location.href = '/chat.html'; // This will redirect the user to index.html
                 } else {
-                    console.error('Failed to load index.html');
+                    console.error('Failed to load chat.html');
                 }
             } catch (error) {
-                console.error('Error loading index.html:', error);
+                console.error('Error loading chat.html:', error);
             }
         });
 
@@ -242,7 +242,7 @@
             logout();
         });
 
-        document.getElementById('loginSignupBtn').addEventListener('click', () => {
+        document.getElementById('loginBtn').addEventListener('click', () => {
             // Check if user is logged in
             const isLoggedIn = false; // Replace with actual login check
             if (isLoggedIn) {
