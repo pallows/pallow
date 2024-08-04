@@ -31,7 +31,8 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    String[] WHITE_LIST = {"/", "/users/login", "/email/**", "/users/signup", "/public/**", "/profiles"};
+    String[] WHITE_LIST = {"/", "/users/login", "/email/**", "/users/signup", "/public/**", "/profiles", "/InvitationList.html"};
+// "/InvitationList.html"  "/groups/**"  추가
 
     @Bean
     public PasswordEncoder passwordEncoder() {
