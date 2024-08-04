@@ -31,8 +31,7 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    String[] WHITE_LIST = {"/", "/users/login", "/signup", "/email/send", "/email/verify", "/users/signup"
-    , "/register_information", "/profiles", "/main", "/userboardCollection", "/login"};
+    String[] WHITE_LIST = {"/", "/users/login", "/email/**", "/users/signup", "/public/**", "/profiles"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -69,8 +68,6 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers(WHITE_LIST).permitAll()
-                .requestMatchers(HttpMethod.GET, "api/popups/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "api/coupons/**").permitAll()
                 .anyRequest().authenticated()
         );
 

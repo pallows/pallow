@@ -129,5 +129,7 @@ public class Profile {
     public void update(ProfileRequestDto requestDto) {
         this.content = requestDto.getContent();
         this.mbti = requestDto.getMbti();
+        this.position = requestDto.getPosition();
+        this.hobby = requestDto.getHobby();
     }
 }
