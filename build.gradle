@@ -79,6 +79,9 @@ dependencies {
     // Webjars
     implementation 'org.webjars:bootstrap:5.3.2'
     implementation 'org.webjars:jquery:3.7.1'
+
+    // asw - s3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {

@@ -82,10 +82,10 @@ public class Meets extends TimeStamp {
         this.groupCreator = user;
     }
 
-    public void update(MeetsRequestDto requestDto) {
+    public void update(MeetsRequestDto requestDto, String imageUrl) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.image = requestDto.getImage();
+        this.image = imageUrl;
         this.maxMemberCount = requestDto.getMaxMemberCount();
         this.position = requestDto.getPosition();
     }
