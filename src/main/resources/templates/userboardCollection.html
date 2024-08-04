@@ -29,51 +29,14 @@
   <div class="text-center mb-8">
     <h1 class="text-3xl font-bold">오늘의 동친</h1>
   </div>
-  <div class="mt-8">
-    <h2 class="text-2xl font-bold mb-4">사진첩</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div class="relative">
-        <img src="https://source.unsplash.com/random/400x400" alt="Photo 1" class="w-full h-64 object-cover rounded-lg">
-        <div class="absolute top-2 right-2 bg-white p-2 rounded-full shadow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-3 3m0 0l-3-3m3 3V4m0 16v-7m0 0l3 3m-3-3l-3 3" />
-          </svg>
-        </div>
-        <div class="absolute bottom-2 left-2 bg-white p-2 rounded shadow">
-          <span class="text-black font-bold">150만</span>
-        </div>
-      </div>
-      <div class="relative">
-        <img src="https://source.unsplash.com/random/400x400" alt="Photo 2" class="w-full h-64 object-cover rounded-lg">
-        <div class="absolute top-2 right-2 bg-white p-2 rounded-full shadow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-3 3m0 0l-3-3m3 3V4m0 16v-7m0 0l3 3m-3-3l-3 3" />
-          </svg>
-        </div>
-        <div class="absolute bottom-2 left-2 bg-white p-2 rounded shadow">
-          <span class="text-black font-bold">15만</span>
-        </div>
-      </div>
-      <div class="relative">
-        <img src="https://source.unsplash.com/random/400x400" alt="Photo 3" class="w-full h-64 object-cover rounded-lg">
-        <div class="absolute top-2 right-2 bg-white p-2 rounded-full shadow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-3 3m0 0l-3-3m3 3V4m0 16v-7m0 0l3 3m-3-3l-3 3" />
-          </svg>
-        </div>
-        <div class="absolute bottom-2 left-2 bg-white p-2 rounded shadow">
-          <span class="text-black font-bold">50만</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div id="profiles-container" class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4"></div>
 </main>
 </body>
 
 <script>
-  const accessToken = localStorage.getItem('Authorization');
   document.addEventListener('DOMContentLoaded', function() {
-    fetch('/profiles/', {
+    const accessToken = localStorage.getItem('Authorization');
+    fetch('/profiles/nearest', {
       method: 'GET',
       headers: {
         'Authorization': accessToken,
@@ -81,75 +44,36 @@
       }
     })
     .then(response => response.json())
-    .then(responseData => {
-      if (responseData.statusCode === 200) {
-        const data = responseData.data;
-        document.getElementById('profilePicture').src = data.photo;
-        document.getElementById('profileName').textContent = data.name; // textContent 사용
-        document.getElementById('profileRegion').value = data.position;
-        document.getElementById('profileLocation').value = data.position;
-        document.getElementById('profileBirth').value = data.birth;
-        document.getElementById('profileHobby').value = data.hobby;
-        document.getElementById('profileMbti').value = data.mbti;
-        document.getElementById('profileDescription').textContent = data.content; // textContent 사용
-      } else {
-        console.error('Error:', responseData.message);
-      }
-    })
-    .catch(error => {
-      console.error('Error fetching profile data:', error);
-    });
+    .then(data => {
+      const profiles = data.data;
+      const profilesContainer = document.getElementById('profiles-container');
 
-    //   document.getElementById('updateButton').addEventListener('click', function() {
-    //     const updatedProfile = {
-    //       content: document.getElementById('profileDescription').value,
-    //       birth: document.getElementById('profileBirth').value,
-    //       gender: document.querySelector('input[name="gender"]:checked').value,
-    //       mbti: document.getElementById('profileMbti').value,
-    //       hobby: document.getElementById('profileHobby').value,
-    //       photo: document.getElementById('profilePicture').src
-    //     };
-    //
-    //     fetch(`/profiles/${userId}`, {
-    //       method: 'PATCH',
-    //       headers: {
-    //         'Content-Type': 'application/json'
-    //       },
-    //       body: JSON.stringify(updatedProfile)
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //       alert('프로필이 성공적으로 수정되었습니다.');
-    //       // Optionally, you can update the page with new data here
-    //     })
-    //     .catch(error => {
-    //       console.error('Error updating profile:', error);
-    //     });
-    //   });
-    // });
-    //
-    document.getElementById('logoutButton').addEventListener('click', function () {
-      fetch('/users/logout', {
-        method: 'POST',
-        headers: {
-          'Authorization': accessToken,
-          'Content-Type': 'application/json'
-        },
-      })
-      .then(response => response.json())
-      .then(responseData => {
-        if (responseData.statusCode === 200) {
-          alert('성공적으로 로그아웃 되었습니다.');
-          window.location.href = '/';
-        } else {
-          alert('로그아웃에 실패했습니다.');
-        }
-      })
-      .catch(error => {
-        console.error('Error logging out:', error);
+      profiles.forEach(profile => {
+        const profileCard = document.createElement('div');
+        profileCard.className = 'relative bg-white rounded-lg shadow-lg overflow-hidden';
+
+        profileCard.innerHTML = `
+          <img src="${profile.photo}" alt="Profile Photo" class="w-full h-64 object-cover">
+          <div class="p-4">
+            <h2 class="text-xl font-semibold">${profile.name}</h2>
+            <p class="text-gray-700">${profile.position}</p>
+            <p class="text-gray-600">MBTI: ${profile.mbti}</p>
+            <p class="text-gray-600">Hobby: ${profile.hobby}</p>
+            <p class="text-gray-600">${profile.content}</p>
+          </div>
+          <div class="absolute top-2 right-2 bg-white p-2 rounded-full shadow">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 9l-3 3m0 0l-3-3m3 3V4m0 16v-7m0 0l3 3m-3-3l-3 3" />
+            </svg>
+          </div>
+        `;
+
+        profilesContainer.appendChild(profileCard);
       });
-    });
-  })
+    })
+    .catch(error => console.error('Error fetching profiles:', error));
+  });
 </script>
+
 
 </html>

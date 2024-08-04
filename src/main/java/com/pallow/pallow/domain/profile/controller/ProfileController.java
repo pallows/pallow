@@ -1,6 +1,5 @@
 package com.pallow.pallow.domain.profile.controller;
 
-import com.pallow.pallow.domain.profile.dto.ProfileFlaskReseponseDto;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.enums.Mbti;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -137,7 +135,6 @@ public class ProfileController {
                 userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_UPDATE_SUCCESS, responseDto));
-
     }
 
     @DeleteMapping("/{userId}")
@@ -146,6 +143,13 @@ public class ProfileController {
             @PathVariable Long userId) {
         profileService.deleteProfile(userId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_DELETE_SUCCESS));
+    }
+
+    @GetMapping("/nearest")
+    public ResponseEntity<CommonResponseDto> getNearest9Users(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        List<ProfileResponseDto> nearest9Users = profileService.getNearest9Users(user);
+        return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_READ_SUCCESS, nearest9Users));
     }
 
 //    @GetMapping("/recommendations")
