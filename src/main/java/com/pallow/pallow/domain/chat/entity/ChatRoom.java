@@ -48,6 +48,11 @@ public class ChatRoom extends TimeStamp {
     @Column
     private LocalDateTime deletedAt;
 
+    @Setter
+    @Getter
+    @Column(unique = true)
+    private String inviteCode;
+
     @Builder.Default
     @Column(nullable = false)
     private boolean isDeleted = false;

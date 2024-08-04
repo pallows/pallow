@@ -8,12 +8,15 @@ import com.pallow.pallow.domain.chat.entity.ChatMessage;
 import com.pallow.pallow.domain.chat.entity.ChatReaction;
 import com.pallow.pallow.domain.chat.entity.ChatRoom;
 import com.pallow.pallow.domain.chat.entity.UserAndChatRoom;
+import com.pallow.pallow.domain.chat.event.ChatInvitationEvent;
 import com.pallow.pallow.domain.chat.model.MessageType;
 import com.pallow.pallow.domain.chat.repository.ChatMessageRepository;
 import com.pallow.pallow.domain.chat.repository.ChatRoomRepository;
 import com.pallow.pallow.domain.chat.repository.UserAndChatRoomRepository;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
+import com.pallow.pallow.global.enums.ErrorType;
+import com.pallow.pallow.global.exception.CustomException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -21,20 +24,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
+import jdk.jshell.spi.ExecutionControl.UserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class ChatService {
-
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserAndChatRoomRepository userAndChatRoomRepository;
@@ -57,6 +65,7 @@ public class ChatService {
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(chatRoomDto.getName())
                 .sender(user)
+                .inviteCode(generateInviteCode()) // 이 부분 추가
                 .build();
         chatRoom = chatRoomRepository.save(chatRoom);
 
@@ -264,9 +273,105 @@ public class ChatService {
     }
 
 
+    public ChatRoomDto getChatRoomByInviteCode(String inviteCode) {
+        ChatRoom chatRoom = chatRoomRepository.findByInviteCode(inviteCode)
+                .orElseThrow(() -> new RuntimeException("Chat room not found"));
+        return convertToChatRoomDto(chatRoom);
+    }
 
+    public ChatRoomResponseDto addUserToChatRoom(Long chatRoomId, String username, boolean isAnonymous) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new RuntimeException("Chat room not found"));
 
+        User user;
+        if (isAnonymous) {
+            user = createAnonymousUser(username);
+        } else {
+            user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+        }
 
+        UserAndChatRoom userAndChatRoom = userAndChatRoomRepository
+                .findByUserAndChatRoom(user, chatRoom)
+                .orElseGet(() -> {
+                    UserAndChatRoom newUserAndChatRoom = new UserAndChatRoom(user, chatRoom);
+                    return userAndChatRoomRepository.save(newUserAndChatRoom);
+                });
+        List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(chatRoomId);
+
+        return new ChatRoomResponseDto(
+                convertToChatRoomDto(chatRoom),
+                messages.stream().map(this::convertToChatMessageDto).collect(Collectors.toList())
+        );
+    }
+
+    public void leaveChatRoom(Long chatRoomId, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new RuntimeException("Chat room not found"));
+
+        UserAndChatRoom userAndChatRoom = userAndChatRoomRepository
+                .findByUserAndChatRoom(user, chatRoom)
+                .orElseThrow(() -> new RuntimeException("User is not in this chat room"));
+
+        userAndChatRoomRepository.delete(userAndChatRoom);
+
+        // If the user was the last one in the room, delete the room
+        if (chatRoom.getUsers().size() == 1) {
+            chatRoomRepository.delete(chatRoom);
+        }
+    }
+
+    private User createAnonymousUser(String username) {
+        User anonymousUser = new User();
+        anonymousUser.setUsername(username);
+        anonymousUser.setAnonymous(true);
+        return userRepository.save(anonymousUser);
+    }
+
+    private String generateInviteCode() {
+        return UUID.randomUUID().toString().substring(0, 8);
+    }
+
+    @Transactional
+    public ChatRoomDto createChatRoomWithUser(String roomName, String creatorNickname, String invitedUserNickname) throws CustomException {
+        User creator = findUserByNickname(creatorNickname);
+        User invitedUser = findUserByNickname(invitedUserNickname);
+
+        if (invitedUser == null) {
+            throw new CustomException(ErrorType.NOT_FOUND_APPLY);
+        }
+
+        ChatRoom chatRoom = ChatRoom.builder()
+                .name(roomName)
+                .sender(creator)
+                .build();
+        chatRoom = chatRoomRepository.save(chatRoom);
+
+        // ... 기존 코드 ...
+
+        // 이벤트 발생
+        applicationEventPublisher.publishEvent(new ChatInvitationEvent(this, creator, invitedUser, chatRoom));
+
+        return convertToChatRoomDto(chatRoom);
+    }
+
+    @Transactional
+    public void deleteChatRoom(Long roomId, String nickname) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Chat room not found"));
+        User user = findUserByNickname(nickname);
+
+        userAndChatRoomRepository.deleteByUserAndChatRoom(user, chatRoom);
+
+        // 채팅방에 남아있는 사용자 수 확인
+        long remainingUsers = userAndChatRoomRepository.countByChatRoom(chatRoom);
+
+        if (remainingUsers == 0) {
+            chatRoomRepository.delete(chatRoom);
+        }
+    }
 
 }
 

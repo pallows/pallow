@@ -26,10 +26,12 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Entity
 @Getter
+@Setter
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -57,6 +59,9 @@ public class User extends TimeStamp {
 
     @Column
     private String name;
+
+    @Column(name = "is_anonymous", nullable = false)
+    private Boolean Anonymous = false;
 
     @Column
     @Enumerated(EnumType.STRING)

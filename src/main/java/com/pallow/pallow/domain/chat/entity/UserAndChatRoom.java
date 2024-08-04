@@ -44,4 +44,8 @@ public class UserAndChatRoom extends TimeStamp {
     @Setter
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public UserAndChatRoom(User user, ChatRoom chatRoom) {
+        super();
+    }
 }

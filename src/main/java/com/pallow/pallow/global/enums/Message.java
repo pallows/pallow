@@ -72,6 +72,7 @@ public enum Message {
     ROOM_CREATE_SUCCESS(HttpStatus.OK, "채팅방을 생성하였습니다."),
     ROOM_READ_SUCCESS(HttpStatus.OK, "채팅방을 조회하였습니다."),
     ROOM_ENTER_SUCCESS(HttpStatus.OK, "채팅방에 입장하였습니다."),
+    ROOM_DELETE_SUCCESS(HttpStatus.OK, "채팅방을 삭제하였습니다"),
 
     //chatmessage
     MESSAGE_CREATE_SUCCESS(HttpStatus.OK, "메시지를 생성하였습니다."),

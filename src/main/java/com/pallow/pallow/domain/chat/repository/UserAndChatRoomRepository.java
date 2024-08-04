@@ -21,4 +21,9 @@ public interface UserAndChatRoomRepository extends JpaRepository<UserAndChatRoom
 
     List<UserAndChatRoom> findByUserIdAndIsActiveTrue(Long userId);
     Optional<UserAndChatRoom> findByUserIdAndChatRoomId(Long userId, Long roomId);
+
+    void deleteByUserAndChatRoom(User user, ChatRoom chatRoom);
+
+    long countByChatRoom(ChatRoom chatRoom);
+
 }
