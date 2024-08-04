@@ -1,5 +1,6 @@
 package com.pallow.pallow.domain.profile.controller;
 
+import com.pallow.pallow.domain.profile.dto.ProfileFlaskReseponseDto;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.enums.Mbti;
