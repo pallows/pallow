@@ -10,6 +10,5 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     Profile findByUserId(Long id);
 
-    @EntityGraph(attributePaths = {"user"})
     List<Profile> findAllByPosition(Region position);
 }

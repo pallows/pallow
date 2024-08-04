@@ -7,6 +7,7 @@ import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * API 경로를 구분하기 위해 @Requestmapping에 "/api" 접두사 추가
  */
+@Slf4j
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -40,6 +42,7 @@ public class MeetsController {
     @PostMapping("/{user_id}")
     public ResponseEntity<CommonResponseDto> createMeets(@RequestBody @Valid MeetsRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        log.info(String.valueOf(userDetails.getUser().getId()));
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_CREATE_SUCCESS,
                         meetsService.create(requestDto, userDetails.getUser())));

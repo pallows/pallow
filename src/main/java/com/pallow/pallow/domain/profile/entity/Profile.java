@@ -14,6 +14,7 @@ import com.pallow.pallow.domain.profile.enums.Relationship;
 import com.pallow.pallow.domain.profile.enums.Religion;
 import com.pallow.pallow.domain.profile.enums.Smoking;
 import com.pallow.pallow.domain.user.entity.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -98,8 +99,7 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Smoking smoking;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userId", nullable = false)
+    @OneToOne(mappedBy = "profile")
     private User user;
 
     @Builder
