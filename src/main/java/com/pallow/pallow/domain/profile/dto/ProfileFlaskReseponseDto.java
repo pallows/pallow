@@ -15,5 +15,4 @@ public class ProfileFlaskReseponseDto {
     private String district;
     private Mbti mbti;
     private String photo;
-
 }

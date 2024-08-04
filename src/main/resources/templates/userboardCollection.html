@@ -15,13 +15,11 @@
 <body class="bg-gray-100">
 <header class="bg-white shadow">
   <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-    <div class="text-2xl font-bold">Pallow</div>
+    <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70"
+         height="70" alt="Logo" class="mr-4">
     <nav class="space-x-4">
-      <a href="#" class="text-gray-700">이벤트</a>
-      <a href="#" class="text-gray-700">인기 글/상승 요청</a>
       <a href="#" class="text-gray-700">내 주변 모임</a>
-      <a href="#" class="text-gray-700">내페이지</a>
-      <a href="#" class="text-gray-700">프로필</a>
+      <a href="#" class="text-gray-700">My Page</a>
     </nav>
     <button class="bg-black text-white px-4 py-2 rounded" id="logoutButton">로그아웃</button>
   </div>
@@ -136,54 +134,56 @@
       console.error('Error fetching profile data:', error);
     });
 
-  //   document.getElementById('updateButton').addEventListener('click', function() {
-  //     const updatedProfile = {
-  //       content: document.getElementById('profileDescription').value,
-  //       birth: document.getElementById('profileBirth').value,
-  //       gender: document.querySelector('input[name="gender"]:checked').value,
-  //       mbti: document.getElementById('profileMbti').value,
-  //       hobby: document.getElementById('profileHobby').value,
-  //       photo: document.getElementById('profilePicture').src
-  //     };
-  //
-  //     fetch(`/profiles/${userId}`, {
-  //       method: 'PATCH',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify(updatedProfile)
-  //     })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       alert('프로필이 성공적으로 수정되었습니다.');
-  //       // Optionally, you can update the page with new data here
-  //     })
-  //     .catch(error => {
-  //       console.error('Error updating profile:', error);
-  //     });
-  //   });
-  // });
-  //
-  // document.getElementById('logoutButton').addEventListener('click', function() {
-  //   fetch('/auth/logout', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //   })
-  //   .then(response => response.json())
-  //   .then(data => {
-  //     if (data.message === 'USER_LOGOUT_SUCCESS') {
-  //       alert('성공적으로 로그아웃 되었습니다.');
-  //       window.location.href = '/auth/login.html'; // Redirect to login page after logout
-  //     } else {
-  //       alert('로그아웃에 실패했습니다.');
-  //     }
-  //   })
-  //   .catch(error => {
-  //     console.error('Error logging out:', error);
-  //   });
-  });
+    //   document.getElementById('updateButton').addEventListener('click', function() {
+    //     const updatedProfile = {
+    //       content: document.getElementById('profileDescription').value,
+    //       birth: document.getElementById('profileBirth').value,
+    //       gender: document.querySelector('input[name="gender"]:checked').value,
+    //       mbti: document.getElementById('profileMbti').value,
+    //       hobby: document.getElementById('profileHobby').value,
+    //       photo: document.getElementById('profilePicture').src
+    //     };
+    //
+    //     fetch(`/profiles/${userId}`, {
+    //       method: 'PATCH',
+    //       headers: {
+    //         'Content-Type': 'application/json'
+    //       },
+    //       body: JSON.stringify(updatedProfile)
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //       alert('프로필이 성공적으로 수정되었습니다.');
+    //       // Optionally, you can update the page with new data here
+    //     })
+    //     .catch(error => {
+    //       console.error('Error updating profile:', error);
+    //     });
+    //   });
+    // });
+    //
+    document.getElementById('logoutButton').addEventListener('click', function () {
+      fetch('/users/logout', {
+        method: 'POST',
+        headers: {
+          'Authorization': accessToken,
+          'Content-Type': 'application/json'
+        },
+      })
+      .then(response => response.json())
+      .then(responseData => {
+        if (responseData.statusCode === 200) {
+          alert('성공적으로 로그아웃 되었습니다.');
+          window.location.href = '/';
+        } else {
+          alert('로그아웃에 실패했습니다.');
+        }
+      })
+      .catch(error => {
+        console.error('Error logging out:', error);
+      });
+    });
+  })
 </script>
 
 </html>
