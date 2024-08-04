@@ -13,6 +13,8 @@ import com.pallow.pallow.global.dtos.FlaskRequestDto;
 import com.pallow.pallow.global.dtos.FlaskResponseDto;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -48,6 +50,7 @@ public class ProfileService {
         return new ProfileResponseDto(profile);
     }
 
+
     @Transactional
     public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
         Profile foundUser = profileRepository.findById(userId)
@@ -66,7 +69,7 @@ public class ProfileService {
         }
         profileRepository.deleteById(userId);
     }
-  
+
     @Transactional
     public List<ProfileFlaskReseponseDto> recommendProfiles(User user) {
         Profile currentUserProfile = profileRepository.findByUserId(user.getId());

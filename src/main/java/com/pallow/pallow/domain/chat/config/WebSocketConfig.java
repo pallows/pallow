@@ -1,6 +1,6 @@
 package com.pallow.pallow.domain.chat.config;
 
-import com.pallow.pallow.global.security.TokenProvider;
+import com.pallow.pallow.global.jwt.JwtProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -26,11 +26,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketConfig.class);
 
-    private final TokenProvider tokenProvider;
+    private final JwtProvider jwtProvider;
     private final UserDetailsService userDetailsService;
 
-    public WebSocketConfig(TokenProvider tokenProvider, UserDetailsService userDetailsService) {
-        this.tokenProvider = tokenProvider;
+    public WebSocketConfig(JwtProvider jwtProvider, UserDetailsService userDetailsService) {
+        this.jwtProvider = jwtProvider;
         this.userDetailsService = userDetailsService;
     }
 
@@ -52,24 +52,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message,
-                        StompHeaderAccessor.class);
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     String token = accessor.getFirstNativeHeader("Authorization");
                     logger.info("Received token: " + token);
                     if (token != null && token.startsWith("Bearer ")) {
                         token = token.substring(7);
                         try {
-                            String username = tokenProvider.getUsernameFromAccessToken(token);
+                            String username = jwtProvider.getUserNameFromJwtToken(token);
                             logger.info("Extracted username: " + username);
                             if (username != null) {
-                                UserDetails userDetails = userDetailsService.loadUserByUsername(
-                                        username);
+                                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                                 UsernamePasswordAuthenticationToken authentication =
-                                        new UsernamePasswordAuthenticationToken(userDetails, null,
-                                                userDetails.getAuthorities());
-                                SecurityContextHolder.getContext()
-                                        .setAuthentication(authentication);
+                                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                                SecurityContextHolder.getContext().setAuthentication(authentication);
                                 accessor.setUser(authentication);
                                 logger.info("Authentication set for user: " + username);
                             }

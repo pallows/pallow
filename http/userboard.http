@@ -1,7 +1,6 @@
 ### 유저 게시글 생성
 POST http://localhost:8080/users/1/userboards
 Authorization: {{Authorization}}
-Cookie: {{Cookie}}
 Content-Type: application/json
 
 {
