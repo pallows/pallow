@@ -1,103 +1,32 @@
-// auth.js
-function getToken() {
-    return localStorage.getItem('jwt');
-}
+document.addEventListener('DOMContentLoaded', function() {
+    const accessToken = localStorage.getItem('Authorization');
 
-function setToken(token) {
-    localStorage.setItem('jwt', token);
-}
-
-
-// 토큰 검증 함수
-async function handleTokenValidation() {
-    const token = getToken();
-    if (!token) {
-        alert("로그인 후 이용해주세요.")
-        redirectToLogin();
-        return;
-    }
-    try {
-        const response = await fetch('/auth/refresh', {
+    // 로그아웃 함수
+    function handleLogout() {
+        fetch('/users/logout', {
             method: 'POST',
             headers: {
-                'Authorization': token,
+                'Authorization': accessToken,
+                'Content-Type': 'application/json'
             },
-            credentials: 'include' // 리프레시 토큰 쿠키를 포함
-        });
-        if (response.ok) {
-            const data = await response.json();
-            console.log('handleTokenValidation 함수 서버 응답중');
-            setToken(data.data);
-            console.log('토큰 재발급 성공'); // 현재는 이 함수를 불러올 때 마다 토큰을 재 발급
-        } else {
-            console.error('토큰 재발급 실패');
-            //  redirectToLogin();
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        if (error.message.includes("리프레시 토큰이 만료되었습니다.")) {
-            alert("리프레시 토큰이 만료되었습니다. 다시 로그인해주세요.");
-        }
-        redirectToLogin();
-    }
-}
-
-function redirectToLogin() {
-    window.location.href = "/login.html";
-}
-
-// TODO :  //  Html 접근시 토큰검증함수
-async function checkToken() {
-    document.addEventListener("DOMContentLoaded", async function () {
-        const token = getToken();
-        try {
-            await handleTokenValidation();
-
-            if (!token) {
-                window.location.href = "/login.html?error=Unauthorized";
+        })
+        .then(response => response.json())
+        .then(responseData => {
+            if (responseData.statusCode === 200) {
+                alert('성공적으로 로그아웃 되었습니다.');
+                window.location.href = '/';
+            } else {
+                alert('로그아웃에 실패했습니다.');
             }
-        } catch (error) {
-            console.error("handleTokenValidation 에러", error);
-        }
-    });
-}
-
-// TODO :  // API 요청 로그인유저 검증 입니다.
-export async function fetchWithJwtAuth(url, options = {}) {
-    const token = getToken('jwt');
-    console.log("fetchWithJwtAuth 의 토큰", token)
-    if (!options.headers) {
-        options.headers = {};
+        })
+        .catch(error => {
+            console.error('Error logging out:', error);
+        });
     }
-    if (token) {
-        console.log("이거좀 보여줘", options.headers['Authorization'] = token)
-        options.headers['Authorization'] = token;
-    }
-    console.log('보내는 헤더:', options.headers); // 헤더를 확인하는 로그 추가
-    const response = await fetch(url, options);
-    console.log('응답 상태:', response.status);
-    return response;
-}
 
-// TODO :  // 로그아웃입니다.
-function logout() {
-    const token = getToken('jwt');
-    fetch('/auth/logout', {
-        method: 'POST',
-        headers: {
-            'Authorization': token,
-            'Content-Type': 'application/json'
-        },
-        credentials: 'include'  // 쿠키 포함
-    }).then(response => {
-        if (response.ok) {
-            localStorage.removeItem('jwt'); // JWT 액세스 토큰 제거
-            console.log('로그아웃');
-            window.location.href = 'login.html';
-        }
-    }).catch(error => {
-        console.error('Error during logout:', error);
+    // 로그아웃 버튼에 이벤트 리스너 추가
+    const logoutButtons = document.querySelectorAll('#logoutBtn, #logoutButton');
+    logoutButtons.forEach(button => {
+        button.addEventListener('click', handleLogout);
     });
-}
-
-export {getToken, setToken, handleTokenValidation, checkToken, logout};
+});

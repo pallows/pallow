@@ -42,7 +42,7 @@
         </div>
         <div class="flex mb-4 space-x-2">
             <button type="submit" class="w-1/2 mr-2 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">로그인</button>
-            <a href="/signup" class="w-1/2 ml-2 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 text-center">회원가입</a>
+            <a href="/public/signup" class="w-1/2 ml-2 bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 text-center">회원가입</a>
         </div>
     </form>
     <a href="/auth/oauth/login/kakao"
@@ -83,7 +83,7 @@
                         localStorage.setItem('Authorization', accessToken);
                         localStorage.setItem('username', username);
                         alert('Login successful!');
-                        window.location.href = '/main';
+                        window.location.href = '/public/main';
                     } else {
                         alert('Login failed: Access token not found.');
                     }
