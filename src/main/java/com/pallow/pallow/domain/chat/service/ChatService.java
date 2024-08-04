@@ -16,6 +16,7 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -228,6 +229,29 @@ public class ChatService {
         }
 
         return unreadCounts;
+    }
+
+    @Transactional
+    public ChatRoomDto findOrCreateChatRoom(Long userId, String username) {
+        User currentUser = findUserByNickname(username);
+        User otherUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<User> users = Arrays.asList(currentUser, otherUser);
+        Optional<ChatRoom> existingRoom = chatRoomRepository.findByUsersIn(users);
+
+        if (existingRoom.isPresent()) {
+            return convertToChatRoomDto(existingRoom.get());
+        } else {
+            ChatRoom newRoom = ChatRoom.builder()
+                    .name(currentUser.getNickname() + " & " + otherUser.getNickname())
+                    .sender(currentUser)
+                    .build();
+            newRoom.getUsers().addAll(users);
+            newRoom = chatRoomRepository.save(newRoom);
+
+            return convertToChatRoomDto(newRoom);
+        }
     }
 
     public void markRoomAsRead(Long roomId, Long userId) {
