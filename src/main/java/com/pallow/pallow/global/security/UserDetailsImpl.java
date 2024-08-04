@@ -1,14 +1,11 @@
 package com.pallow.pallow.global.security;
 
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.global.enums.Role;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter

@@ -1,18 +1,13 @@
 package com.pallow.pallow.domain.user.controller;
 
 
-import com.pallow.pallow.domain.user.dto.LoginRequestDto;
 import com.pallow.pallow.domain.user.dto.SignupRequestDto;
 import com.pallow.pallow.domain.user.dto.UserRequestDto;
 import com.pallow.pallow.domain.user.dto.UserResponseDto;
-import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.service.UserService;
 import com.pallow.pallow.global.common.CommonResponseDto;
-
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +23,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<CommonResponseDto> signup(
-            @Valid @RequestBody SignupRequestDto dto) {
+    public ResponseEntity<CommonResponseDto> signup(@Valid @RequestBody SignupRequestDto dto) {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.USER_LOCAL_SIGNUP_SUCCESS, userService.signup(dto)));
     }

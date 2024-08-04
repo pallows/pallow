@@ -31,8 +31,8 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    String[] WHITE_LIST = {"/", "/api/v1/login", "/signup", "/email/send", "/email/verify", "/api/v1/signup"
-    , "/register_information", "/profiles"};
+    String[] WHITE_LIST = {"/", "/users/login", "/signup", "/email/send", "/email/verify", "/users/signup"
+    , "/register_information", "/profiles", "/main", "/userboardCollection", "/login"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -75,9 +75,8 @@ public class WebSecurityConfig {
         );
 
         // 필터 관리
-        http.addFilterBefore(jwtAuthorizationFilter(), AuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
+        http.addFilterBefore(jwtAuthorizationFilter(), AuthenticationFilter.class);
         return http.build();
     }
 

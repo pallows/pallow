@@ -1,6 +1,5 @@
 package com.pallow.pallow.domain.user.service;
 
-import com.pallow.pallow.domain.user.dto.LoginRequestDto;
 import com.pallow.pallow.domain.user.dto.SignupRequestDto;
 import com.pallow.pallow.domain.user.dto.UserRequestDto;
 import com.pallow.pallow.domain.user.dto.UserResponseDto;
@@ -9,13 +8,13 @@ import com.pallow.pallow.domain.user.repository.RefreshTokenRepository;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
+import com.pallow.pallow.global.enums.Gender;
+import com.pallow.pallow.global.enums.Role;
 import com.pallow.pallow.global.exception.CustomException;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,8 +38,17 @@ public class UserService {
         if (userRepository.existsByUsername(dto.getUsername())) {
             throw new CustomException(ErrorType.DUPLICATE_ACCOUNT_ID);
         }
-        String encodedPassword = passwordEncoder.encode(dto.getPassword());
-        return userRepository.save(User.of(dto, encodedPassword));
+
+        User creadtedUser = User.createdUser(
+                dto.getUsername(),
+                dto.getNickname(),
+                dto.getEmail(),
+                dto.getName(),
+                Gender.fromString(dto.getGender()),
+                passwordEncoder.encode(dto.getPassword()),
+                Role.USER);
+        userRepository.save(creadtedUser);
+        return creadtedUser;
     }
 
     /**
@@ -58,7 +66,6 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
     }
-
 
     public void deleteUser(Long userId, Long currentUserId) {
         if (!Objects.equals(userId, currentUserId)) { // 탈퇴를 하기위한 유저가 본인인지 검사

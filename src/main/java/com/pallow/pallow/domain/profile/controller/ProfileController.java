@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,12 @@ public class ProfileController {
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
     }
 
+    @GetMapping("/")
+    public ResponseEntity<CommonResponseDto> getMyProfile(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        ProfileResponseDto responseDto = profileService.getMyProfile(userDetails.getUser().getId());
+        return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
+    }
+
     @PostMapping
     public ResponseEntity<CommonResponseDto> createProfile(
             @RequestParam("content") String content,
@@ -68,7 +75,6 @@ public class ProfileController {
             @RequestParam("position") String position,
             @RequestParam("username") String username) throws IOException {
 
-        LocalDate birthDate = LocalDate.parse(birth);
         Mbti mbtiEnum = Mbti.valueOf(mbti);
 
         String photoPath;
@@ -80,17 +86,19 @@ public class ProfileController {
 
         ProfileRequestDto requestDto = new ProfileRequestDto();
         requestDto.setContent(content);
-        requestDto.setBirth(birthDate);
+        requestDto.setBirth(birth);
         requestDto.setMbti(mbtiEnum);
-        requestDto.setHobby(hobby);
         requestDto.setPhoto(photoPath);
         requestDto.setPosition(position);
+        requestDto.setUsername(username);
+        requestDto.setHobby(hobby);
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
 
         ProfileResponseDto responseDto = profileService.createProfile(requestDto, user);
-        return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
+        return ResponseEntity.ok(
+                new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
     }
 
     private String saveFile(MultipartFile file) throws IOException {
@@ -139,13 +147,13 @@ public class ProfileController {
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_DELETE_SUCCESS));
     }
 
-    @GetMapping("/recommendations")
-    public ResponseEntity<CommonResponseDto> getRecommendedProfiles(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<ProfileFlaskReseponseDto> responseDto = profileService.recommendProfiles(
-                userDetails.getUser());
-        return ResponseEntity.ok(
-                new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS, responseDto));
-    }
+//    @GetMapping("/recommendations")
+//    public ResponseEntity<CommonResponseDto> getRecommendedProfiles(
+//            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        List<ProfileFlaskReseponseDto> responseDto = profileService.recommendProfiles(
+//                userDetails.getUser());
+//        return ResponseEntity.ok(
+//                new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS, responseDto));
+//    }
 
 }

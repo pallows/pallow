@@ -3,8 +3,8 @@ package com.pallow.pallow.domain.user.entity;
 import com.pallow.pallow.domain.chat.entity.UserAndChatRoom;
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.profile.entity.Profile;
-import com.pallow.pallow.global.common.CommonOauth;
 import com.pallow.pallow.domain.user.dto.SignupRequestDto;
+import com.pallow.pallow.global.common.CommonOauth;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.Gender;
@@ -21,11 +21,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Entity
@@ -68,7 +68,7 @@ public class User extends TimeStamp {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private CommonStatus status;
+    private CommonStatus status = CommonStatus.ACTIVE;
 
     @Column
     private CommonOauth oauth;
@@ -110,8 +110,17 @@ public class User extends TimeStamp {
         this.password = password;
     }
 
-    public static User of(SignupRequestDto dto, String encodedPassword) {
-        return new User(dto, encodedPassword);
+    public static User createdUser(String username, String nickname, String email, String name,Gender gender,
+            String password, Role role) {
+        User user = new User();
+        user.username = username;
+        user.nickname = nickname;
+        user.password = password;
+        user.email = email;
+        user.name = name;
+        user.gender = gender;
+        user.userRole = role;
+        user.status = CommonStatus.ACTIVE;
+        return user;
     }
-
 }
