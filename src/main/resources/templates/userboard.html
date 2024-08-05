@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+  <script src="/js/auth.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prototype</title>
@@ -49,6 +50,22 @@
   <link rel="icon" href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png" type="image/x-icon">
 </head>
 <body class="bg-gray-100">
+<header class="flex justify-between items-center p-4 bg-white shadow">
+  <div class="flex items-center">
+    <a href="/public/main">
+      <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
+    </a>
+    <nav>
+      <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
+      <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
+    </nav>
+  </div>
+  <div class="flex items-center">
+    <button id="profileBtn" class="mr-4">내 프로필</button>
+    <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
+  </div>
+</header>
+
 <div class="max-w-4xl mx-auto p-4 bg-white shadow-md rounded-lg">
   <div class="flex justify-between items-center mb-4">
     <div class="text-gray-500 flex items-center space-x-2">
@@ -56,10 +73,6 @@
         <img src="https://source.unsplash.com/random/40x40" alt="Profile">
       </a>
       <span>username</span>
-    </div>
-    <div class="space-x-2">
-      <a href="edit.html" class="text-blue-500 hover:text-blue-700" id="post-actions">게시물 수정하기</a>
-      <a href="close.html" class="text-red-500 hover:text-red-700">닫기</a>
     </div>
 
   </div>

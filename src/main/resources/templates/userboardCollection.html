@@ -52,6 +52,7 @@
       profiles.forEach(profile => {
         const profileCard = document.createElement('div');
         profileCard.className = 'relative bg-white rounded-lg shadow-lg overflow-hidden';
+        profileCard.dataset.profileId = profile.id;
 
         profileCard.innerHTML = `
           <img src="${profile.photo}" alt="Profile Photo" class="w-full h-64 object-cover">
@@ -68,6 +69,11 @@
             </svg>
           </div>
         `;
+
+        profileCard.addEventListener('click', function() {
+          const profileId = profileCard.dataset.profileId;
+          window.location.href = `/public/userboard?profileId=${profileId}`;
+        });
 
         profilesContainer.appendChild(profileCard);
       });
