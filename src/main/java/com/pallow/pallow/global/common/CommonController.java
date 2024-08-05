@@ -15,7 +15,9 @@ public class CommonController {
     private final MeetsService meetsService;
 
     @GetMapping("/")
-    public String home() {return "login";}
+    public String home() {
+        return "login";
+    }
 
     @GetMapping("/public/main")
     public String mainPage() {
@@ -33,12 +35,12 @@ public class CommonController {
     }
 
     @GetMapping("/public/benefits")
-    public String benefitsPage()  {
+    public String benefitsPage() {
         return "benefits";
     }
 
     @GetMapping("/public/payments")
-    public String paymentsPage()  {
+    public String paymentsPage() {
         return "payments";
     }
 
@@ -61,5 +63,10 @@ public class CommonController {
     @GetMapping("/public/MyPage")
     public String MyPage() {
         return "MyPage";
+    }
+
+    @GetMapping("/public/userboard")
+    public String userboard() {
+        return "userboard";
     }
 }

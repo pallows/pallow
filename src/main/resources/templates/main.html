@@ -70,8 +70,9 @@
 <body class="bg-gray-100 text-black">
 <header class="flex justify-between items-center p-4 bg-white shadow">
     <div class="flex items-center">
-        <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70"
-             height="70" alt="Logo" class="mr-4">
+        <a href="/public/main">
+            <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
+        </a>
         <nav>
             <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
             <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
@@ -142,12 +143,9 @@
     </button>
     <button id="goToIndexBtn">test Button</button>
 </footer>
-
-
 <script type="module">
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const accessToken = localStorage.getItem('Authorization');
-        console.log("어쩌구", accessToken)
         if (!accessToken) {
             window.location.href = '/login';
             return;
@@ -165,8 +163,10 @@
         document.getElementById('goToIndexBtn').addEventListener('click', async () => {
             try {
                 const response = await fetchWithAuth('/chat.html');
+                const response = await fetchWithAuth('/meets.html');
                 if (response.ok) {
                     window.location.href = '/chat.html'; // This will redirect the user to index.html
+                    window.location.href = '/meets.html'; // This will redirect the user to index.html
                 } else {
                     console.error('Failed to load chat.html');
                 }
@@ -242,16 +242,16 @@
         document.getElementById('logoutBtn').addEventListener('click', () => {
             logout();
         });
-
-        document.getElementById('loginBtn').addEventListener('click', () => {
-            // Check if user is logged in
-            const isLoggedIn = false; // Replace with actual login check
-            if (isLoggedIn) {
-                alert('이미 엘리트 멤버십 혜택을 받고 계십니다!');
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
+        //
+        // document.getElementById('loginSignupBtn').addEventListener('click', () => {
+        //     // Check if user is logged in
+        //     const isLoggedIn = false; // Replace with actual login check
+        //     if (isLoggedIn) {
+        //         alert('이미 엘리트 멤버십 혜택을 받고 계십니다!');
+        //     } else {
+        //         window.location.href = 'login.html';
+        //     }
+        // });
 
         document.getElementById('chatBtn').addEventListener('click', () => {
             window.location.href = '/chat';

@@ -7,11 +7,15 @@ import lombok.Getter;
 @Getter
 public class InvitedBoardResponseDto {
 
+
+    private Long userId;
+
     private String nickname;
 
     private InviteStatus status;
 
     public InvitedBoardResponseDto(InvitedBoard invitedBoard) {
+        this.userId = invitedBoard.getUser().getId();
         this.nickname = invitedBoard.getUser().getNickname();
         this.status = invitedBoard.getStatus();
     }

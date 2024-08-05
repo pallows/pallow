@@ -4,6 +4,8 @@ import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.global.enums.CommonStatus;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 public class MeetsResponseDto {
 
@@ -21,6 +23,11 @@ public class MeetsResponseDto {
 
     private CommonStatus status;
 
+    private String creatorProfilePhoto; // 추가한 필드
+
+    private LocalDateTime createdAt;
+
+
     public MeetsResponseDto(Meets meets) {
         this.id = meets.getId();
         this.title = meets.getTitle();
@@ -29,5 +36,7 @@ public class MeetsResponseDto {
         this.maxMemberCount = meets.getMaxMemberCount();
         this.position = meets.getPosition();
         this.status = meets.getStatus();
+        this.creatorProfilePhoto = meets.getGroupCreator().getProfile().getPhoto(); // 생성자의 프로필 사진 URL 설정
+        this.createdAt = meets.getCreatedAt();
     }
 }

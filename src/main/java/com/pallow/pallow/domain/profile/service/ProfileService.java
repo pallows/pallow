@@ -7,6 +7,7 @@ import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.domain.profile.entity.ProfileItem;
+import com.pallow.pallow.domain.profile.repository.ProfileCustomRepository;
 import com.pallow.pallow.domain.profile.repository.ProfileRepository;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
@@ -16,9 +17,13 @@ import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +44,7 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
     private final ProfileMapper profileMapper;
+    private final ProfileCustomRepository profileCustomRepository;
 
     public ProfileResponseDto getProfile(Long userId) {
         Profile foundUser = profileRepository.findById(userId)
@@ -77,7 +83,7 @@ public class ProfileService {
         }
         profileRepository.deleteById(userId);
     }
-  
+
     @Transactional
     public List<ProfileFlaskReseponseDto> recommendProfiles(User user) {
         Profile currentUserProfile = profileRepository.findByUserId(user.getId());
@@ -143,6 +149,31 @@ public class ProfileService {
             log.error("HTTP error while sending request to Flask: {}", e.getMessage());
             throw new CustomException(ErrorType.NOT_FOUND_USER);
         }
+    }
+
+    @Transactional
+    public List<ProfileResponseDto> getNearest9Users(User user) {
+        String[] userPositionParts = user.getProfile().getPosition().split(" ");
+        String first = userPositionParts.length > 0 ? userPositionParts[0] : "";
+        String second = userPositionParts.length > 1 ? userPositionParts[1] : "";
+        String third = userPositionParts.length > 2 ? userPositionParts[2] : "";
+        return profileCustomRepository.findTop9NearestProfiles(user.getId(), first, second, third);
+    }
+
+    private int comparePositions(String userPosition, String profilePosition) {
+        String[] userPositionParts = userPosition.split(" ");
+        String[] profilePositionParts = profilePosition.split(" ");
+        int matchScore = 0;
+        if (userPositionParts.length > 0 && profilePositionParts.length > 0 && userPositionParts[0].equals(profilePositionParts[0])) {
+            matchScore += 3;
+        }
+        if (userPositionParts.length > 1 && profilePositionParts.length > 1 && userPositionParts[1].equals(profilePositionParts[1])) {
+            matchScore += 2;
+        }
+        if (userPositionParts.length > 2 && profilePositionParts.length > 2 && userPositionParts[2].equals(profilePositionParts[2])) {
+            matchScore += 1;
+        }
+        return -matchScore;
     }
 
 
