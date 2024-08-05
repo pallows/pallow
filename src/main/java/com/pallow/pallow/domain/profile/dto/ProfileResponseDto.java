@@ -19,6 +19,7 @@ import lombok.Setter;
 @Getter
 public class ProfileResponseDto {
 
+    private Long id;
     private String content;
     private String birth;
     private String position;
@@ -40,7 +41,7 @@ public class ProfileResponseDto {
     private String name;
 
     @QueryProjection
-    public ProfileResponseDto(String content, String birth, String position, Mbti mbti, String hobby, String photo, String name) {
+    public ProfileResponseDto(Long id, String content, String birth, String position, Mbti mbti, String hobby, String photo, String name) {
         this.content = content;
         this.birth = birth;
         this.position = position;
@@ -48,6 +49,7 @@ public class ProfileResponseDto {
         this.hobby = hobby;
         this.photo = photo;
         this.name = name.trim();
+        this.id = id;
     }
 
     public ProfileResponseDto(Profile foundUser, String name) {

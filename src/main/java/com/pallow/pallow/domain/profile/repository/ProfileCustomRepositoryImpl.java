@@ -38,6 +38,7 @@ public class ProfileCustomRepositoryImpl implements ProfileCustomRepository {
 
         List<ProfileResponseDto> nearestProfiles = jpaQueryFactory
                 .select(new QProfileResponseDto(
+                        profile.id,
                         profile.content,
                         profile.birth,
                         profile.position,
@@ -57,6 +58,7 @@ public class ProfileCustomRepositoryImpl implements ProfileCustomRepository {
         if (nearestProfiles.size() < 9) {
             List<ProfileResponseDto> additionalProfiles = jpaQueryFactory
                     .select(new QProfileResponseDto(
+                            profile.id,
                             profile.content,
                             profile.birth,
                             profile.position,

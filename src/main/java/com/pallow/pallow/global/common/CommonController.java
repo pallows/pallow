@@ -64,4 +64,9 @@ public class CommonController {
     public String MyPage() {
         return "MyPage";
     }
+
+    @GetMapping("/public/userboard")
+    public String userboard() {
+        return "userboard";
+    }
 }

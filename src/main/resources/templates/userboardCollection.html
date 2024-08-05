@@ -16,8 +16,9 @@
 <body class="bg-gray-100">
 <header class="bg-white shadow">
   <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-    <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70"
-         height="70" alt="Logo" class="mr-4" href="/main">
+    <a href="/public/main">
+      <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
+    </a>
     <nav class="space-x-4">
       <a href="/public/meetsCollection" class="text-gray-700">내 주변 모임</a>
       <a href="/public/MyPage" class="text-gray-700">My Page</a>
@@ -51,6 +52,7 @@
       profiles.forEach(profile => {
         const profileCard = document.createElement('div');
         profileCard.className = 'relative bg-white rounded-lg shadow-lg overflow-hidden';
+        profileCard.dataset.profileId = profile.id;
 
         profileCard.innerHTML = `
           <img src="${profile.photo}" alt="Profile Photo" class="w-full h-64 object-cover">
@@ -67,6 +69,11 @@
             </svg>
           </div>
         `;
+
+        profileCard.addEventListener('click', function() {
+          const profileId = profileCard.dataset.profileId;
+          window.location.href = `/public/userboard?profileId=${profileId}`;
+        });
 
         profilesContainer.appendChild(profileCard);
       });
