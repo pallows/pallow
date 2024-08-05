@@ -79,19 +79,35 @@ jobs:
             fi
             # 여기서의 환경 변수도 여러분 상황에 맞게 작성하시면 됩니다!!!
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
-            sudo docker run -d -p 8080:8080 \
-                -e CLIENT_ID=d21718e96e4084ceeeeb474c55d28d50
-                -e DB_PASSWORD=1q2w3e4r
-                -e DB_URL=jdbc:mysql://localhost:3306/pallow
-                -e DB_USERNAME=root
-                -e ACCESS_TOKEN_TTL=6400000
-                -e REFRESH_TOKEN_TTL= 6400000
-                -e JWT_SECRET_KEY=GziP2tKme5j8oPnIcJxJmv7j+sSev3J1tBRExWgnSMeBBYtGq+RFXjsbA+4E8G5lBPOAriDxEr8B2B7W9T+F0w==
-                -e MAIL_PASSWORD=festtsobwrueciig
-                -e MAIL_USERNAME=seo78200@gmail.com
-                -e REDIRECT_URI=http://localhost:8080/auth/oauth/callback
-                -e REDIS_HOST=localhost 
-                -e REDIS_PORT=6379
+            sudo docker run -it -d -p 8080:8080 \
+                -e CLIENT_ID=d21718e96e4084ceeeeb474c55d28d50 \
+                -e DB_PASSWORD=1q2w3e4r \
+                -e DB_URL=jdbc:mysql://localhost:3306/pallow \
+                -e DB_USERNAME=root \
+                -e ACCESS_TOKEN_TTL=6400000 \
+                -e REFRESH_TOKEN_TTL= 6400000 \
+                -e JWT_SECRET_KEY=GziP2tKme5j8oPnIcJxJmv7j+sSev3J1tBRExWgnSMeBBYtGq+RFXjsbA+4E8G5lBPOAriDxEr8B2B7W9T+F0w== \
+                -e MAIL_PASSWORD=festtsobwrueciig \
+                -e MAIL_USERNAME=seo78200@gmail.com \
+                -e REDIRECT_URI=http://localhost:8080/auth/oauth/callback \
+                -e REDIS_HOST=localhost \
+                -e REDIS_PORT=6379 \
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
+            
+            sudo docker run -it -d -p 8080:8080 \
+                -e CLIENT_ID=d21718e96e4084ceeeeb474c55d28d50 \
+                -e DB_PASSWORD=1q2w3e4r \
+                -e DB_URL=jdbc:mysql://localhost:3306/pallow \
+                -e DB_USERNAME=root \
+                -e ACCESS_TOKEN_TTL=6400000 \
+                -e REFRESH_TOKEN_TTL=6400000 \
+                -e JWT_SECRET_KEY=GziP2tKme5j8oPnIcJxJmv7j+sSev3J1tBRExWgnSMeBBYtGq+RFXjsbA+4E8G5lBPOAriDxEr8B2B7W9T+F0w== \
+                -e MAIL_PASSWORD=festtsobwrueciig \
+                -e MAIL_USERNAME=seo78200@gmail.com \
+                -e REDIRECT_URI=http://localhost:8080/auth/oauth/callback \
+                -e REDIS_HOST=localhost \
+                -e REDIS_PORT=6379 \
+            --name dqwerkahfmvkxl timevil/pal-world:latest /bin/bash
+        
             
             
