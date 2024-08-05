@@ -1,5 +1,6 @@
 package com.pallow.pallow.domain.userboard.service;
 
+import com.pallow.pallow.domain.like.service.LikeService;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.service.UserService;
 import com.pallow.pallow.domain.userboard.dto.UserBoardRequestDto;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserBoardService {
 
     private final UserService userService;
+    private final LikeService likeService;
     private final ImageService imageService;
     private final UserBoardRepository userBoardRepository;
 
@@ -96,6 +98,16 @@ public class UserBoardService {
         }
 
         userBoardRepository.delete(userBoard);
+    }
+
+    /**
+     * 좋아요 토글
+     * @param userBoardId
+     * @param user
+     */
+    @Transactional
+    public void toggleLike(Long userBoardId, User user) {
+        likeService.toggleLike(userBoardId, user, userBoardRepository);
     }
 
     private boolean isSameIdAndUser(Long userId, User user) {

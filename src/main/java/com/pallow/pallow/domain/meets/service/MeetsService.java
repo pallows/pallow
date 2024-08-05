@@ -2,6 +2,7 @@ package com.pallow.pallow.domain.meets.service;
 
 import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
 import com.pallow.pallow.domain.invitedboard.repository.InvitedBoardRepository;
+import com.pallow.pallow.domain.like.service.LikeService;
 import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
 import com.pallow.pallow.domain.meets.dto.MeetsResponseDto;
 import com.pallow.pallow.domain.meets.entity.Meets;
@@ -27,8 +28,9 @@ public class MeetsService {
 
     private final MeetsRepository meetsRepository;
     private final UserRepository userRepository;
-    private final InvitedBoardRepository invitedBoardRepository;
+    private final LikeService likeService;
     private final ImageService imageService;
+    private final InvitedBoardRepository invitedBoardRepository;
 
     /**
      * 그룹 생성
@@ -53,6 +55,7 @@ public class MeetsService {
                 .content(requestDto.getContent())
                 .image(imageUrl)
                 .maxMemberCount(requestDto.getMaxMemberCount())
+                .position(requestDto.getPosition())
                 .user(existUser)
                 .status(CommonStatus.ACTIVE)
                 .build();
@@ -175,5 +178,15 @@ public class MeetsService {
         );
 
         invitedBoardRepository.delete(invitedMember);
+    }
+
+    /**
+     * 좋아요 토글
+     * @param meetsId
+     * @param user
+     */
+    @Transactional
+    public void toggleLike(Long meetsId, User user) {
+        likeService.toggleLike(meetsId, user, meetsRepository);
     }
 }

@@ -23,6 +23,8 @@ public class MeetsResponseDto {
 
     private CommonStatus status;
 
+    private int likesCount;
+
     public MeetsResponseDto(Meets meets) {
         this.id = meets.getId();
         this.title = meets.getTitle();
@@ -32,5 +34,6 @@ public class MeetsResponseDto {
         this.maxMemberCount = meets.getMaxMemberCount();
         this.position = meets.getPosition();
         this.status = meets.getStatus();
+        this.likesCount = meets.getLikesCount();
     }
 }

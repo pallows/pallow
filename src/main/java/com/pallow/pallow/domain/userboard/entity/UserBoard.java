@@ -1,8 +1,10 @@
 package com.pallow.pallow.domain.userboard.entity;
 
+import com.pallow.pallow.domain.like.entity.Likeable;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.userboard.dto.UserBoardRequestDto;
 import com.pallow.pallow.global.entity.TimeStamp;
+import com.pallow.pallow.global.enums.ContentType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class UserBoard extends TimeStamp {
+public class UserBoard extends TimeStamp implements Likeable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +40,7 @@ public class UserBoard extends TimeStamp {
     @Column
     private String image;
 
-    @Column(nullable = false)
+    @Column
     private int likesCount;
 
     @Builder
@@ -57,5 +59,20 @@ public class UserBoard extends TimeStamp {
         this.content = requestDto.getContent();
         this.image = imageUrl;
         this.title = requestDto.getTitle();
+    }
+
+    @Override
+    public ContentType contentType() {
+        return ContentType.USER_BOARD;
+    }
+
+    @Override
+    public void addLikesCount() {
+        this.likesCount++;
+    }
+
+    @Override
+    public void minusLikesCount() {
+        this.likesCount--;
     }
 }
