@@ -14,10 +14,16 @@ public class ReviewResponseDto {
 
     private int likesCount;
 
+    private String reviewerName;
+
+    private String reviewerProfilePhoto;
+
     public ReviewResponseDto(MeetsReview meetsReview) {
         this.id = meetsReview.getId();
         this.content = meetsReview.getContent();
         this.likesCount = meetsReview.getLikesCount();
         this.starRating = meetsReview.getStarRating();
+        this.reviewerName = meetsReview.getUser().getUsername(); // 유저 이름
+        this.reviewerProfilePhoto = meetsReview.getUser().getProfile().getPhoto(); // 프로필 사진
     }
 }
