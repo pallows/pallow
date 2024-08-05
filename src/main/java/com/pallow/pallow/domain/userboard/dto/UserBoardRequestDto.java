@@ -4,8 +4,11 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.userboard.entity.UserBoard;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
+@Setter
 public class UserBoardRequestDto {
 
     @NotNull(message = "제목이 필요합니다.")
@@ -15,9 +18,9 @@ public class UserBoardRequestDto {
     private String content;
 
     @NotNull(message = "사진이 필요합니다.")
-    private String photo;
+    private MultipartFile image;
 
-    public UserBoard toEntity(User createdBy) {
-        return UserBoard.builder().title(title).content(content).photo(photo).user(createdBy).build();
+    public UserBoard toEntity(User createdBy, String imageUrl) {
+        return UserBoard.builder().title(title).content(content).image(imageUrl).user(createdBy).build();
     }
 }

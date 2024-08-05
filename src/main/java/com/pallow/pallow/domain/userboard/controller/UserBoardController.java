@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +32,7 @@ public class UserBoardController {
     public ResponseEntity<CommonResponseDto> createUserBoard(
             @PathVariable("userId") long userId,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody @Valid UserBoardRequestDto requestDto) {
+            @ModelAttribute @Valid UserBoardRequestDto requestDto) {
         UserBoardResponseDto responseDto = userBoardService.createBoard(requestDto,
                 userDetails.getUser(), userId);
         return ResponseEntity.ok(
@@ -63,7 +64,7 @@ public class UserBoardController {
     public ResponseEntity<CommonResponseDto> updateUserBoard(
             @PathVariable("userId") long userId,
             @PathVariable("userBoardId") long userBoardId,
-            @RequestBody @Valid UserBoardRequestDto requestDto,
+            @ModelAttribute @Valid UserBoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserBoardResponseDto responseDto = userBoardService.updateUserBoard(userId, userBoardId,
                 requestDto, userDetails.getUser());

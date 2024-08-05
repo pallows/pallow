@@ -39,7 +39,7 @@ public class Profile {
     private Long Id;
 
     @Column
-    private String photo;
+    private String image;
 
     @Column(nullable = false)
     private String content;
@@ -105,17 +105,19 @@ public class Profile {
 
     @Builder
     public Profile(String content, String birth, Region position, Mbti mbti, User createdBy,
-            Interest interest, String photo) {
+            Interest interest, String image) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
         this.position = position;
-        this.photo = photo;
+        this.image = image;
         this.user = createdBy;
     }
 
-    public void update(ProfileRequestDto requestDto) {
+    public void update(ProfileRequestDto requestDto, String imageUrl) {
         this.content = requestDto.getContent();
+        this.position = requestDto.getPosition();
         this.mbti = requestDto.getMbti();
+        this.image = imageUrl;
     }
 }

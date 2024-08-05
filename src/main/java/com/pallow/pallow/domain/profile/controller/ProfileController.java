@@ -18,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.Mapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,9 +54,9 @@ public class ProfileController {
      * @param userDetails 유저 데이터
      * @return 생성 성공 메시지 + 생성된 프로필 데이터
      */
-    @PostMapping
+    @PostMapping(consumes = { "multipart/form-data" })
     public ResponseEntity<CommonResponseDto> createProfile(
-            @RequestBody @Valid ProfileRequestDto requestDto,
+            @ModelAttribute @Valid ProfileRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         ProfileResponseDto responseDto = profileService.createProfile(requestDto,
                 userDetails.getUser());
@@ -73,7 +74,7 @@ public class ProfileController {
      */
     @PatchMapping
     public ResponseEntity<CommonResponseDto> updateProfile(
-            @RequestBody @Valid ProfileRequestDto requestDto,
+            @ModelAttribute @Valid ProfileRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable Long userId) {
         ProfileResponseDto responseDto = profileService.updateProfile(userId, requestDto,

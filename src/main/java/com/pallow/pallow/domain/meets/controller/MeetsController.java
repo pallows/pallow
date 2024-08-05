@@ -39,13 +39,9 @@ public class MeetsController {
      * @param userDetails 유저 데이터
      * @return 생성 성공 메시지 + 생성된 리뷰 데이터
      */
-    @PostMapping(value = "/{user_id}", consumes = { "multipart/form-data" })
+    @PostMapping("/{user_id}")
     public ResponseEntity<CommonResponseDto> createMeets(@ModelAttribute @Valid MeetsRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            Errors errors) {
-        if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().body((CommonResponseDto) errors.getAllErrors());
-        }
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_CREATE_SUCCESS,
                         meetsService.create(requestDto, userDetails.getUser())));
@@ -84,7 +80,7 @@ public class MeetsController {
      */
     @PatchMapping("/{meets_id}")
     public ResponseEntity<CommonResponseDto> updateMeets(@PathVariable Long meets_id,
-            @RequestBody @Valid MeetsRequestDto requestDto,
+            @ModelAttribute @Valid MeetsRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_UPDATE_SUCCESS,

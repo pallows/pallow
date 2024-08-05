@@ -18,26 +18,6 @@ public class ImageService {
         this.amazonS3 = amazonS3;
     }
 
-//    public String imageUpload(MultipartRequest request) throws IOException {
-//        // request 에서 이미지 파일을 가져옴
-//        MultipartFile file = request.getFile("file");
-//
-//        // 가져온 이미지 파일의 이름과 확장자 추출
-//        String fileName = file.getOriginalFilename();
-//        String ext = fileName.substring(fileName.indexOf("."));
-//
-//        // 이미지 파일에 고유 아이디 생성
-//        String uuidFileName = UUID.randomUUID() + ext;
-//
-//        ObjectMetadata metadata = new ObjectMetadata();
-//        metadata.setContentLength(file.getSize());
-//
-//        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uuidFileName, file.getInputStream(), metadata);
-//
-//        amazonS3.putObject(putObjectRequest);
-//        return amazonS3.getUrl(bucketName, fileName).toString();
-//    }
-
     public String imageUpload(MultipartFile file) throws IOException {
         String fileName = file.getOriginalFilename();
         String ext = fileName.substring(fileName.lastIndexOf("."));

@@ -25,6 +25,8 @@ import com.pallow.pallow.global.region.Region.District_Jeollabuk;
 import com.pallow.pallow.global.region.Region.District_Jeollanam;
 import com.pallow.pallow.global.region.Region.District_Seoul;
 import com.pallow.pallow.global.region.Region.District_Ulsan;
+import com.pallow.pallow.s3.service.ImageService;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
+
+    private final ImageService imageService;
 
     /**
      * TODO 인증 인가 부분과 병합 후 메소드 작동시 유저 확인 받게끔 코드 변경 필요!
@@ -52,8 +56,17 @@ public class ProfileService {
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user) {
         User foundUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+
+        // 이미지 업로드
+        String imageUrl = null;
+        try {
+            imageUrl = imageService.imageUpload(requestDto.getImage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         requestDto.setDistrictCodeString(changeIntToString(requestDto.getDistrictCode()));
-        Profile profile = profileRepository.save(requestDto.toEntity(foundUser));
+        Profile profile = profileRepository.save(requestDto.toEntity(foundUser, imageUrl));
         return new ProfileResponseDto(profile);
     }
 
@@ -62,19 +75,44 @@ public class ProfileService {
     public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
         Profile foundUser = profileRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
+
+        // 이미지 업로드
+        String imageUrl = null;
+        if (requestDto.getImage() != null && !requestDto.getImage().isEmpty()) {
+            try {
+                imageService.deleteImage(foundUser.getImage());
+                imageUrl = imageService.imageUpload(requestDto.getImage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            imageUrl = foundUser.getImage(); // 기존 이미지 URL 유지
+        }
+
         requestDto.setDistrictCodeString(changeIntToString(requestDto.getDistrictCode()));
-        foundUser.update(requestDto);
+        foundUser.update(requestDto, imageUrl);
         return new ProfileResponseDto(foundUser);
     }
 
     @Transactional
     public void deleteProfile(Long userId, User user) {
+        Profile profile = profileRepository.findByUserId(userId).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_USER)
+        );
+
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
+
+        // 이미지 삭제
+        if (profile.getImage() != null && !profile.getImage().isEmpty()) {
+            imageService.deleteImage(profile.getImage());
+        }
+
         profileRepository.deleteById(userId);
     }
 

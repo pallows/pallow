@@ -8,6 +8,8 @@ import com.pallow.pallow.domain.userboard.entity.UserBoard;
 import com.pallow.pallow.domain.userboard.repository.UserBoardRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+import com.pallow.pallow.s3.service.ImageService;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserBoardService {
 
     private final UserService userService;
+    private final ImageService imageService;
     private final UserBoardRepository userBoardRepository;
 
     public UserBoardResponseDto createBoard(UserBoardRequestDto requestDto, User user,
@@ -29,7 +32,16 @@ public class UserBoardService {
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
-        UserBoard userBoard = userBoardRepository.save(requestDto.toEntity(createdBy));
+
+        // 이미지 업로드
+        String imageUrl = null;
+        try {
+            imageUrl = imageService.imageUpload(requestDto.getImage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        UserBoard userBoard = userBoardRepository.save(requestDto.toEntity(createdBy, imageUrl));
         return new UserBoardResponseDto(userBoard);
     }
 
@@ -52,7 +64,21 @@ public class UserBoardService {
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
-        userBoard.update(requestDto);
+
+        // 이미지 업로드
+        String imageUrl = null;
+        if (requestDto.getImage() != null && !requestDto.getImage().isEmpty()) {
+            try {
+                imageService.deleteImage(userBoard.getImage());
+                imageUrl = imageService.imageUpload(requestDto.getImage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            imageUrl = userBoard.getImage(); // 기존 이미지 URL 유지
+        }
+
+        userBoard.update(requestDto, imageUrl);
         return new UserBoardResponseDto(userBoard);
     }
 
@@ -63,6 +89,12 @@ public class UserBoardService {
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
+
+        // 이미지 삭제
+        if (userBoard.getImage() != null && !userBoard.getImage().isEmpty()) {
+            imageService.deleteImage(userBoard.getImage());
+        }
+
         userBoardRepository.delete(userBoard);
     }
 

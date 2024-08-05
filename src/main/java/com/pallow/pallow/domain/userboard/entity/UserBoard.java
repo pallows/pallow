@@ -35,27 +35,27 @@ public class UserBoard extends TimeStamp {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private String photo;
+    @Column
+    private String image;
 
     @Column(nullable = false)
     private int likesCount;
 
     @Builder
-    public UserBoard(Long id, User user, String title, String content, String photo,
+    public UserBoard(Long id, User user, String title, String content, String image,
             int likesCount) {
         this.id = id;
         this.user = user;
         this.title = title;
         this.content = content;
-        this.photo = photo;
+        this.image = image;
         this.likesCount = likesCount;
     }
 
 
-    public void update(UserBoardRequestDto requestDto) {
+    public void update(UserBoardRequestDto requestDto, String imageUrl) {
         this.content = requestDto.getContent();
-        this.photo = requestDto.getPhoto();
+        this.image = imageUrl;
         this.title = requestDto.getTitle();
     }
 }

@@ -25,26 +25,26 @@ public class S3Config {
     @Value("${cloud.aws.region.static}")
     private String region;
 
-    @Value("${file.multipart.maxUploadSize:10485760}")
-    private long maxUploadSize;
-
-    @Value("${file.multipart.maxUploadSizePerFile:10485760}")
-    private long maxUploadSizePerFile;
-
-    @Bean
-    public MultipartResolver multipartResolver() {
-        StandardServletMultipartResolver multipartResolver = new StandardServletMultipartResolver();
-        return multipartResolver;
-    }
-
-    @Bean
-    public MultipartConfigElement multipartConfigElement() {
-        MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setMaxRequestSize(DataSize.ofBytes(maxUploadSize));
-        factory.setMaxFileSize(DataSize.ofBytes(maxUploadSizePerFile));
-
-        return factory.createMultipartConfig();
-    }
+//    @Value("${file.multipart.maxUploadSize:10485760}")
+//    private long maxUploadSize;
+//
+//    @Value("${file.multipart.maxUploadSizePerFile:10485760}")
+//    private long maxUploadSizePerFile;
+//
+//    @Bean
+//    public MultipartResolver multipartResolver() {
+//        StandardServletMultipartResolver multipartResolver = new StandardServletMultipartResolver();
+//        return multipartResolver;
+//    }
+//
+//    @Bean
+//    public MultipartConfigElement multipartConfigElement() {
+//        MultipartConfigFactory factory = new MultipartConfigFactory();
+//        factory.setMaxRequestSize(DataSize.ofBytes(maxUploadSize));
+//        factory.setMaxFileSize(DataSize.ofBytes(maxUploadSizePerFile));
+//
+//        return factory.createMultipartConfig();
+//    }
 
     @Bean
     public AmazonS3Client amazonS3Client() {

@@ -9,14 +9,14 @@ public class UserBoardResponseDto {
     private long id;
     private String title;
     private String content;
-    private String photo;
+    private String image;
     private int likesCount;
 
     public UserBoardResponseDto(UserBoard userBoard) {
         this.id = userBoard.getId();
         this.title = userBoard.getTitle();
         this.content = userBoard.getContent();
-        this.photo = userBoard.getPhoto();
+        this.image = userBoard.getImage();
         this.likesCount = userBoard.getLikesCount();
     }
 

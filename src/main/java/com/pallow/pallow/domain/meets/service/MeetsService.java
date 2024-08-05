@@ -99,6 +99,7 @@ public class MeetsService {
         String imageUrl = null;
         if (requestDto.getImage() != null && !requestDto.getImage().isEmpty()) {
             try {
+                imageService.deleteImage(meets.getImage());
                 imageUrl = imageService.imageUpload(requestDto.getImage());
             } catch (IOException e) {
                 throw new RuntimeException(e);

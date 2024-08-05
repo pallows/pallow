@@ -13,6 +13,8 @@ public class MeetsResponseDto {
 
     private String content;
 
+    private String image;
+
     private int memberCount;
 
     private int maxMemberCount;
@@ -25,6 +27,7 @@ public class MeetsResponseDto {
         this.id = meets.getId();
         this.title = meets.getTitle();
         this.content = meets.getContent();
+        this.image = meets.getImage();
         this.memberCount = meets.getMemberCount();
         this.maxMemberCount = meets.getMaxMemberCount();
         this.position = meets.getPosition();

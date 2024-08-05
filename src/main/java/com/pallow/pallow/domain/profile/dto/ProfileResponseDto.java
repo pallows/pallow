@@ -21,7 +21,7 @@ public class ProfileResponseDto {
         this.position = foundUser.getPosition();
         this.district = foundUser.getDistrict();
         this.mbti = foundUser.getMbti();
-        this.photo = foundUser.getPhoto();
+        this.photo = foundUser.getImage();
     }
 
 }

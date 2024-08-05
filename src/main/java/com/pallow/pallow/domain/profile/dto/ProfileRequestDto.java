@@ -7,6 +7,7 @@ import com.pallow.pallow.domain.user.entity.User;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -19,13 +20,13 @@ public class ProfileRequestDto {
     @NotNull(message = "지역을 선택해 주세요.")
     private Region position;
     private Mbti mbti;
-    private String photo;
+    private MultipartFile image;
     private int districtCode;
     private String districtCodeString;
 
 
-    public Profile toEntity(User foundUser) {
+    public Profile toEntity(User foundUser, String imageUrl) {
         return Profile.builder().birth(birth).content(content).position(position).mbti(mbti)
-                .photo(photo).createdBy(foundUser).build();
+                .image(imageUrl).createdBy(foundUser).build();
     }
 }
