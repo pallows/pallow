@@ -49,11 +49,7 @@ public class Profile {
     private String birth;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private Region position;
-
-    @Column
-    private String district;
+    private String position;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -103,7 +99,7 @@ public class Profile {
     private User user;
 
     @Builder
-    public Profile(String content, String birth, Region position, Mbti mbti, User createdBy,
+    public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
             Interest interest, String photo) {
         this.content = content;
         this.birth = birth;

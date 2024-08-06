@@ -5003,7 +5003,7 @@ INSERT INTO user (created_at, modified_at, email, nickname, password, name, gend
 
 INSERT INTO profile (
     content, birth, position, district, mbti, interest, alcohol, education, ideal, jobs,
-    personality, pros, relationship, religion, smoking, user_id, photo
+    personality, pros, relationship, religion, smoking, photo
 ) VALUES (
              'ProfileContent1', '1972-01-05', '경상북도', '울진군', 'ENFJ',
              'BAKING', 'NOPE', 'ETC', 'HUMOROUS', 'INFLUENCER',
