@@ -15,38 +15,15 @@ import com.pallow.pallow.global.dtos.FlaskRequestDto;
 import com.pallow.pallow.global.dtos.FlaskResponseDto;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
-import com.pallow.pallow.global.region.District;
-import com.pallow.pallow.global.region.Region.District_Busan;
-import com.pallow.pallow.global.region.Region.District_Chungcheongbuk;
-import com.pallow.pallow.global.region.Region.District_Chungcheongnam;
-import com.pallow.pallow.global.region.Region.District_Daegeon;
-import com.pallow.pallow.global.region.Region.District_Daegu;
-import com.pallow.pallow.global.region.Region.District_Gangwon;
-import com.pallow.pallow.global.region.Region.District_Gwangju;
-import com.pallow.pallow.global.region.Region.District_Gyeongi;
-import com.pallow.pallow.global.region.Region.District_Gyeongsangbuk;
-import com.pallow.pallow.global.region.Region.District_Gyeongsangnam;
-import com.pallow.pallow.global.region.Region.District_Incheon;
-import com.pallow.pallow.global.region.Region.District_Jeju;
-import com.pallow.pallow.global.region.Region.District_Jeollabuk;
-import com.pallow.pallow.global.region.Region.District_Jeollanam;
-import com.pallow.pallow.global.region.Region.District_Seoul;
-import com.pallow.pallow.global.region.Region.District_Ulsan;
-import com.pallow.pallow.s3.service.ImageService;
+import com.pallow.pallow.global.s3.service.ImageService;
 import java.io.IOException;
-import com.pallow.pallow.global.security.UserDetailsImpl;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -141,7 +118,9 @@ public class ProfileService {
 
     @Transactional
     public List<ProfileFlaskReseponseDto> recommendProfiles(User user) {
-        Profile currentUserProfile = profileRepository.findByUserId(user.getId());
+        Profile currentUserProfile = profileRepository.findByUserId(user.getId()).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_USER)
+        );
         List<Profile> profileList = profileRepository.findAllByPosition(user.getProfile().getPosition());
         List<ProfileItem> items = new ArrayList<>();
 

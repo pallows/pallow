@@ -79,6 +79,8 @@ public class ChatRoom extends TimeStamp {
             joinColumns = @JoinColumn(name = "chat_room_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+
+    @Builder.Default
     private Set<User> users = new HashSet<>();
 
     public void updateDeletedAt() {

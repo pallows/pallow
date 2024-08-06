@@ -43,10 +43,8 @@ public class ProfileRequestDto {
     private Smoking smoking;
     private Pros pros;
 
-
     // 프로필 화면에 띄우기 위함
     private String username;
-
 
     public Profile toEntity(User foundUser, String imageUrl) {
         return Profile.builder().birth(birth).content(content).position(position).mbti(mbti)

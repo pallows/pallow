@@ -44,7 +44,7 @@ public class ProfileCustomRepositoryImpl implements ProfileCustomRepository {
                         profile.position,
                         profile.mbti,
                         profile.hobby,
-                        profile.photo,
+                        profile.image,
                         user.name
                 ))
                 .from(profile)
@@ -64,7 +64,7 @@ public class ProfileCustomRepositoryImpl implements ProfileCustomRepository {
                             profile.position,
                             profile.mbti,
                             profile.hobby,
-                            profile.photo,
+                            profile.image,
                             user.name
                     ))
                     .from(profile)

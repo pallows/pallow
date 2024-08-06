@@ -11,7 +11,6 @@ import com.pallow.pallow.domain.profile.enums.Pros;
 import com.pallow.pallow.domain.profile.enums.Relationship;
 import com.pallow.pallow.domain.profile.enums.Religion;
 import com.pallow.pallow.domain.profile.enums.Smoking;
-import com.pallow.pallow.domain.user.entity.User;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,6 +52,7 @@ public class ProfileResponseDto {
     }
 
     public ProfileResponseDto(Profile foundUser, String name) {
+        this.id = foundUser.getId();
         this.content = foundUser.getContent();
         this.birth = foundUser.getBirth();
         this.position = foundUser.getPosition();
@@ -61,9 +61,4 @@ public class ProfileResponseDto {
         this.hobby = foundUser.getHobby();
         this.name = name.trim();
     }
-
-//    public Profile toEntity(User user) {
-//        return Profile.builder().content(content).birth(birth).position(position)
-//                .mbti(mbti).createdBy(user).hobby(hobby).image(photo).build();
-//    }
 }

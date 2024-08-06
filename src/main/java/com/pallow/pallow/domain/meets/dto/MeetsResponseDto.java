@@ -27,9 +27,9 @@ public class MeetsResponseDto {
 
     private int likesCount;
 
-    private String creatorProfilePhoto; // 추가한 필드 ????????????
+//    private String creatorProfilePhoto; // 추가한 필드
 
-    private LocalDateTime createdAt;    // 추가한 필드 ????????????
+    private LocalDateTime createdAt;
 
 
     public MeetsResponseDto(Meets meets) {
@@ -42,7 +42,7 @@ public class MeetsResponseDto {
         this.position = meets.getPosition();
         this.status = meets.getStatus();
         this.likesCount = meets.getLikesCount();
-        this.creatorProfilePhoto = meets.getGroupCreator().getProfile().getPhoto(); // 생성자의 프로필 사진 URL 설정
+//        this.creatorProfilePhoto = meets.getGroupCreator().getProfile().getPhoto(); // 생성자의 프로필 사진 URL 설정
         this.createdAt = meets.getCreatedAt();
     }
 }

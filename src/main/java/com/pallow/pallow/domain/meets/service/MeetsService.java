@@ -14,7 +14,7 @@ import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.InviteStatus;
 import com.pallow.pallow.global.exception.CustomException;
-import com.pallow.pallow.s3.service.ImageService;
+import com.pallow.pallow.global.s3.service.ImageService;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;

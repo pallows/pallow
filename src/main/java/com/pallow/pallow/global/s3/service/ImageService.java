@@ -1,4 +1,4 @@
-package com.pallow.pallow.s3.service;
+package com.pallow.pallow.global.s3.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;

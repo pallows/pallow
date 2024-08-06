@@ -16,7 +16,7 @@ public class ReviewResponseDto {
 
     private String reviewerName;
 
-    private String reviewerProfilePhoto;
+//    private String reviewerProfilePhoto;
 
     public ReviewResponseDto(MeetsReview meetsReview) {
         this.id = meetsReview.getId();
@@ -24,6 +24,6 @@ public class ReviewResponseDto {
         this.likesCount = meetsReview.getLikesCount();
         this.starRating = meetsReview.getStarRating();
         this.reviewerName = meetsReview.getUser().getUsername(); // 유저 이름
-        this.reviewerProfilePhoto = meetsReview.getUser().getProfile().getPhoto(); // 프로필 사진
+//        this.reviewerProfilePhoto = meetsReview.getUser().getProfile().getPhoto(); // 프로필 사진
     }
 }

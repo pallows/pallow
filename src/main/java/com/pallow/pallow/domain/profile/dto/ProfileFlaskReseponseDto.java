@@ -14,5 +14,5 @@ public class ProfileFlaskReseponseDto {
     private String position;
     private String district;
     private Mbti mbti;
-    private String photo;
+    private String image;
 }
