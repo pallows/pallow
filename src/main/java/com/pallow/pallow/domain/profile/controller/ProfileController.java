@@ -38,12 +38,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/profiles/{userId}")
+@RequestMapping("/profiles")
 @RequiredArgsConstructor
 public class ProfileController {
 
     private final ProfileService profileService;
-//    private final UserRepository userRepository;
+    private final UserRepository userRepository;
 //    private static final String UPLOAD_DIR = "src/main/resources/static/images/";
 
     /**
@@ -52,7 +52,7 @@ public class ProfileController {
      * @param userId 유저아이디
      * @return 조회 성공 메시지 + 조회 데이터
      */
-    @GetMapping
+    @GetMapping("/{userId}")
     public ResponseEntity<CommonResponseDto> getProfile(
             @PathVariable Long userId) {
         ProfileResponseDto responseDto = profileService.getProfile(userId);
@@ -65,18 +65,15 @@ public class ProfileController {
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
     }
 
-    /**
-     * 프로필 생성
-     * @param requestDto  생성 데이터
-     * @param userDetails 유저 데이터
-     * @return 생성 성공 메시지 + 생성된 프로필 데이터
-     */
     @PostMapping
     public ResponseEntity<CommonResponseDto> createProfile(
-            @ModelAttribute @Valid ProfileRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            @ModelAttribute("ProfileRequestDto") @Valid ProfileRequestDto requestDto,
+            @RequestParam("username") String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_USER)
+        );
         ProfileResponseDto responseDto = profileService.createProfile(requestDto,
-                userDetails.getUser());
+                user);
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
     }
