@@ -1,4 +1,16 @@
+### 그룹생성
+POST http://localhost:8080/api/meets/1
+Authorization: {{Authorization}}
+Cookie: {{Cookie}}
+Content-Type: application/json
 
+{
+  "title": "title 1",
+  "content": "content 1",
+  "image": "image",
+  "position": "position",
+  "maxMemberCount": 2
+}
 
 ### 그룹 선택 조회
 GET http://localhost:8080/api/meets/1

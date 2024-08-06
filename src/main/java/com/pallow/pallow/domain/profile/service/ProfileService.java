@@ -1,11 +1,18 @@
 package com.pallow.pallow.domain.profile.service;
 
+
+import com.pallow.pallow.domain.profile.dto.ProfileFlaskReseponseDto;
+import com.pallow.pallow.domain.profile.dto.ProfileMapper;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.entity.Profile;
+import com.pallow.pallow.domain.profile.entity.ProfileItem;
+import com.pallow.pallow.domain.profile.repository.ProfileCustomRepository;
 import com.pallow.pallow.domain.profile.repository.ProfileRepository;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
+import com.pallow.pallow.global.dtos.FlaskRequestDto;
+import com.pallow.pallow.global.dtos.FlaskResponseDto;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.region.District;
@@ -27,12 +34,23 @@ import com.pallow.pallow.global.region.Region.District_Seoul;
 import com.pallow.pallow.global.region.Region.District_Ulsan;
 import com.pallow.pallow.s3.service.ImageService;
 import java.io.IOException;
+import com.pallow.pallow.global.security.UserDetailsImpl;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
@@ -46,11 +64,19 @@ public class ProfileService {
      */
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
+    private final ProfileMapper profileMapper;
+    private final ProfileCustomRepository profileCustomRepository;
 
     public ProfileResponseDto getProfile(Long userId) {
         Profile foundUser = profileRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        return new ProfileResponseDto(foundUser);
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getUsername());
+    }
+
+    public ProfileResponseDto getMyProfile(Long userId) {
+        Profile foundUser = profileRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
     }
 
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user) {
@@ -65,11 +91,9 @@ public class ProfileService {
             throw new RuntimeException(e);
         }
 
-        requestDto.setDistrictCodeString(changeIntToString(requestDto.getDistrictCode()));
         Profile profile = profileRepository.save(requestDto.toEntity(foundUser, imageUrl));
-        return new ProfileResponseDto(profile);
+        return new ProfileResponseDto(profile, profile.getUser().getName());
     }
-
 
     @Transactional
     public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
@@ -93,9 +117,8 @@ public class ProfileService {
             imageUrl = foundUser.getImage(); // 기존 이미지 URL 유지
         }
 
-        requestDto.setDistrictCodeString(changeIntToString(requestDto.getDistrictCode()));
         foundUser.update(requestDto, imageUrl);
-        return new ProfileResponseDto(foundUser);
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
     }
 
     @Transactional
@@ -117,156 +140,99 @@ public class ProfileService {
     }
 
     @Transactional
-    public List<ProfileResponseDto> recommendProfiles(Profile profile, User user) {
-        List<Profile> allProfiles = profileRepository.findAll();
+    public List<ProfileFlaskReseponseDto> recommendProfiles(User user) {
+        Profile currentUserProfile = profileRepository.findByUserId(user.getId());
+        List<Profile> profileList = profileRepository.findAllByPosition(user.getProfile().getPosition());
+        List<ProfileItem> items = new ArrayList<>();
 
-        return allProfiles.stream()
-                .filter(p -> !p.getId().equals(profile.getId()))
-                .sorted((p1, p2) -> Double.compare(calculateSimilarity(profile, p2),
-                        calculateSimilarity(profile, p1)))
-                .limit(9)
-                .map(ProfileResponseDto::new) // Convert Profile to ProfileResponseDto
-                .collect(Collectors.toList());
+        profileList.forEach(profile -> items.add(profileMapper.toRequestItem(profile)));
+
+        // 로그 추가: 전송 데이터 확인
+        log.info("Items to be sent to Flask: {}", items);
+        log.info("Sending request to Flask with data: {}", FlaskRequestDto.builder()
+                .id(currentUserProfile.getId())
+                .profiles(items)
+                .build());
+
+        // send request to flask
+        FlaskResponseDto responseDto = sendRequestToFlask(FlaskRequestDto.builder()
+                .id(currentUserProfile.getId())
+                .profiles(items)
+                .build());
+
+        // 로그 추가: 응답 데이터 확인
+        log.info("Received response from Flask: {}", responseDto);
+        log.info("Received sorted ID list from Flask: {}", responseDto.getData().getSortedIdList());
+
+        // make response
+        List<ProfileFlaskReseponseDto> results = new ArrayList<>();
+        responseDto.getData().getSortedIdList().forEach(id -> {
+            Profile profile = profileRepository.findById(id)
+                    .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+            results.add(profileMapper.getResponseDto(profile));
+        });
+
+        // Ensure `results` is not empty before removing the first element
+        if (!results.isEmpty()) {
+            results.remove(0);
+        } else {
+            // Log or handle the empty results case if needed
+            log.warn("No profiles found to remove.");
+        }
+
+        return results;
+    }
+
+    private FlaskResponseDto sendRequestToFlask(FlaskRequestDto requestDto) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-type", "application/json; charset=UTF-8");
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<FlaskResponseDto> responseEntity = restTemplate.postForEntity(
+                    "http://localhost:8000/api/profile/recommend",
+                    new HttpEntity<>(requestDto, headers),
+                    FlaskResponseDto.class
+            );
+
+            // 로그 추가: 요청과 응답 정보 확인
+            log.info("Request sent to Flask: {}", requestDto);
+            log.info("Response received from Flask: {}", responseEntity.getBody());
+
+            return responseEntity.getBody();
+        } catch (HttpClientErrorException e) {
+            log.error("HTTP error while sending request to Flask: {}", e.getMessage());
+            throw new CustomException(ErrorType.NOT_FOUND_USER);
+        }
+    }
+
+    @Transactional
+    public List<ProfileResponseDto> getNearest9Users(User user) {
+        String[] userPositionParts = user.getProfile().getPosition().split(" ");
+        String first = userPositionParts.length > 0 ? userPositionParts[0] : "";
+        String second = userPositionParts.length > 1 ? userPositionParts[1] : "";
+        String third = userPositionParts.length > 2 ? userPositionParts[2] : "";
+        return profileCustomRepository.findTop9NearestProfiles(user.getId(), first, second, third);
+    }
+
+    private int comparePositions(String userPosition, String profilePosition) {
+        String[] userPositionParts = userPosition.split(" ");
+        String[] profilePositionParts = profilePosition.split(" ");
+        int matchScore = 0;
+        if (userPositionParts.length > 0 && profilePositionParts.length > 0 && userPositionParts[0].equals(profilePositionParts[0])) {
+            matchScore += 3;
+        }
+        if (userPositionParts.length > 1 && profilePositionParts.length > 1 && userPositionParts[1].equals(profilePositionParts[1])) {
+            matchScore += 2;
+        }
+        if (userPositionParts.length > 2 && profilePositionParts.length > 2 && userPositionParts[2].equals(profilePositionParts[2])) {
+            matchScore += 1;
+        }
+        return -matchScore;
     }
 
 
     private boolean isSameIdAndUser(Long userId, User user) {
         return user.getId().equals(userId);
     }
-
-    private double calculateSimilarity(Profile p1, Profile p2) {
-        double score = 0;
-
-        if (p1.getMbti() == p2.getMbti()) {
-            score += 10;
-        }
-        if (p1.getInterest() == p2.getInterest()) {
-            score += 10;
-        }
-        if (p1.getAlcohol() == p2.getAlcohol()) {
-            score += 10;
-        }
-        if (p1.getEducation() == p2.getEducation()) {
-            score += 10;
-        }
-        if (p1.getIdeal() == p2.getIdeal()) {
-            score += 10;
-        }
-        if (p1.getJobs() == p2.getJobs()) {
-            score += 10;
-        }
-        if (p1.getPersonality() == p2.getPersonality()) {
-            score += 10;
-        }
-        if (p1.getPros() == p2.getPros()) {
-            score += 10;
-        }
-        if (p1.getRelationship() == p2.getRelationship()) {
-            score += 10;
-        }
-        if (p1.getReligion() == p2.getReligion()) {
-            score += 10;
-        }
-        if (p1.getSmoking() == p2.getSmoking()) {
-            score += 10;
-        }
-
-        log.info(String.valueOf(score) + " " + p1.getId() + " " + p2.getId());
-
-        return score;
-    }
-
-    /**
-     * District Int -> String
-     *
-     * @param code
-     * @return String
-     */
-    private String changeIntToString(int code) {
-
-        String temp = String.valueOf(code);
-        int getRegionCode = Integer.parseInt(temp.substring(0, 2));
-
-        switch (getRegionCode) {
-            case 11:
-                District_Seoul districtSeoul = District.findByDistrictCode(District_Seoul.class,
-                        code);
-                return String.valueOf(districtSeoul);
-            case 21:
-                District_Busan districtBusan = District.findByDistrictCode(District_Busan.class,
-                        code);
-                return String.valueOf(districtBusan);
-            case 22:
-                District_Daegu districtDaegu = District.findByDistrictCode(District_Daegu.class,
-                        code);
-                return String.valueOf(districtDaegu);
-            case 23:
-                District_Incheon districtIncheon = District.findByDistrictCode(
-                        District_Incheon.class,
-                        code);
-                return String.valueOf(districtIncheon);
-            case 24:
-                District_Gwangju districtGwangju = District.findByDistrictCode(
-                        District_Gwangju.class,
-                        code);
-                return String.valueOf(districtGwangju);
-            case 25:
-                District_Daegeon districtDaegeon = District.findByDistrictCode(
-                        District_Daegeon.class,
-                        code);
-                return String.valueOf(districtDaegeon);
-            case 26:
-                District_Ulsan districtUlsan = District.findByDistrictCode(District_Ulsan.class,
-                        code);
-                return String.valueOf(districtUlsan);
-            case 29:
-                return "세종특별자치시";
-            case 31:
-                District_Gyeongi districtGyeongi = District.findByDistrictCode(
-                        District_Gyeongi.class,
-                        code);
-                return String.valueOf(districtGyeongi);
-            case 32:
-                District_Gangwon districtGangwon = District.findByDistrictCode(
-                        District_Gangwon.class,
-                        code);
-                return String.valueOf(districtGangwon);
-            case 33:
-                District_Chungcheongbuk districtChungcheongbuk = District.findByDistrictCode(
-                        District_Chungcheongbuk.class,
-                        code);
-                return String.valueOf(districtChungcheongbuk);
-            case 34:
-                District_Chungcheongnam districtChungcheongnam = District.findByDistrictCode(
-                        District_Chungcheongnam.class,
-                        code);
-                return String.valueOf(districtChungcheongnam);
-            case 35:
-                District_Jeollabuk districtJeollabuk = District.findByDistrictCode(
-                        District_Jeollabuk.class,
-                        code);
-                return String.valueOf(districtJeollabuk);
-            case 36:
-                District_Jeollanam districtJeollanam = District.findByDistrictCode(
-                        District_Jeollanam.class,
-                        code);
-                return String.valueOf(districtJeollanam);
-            case 37:
-                District_Gyeongsangbuk districtGyeongsangbuk = District.findByDistrictCode(
-                        District_Gyeongsangbuk.class,
-                        code);
-                return String.valueOf(districtGyeongsangbuk);
-            case 38:
-                District_Gyeongsangnam districtGyeongsangnam = District.findByDistrictCode(
-                        District_Gyeongsangnam.class,
-                        code);
-                return String.valueOf(districtGyeongsangnam);
-            case 39:
-                District_Jeju districtJeju = District.findByDistrictCode(District_Jeju.class,
-                        code);
-                return String.valueOf(districtJeju);
-        }
-        throw new CustomException(ErrorType.NOT_FOUND_REGION);
-    }
-
 }

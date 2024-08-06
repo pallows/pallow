@@ -1,7 +1,9 @@
 ### 회원 프로필 생성
-POST http://localhost:8080/profiles/1
+POST http://localhost:8080/profiles/2
 Authorization: {{Authorization}}
+Cookie: {{Cookie}}
 Content-Type: application/json
+
 
 {
   "content": "난 멋쟁이입니다.",
@@ -29,7 +31,7 @@ Content-Type: application/json
 }
 
 ### 프로필 조회
-GET http://localhost:8080/profiles/1
+GET http://localhost:8080/profiles/101
 Authorization: {{Authorization}}
 
 ### 회원 프로필 삭제 ( 회원탈퇴 시 )
@@ -37,6 +39,6 @@ DELETE http://localhost:8080/profiles/1
 Authorization: {{Authorization}}
 
 ### 회원 추천 받기
-GET http://localhost:8080/profiles/1/recommendations
+GET http://localhost:8080/profiles/recommendations
 Authorization: {{Authorization}}
 Content-Type: application/json

@@ -1,6 +1,5 @@
 package com.pallow.pallow.domain.chat.entity;
 
-import com.pallow.pallow.domain.chat.dto.ChatMessageDto;
 import com.pallow.pallow.domain.chat.model.MessageType;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.entity.TimeStamp;
@@ -16,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -49,12 +47,14 @@ public class ChatMessage extends TimeStamp {
     @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private MessageType type = MessageType.CHAT;
 
     /**
      * 기본 메시지의 공감 수를 0개로 초기화 해놓음
      */
     @Column
+    @Builder.Default
     private int chatReactionCount = 0;
 
 
@@ -63,6 +63,7 @@ public class ChatMessage extends TimeStamp {
     @JoinColumn(name = "chatroom_id", nullable = false)
     private ChatRoom chatRoom;
 
+    @Builder.Default
     @OneToMany(mappedBy = "chatMessage", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChatReaction> chatReactions = new HashSet<>();
 

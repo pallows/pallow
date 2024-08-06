@@ -8,6 +8,10 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum Message {
 
+    //SOCIAL OAUTH
+    OAUTH_LOGIN_NOT_IMPLEMENTED(HttpStatus.OK, "로그인 성공하였습니다."),
+    USER_OAUTH_SIGNUP_SUCCESS(HttpStatus.OK, "소셜 회원가입에 성공하였습니다."),
+
     //MAIL
     MAIL_SEND_SUCCESS(HttpStatus.OK, "인증 번호가 전송되었습니다."),
     MAIL_VERIFICATION_CODE_SUCCESS(HttpStatus.OK, "이메일 인증이 완료 되었습니다."),
@@ -17,6 +21,7 @@ public enum Message {
 
     // USER
     USER_LOGIN_SUCCESS(HttpStatus.OK, "로그인 ! 완료 ❤️."),
+    USER_LOGIN_FAIL(HttpStatus.OK, "로그인 실패! ❤️."),
     USER_LOGOUT_SUCCESS(HttpStatus.OK, "로그아웃 되었습니다."),
     USER_DELETE_SUCCESS(HttpStatus.OK, "회원 정보를 삭제하였습니다."),
     USER_READ_ALL_SUCCESS(HttpStatus.OK, "회원 전체 조회를 하였습니다."),
@@ -66,11 +71,12 @@ public enum Message {
     ROOM_CREATE_SUCCESS(HttpStatus.OK, "채팅방을 생성하였습니다."),
     ROOM_READ_SUCCESS(HttpStatus.OK, "채팅방을 조회하였습니다."),
     ROOM_ENTER_SUCCESS(HttpStatus.OK, "채팅방에 입장하였습니다."),
+    ROOM_DELETE_SUCCESS(HttpStatus.OK, "채팅방을 삭제하였습니다"),
 
     //chatmessage
     MESSAGE_CREATE_SUCCESS(HttpStatus.OK, "메시지를 생성하였습니다."),
 
-    //message reaction
+    //likes
     LIKES_TOGGLE_SUCCESS(HttpStatus.OK, "좋아요")
 
    ;
