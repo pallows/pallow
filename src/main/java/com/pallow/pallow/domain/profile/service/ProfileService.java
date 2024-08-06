@@ -57,18 +57,14 @@ public class ProfileService {
     }
 
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user) {
-        User foundUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-
-        // 이미지 업로드
         String imageUrl = null;
         try {
             imageUrl = imageService.imageUpload(requestDto.getImage());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        Profile profile = profileRepository.save(requestDto.toEntity(foundUser, imageUrl));
+        System.out.println("image URL" + imageUrl);
+        Profile profile = profileRepository.save(requestDto.toEntity(user, imageUrl));
         return new ProfileResponseDto(profile, profile.getUser().getName());
     }
 
