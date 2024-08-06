@@ -2,6 +2,7 @@ package com.pallow.pallow.global.security;
 
 import com.pallow.pallow.domain.user.entity.User;
 import java.util.Collection;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,16 +16,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Role userRole = user.getUserRole();
-        String authority = userRole.getRole();
-
-        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
-
-        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-
-        grantedAuthorities.add(simpleGrantedAuthority);
-
-        return grantedAuthorities;
+        return List.of();
     }
 
     @Override

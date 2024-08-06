@@ -3,7 +3,7 @@ package com.pallow.pallow;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
+@SpringBootApplication
 public class PallowApplication {
 
     public static void main(String[] args) {
