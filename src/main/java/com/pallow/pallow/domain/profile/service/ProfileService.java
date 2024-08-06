@@ -15,19 +15,15 @@ import com.pallow.pallow.global.dtos.FlaskRequestDto;
 import com.pallow.pallow.global.dtos.FlaskResponseDto;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
-import com.pallow.pallow.global.security.UserDetailsImpl;
+import com.pallow.pallow.global.s3.service.ImageService;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -37,6 +33,8 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
+
+    private final ImageService imageService;
 
     /**
      * TODO 인증 인가 부분과 병합 후 메소드 작동시 유저 확인 받게끔 코드 변경 필요!
@@ -61,7 +59,16 @@ public class ProfileService {
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user) {
         User foundUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        Profile profile = profileRepository.save(requestDto.toEntity(foundUser));
+
+        // 이미지 업로드
+        String imageUrl = null;
+        try {
+            imageUrl = imageService.imageUpload(requestDto.getImage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Profile profile = profileRepository.save(requestDto.toEntity(foundUser, imageUrl));
         return new ProfileResponseDto(profile, profile.getUser().getName());
     }
 
@@ -69,24 +76,51 @@ public class ProfileService {
     public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
         Profile foundUser = profileRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
-        foundUser.update(requestDto);
+
+        // 이미지 업로드
+        String imageUrl = null;
+        if (requestDto.getImage() != null && !requestDto.getImage().isEmpty()) {
+            try {
+                imageService.deleteImage(foundUser.getImage());
+                imageUrl = imageService.imageUpload(requestDto.getImage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            imageUrl = foundUser.getImage(); // 기존 이미지 URL 유지
+        }
+
+        foundUser.update(requestDto, imageUrl);
         return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
     }
 
     @Transactional
     public void deleteProfile(Long userId, User user) {
+        Profile profile = profileRepository.findByUserId(userId).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_USER)
+        );
+
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
+
+        // 이미지 삭제
+        if (profile.getImage() != null && !profile.getImage().isEmpty()) {
+            imageService.deleteImage(profile.getImage());
+        }
+
         profileRepository.deleteById(userId);
     }
 
     @Transactional
     public List<ProfileFlaskReseponseDto> recommendProfiles(User user) {
-        Profile currentUserProfile = profileRepository.findByUserId(user.getId());
+        Profile currentUserProfile = profileRepository.findByUserId(user.getId()).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_USER)
+        );
         List<Profile> profileList = profileRepository.findAllByPosition(user.getProfile().getPosition());
         List<ProfileItem> items = new ArrayList<>();
 

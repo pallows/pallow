@@ -29,6 +29,7 @@ public class ChatMessageDto {
          */
         private boolean hasChatReacted;
 
+        @Builder.Default
         ChatMessageDto message = ChatMessageDto.builder()
                 .id(1L)
                 .chatRoomId(2L)

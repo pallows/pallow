@@ -125,7 +125,7 @@ public class ReviewService {
     }
 
     /**
-     * 리뷰 좋아요 토글
+     * 좋아요 토글
      * @param reviewId
      * @param user
      */

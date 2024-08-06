@@ -38,7 +38,7 @@ public class Profile {
     private Long id;
 
     @Column
-    private String photo;
+    private String image;
 
     @Column(nullable = false)
     private String content;
@@ -49,7 +49,11 @@ public class Profile {
     @Column
     private String position;
 
+    // 인트로 받아와서 스트링으로 변환해야함
     @Column
+    private String district;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
@@ -102,14 +106,14 @@ public class Profile {
 
     @Builder
     public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
-            Interest interest, String photo, String hobby, Alcohol alcohol, Education education,
+            Interest interest, String image, String hobby, Alcohol alcohol, Education education,
             IDEAL ideal, Jobs jobs, Personality personality, Pros pros,
             Relationship relationship, Religion religion, Smoking smoking) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
         this.position = position;
-        this.photo = photo;
+        this.image = image;
         this.user = createdBy;
         this.hobby = hobby;
         this.interest = interest;
@@ -124,10 +128,11 @@ public class Profile {
         this.pros = pros;
     }
 
-    public void update(ProfileRequestDto requestDto) {
+    public void update(ProfileRequestDto requestDto, String imageUrl) {
         this.content = requestDto.getContent();
-        this.mbti = requestDto.getMbti();
         this.position = requestDto.getPosition();
+        this.mbti = requestDto.getMbti();
         this.hobby = requestDto.getHobby();
+        this.image = imageUrl;
     }
 }

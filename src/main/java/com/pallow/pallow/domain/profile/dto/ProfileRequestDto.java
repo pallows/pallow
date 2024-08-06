@@ -16,6 +16,8 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -29,7 +31,7 @@ public class ProfileRequestDto {
     private String position;
     private Mbti mbti;
     private String hobby;
-    private String photo;
+    private MultipartFile image;
 
     private Alcohol alcohol;
     private Education education;
@@ -41,13 +43,11 @@ public class ProfileRequestDto {
     private Smoking smoking;
     private Pros pros;
 
-
     // 프로필 화면에 띄우기 위함
     private String username;
 
-
-    public Profile toEntity(User foundUser) {
-        return Profile.builder().content(content).birth(birth).position(position).mbti(mbti)
-                .createdBy(foundUser).hobby(hobby).photo(photo).build();
+    public Profile toEntity(User foundUser, String imageUrl) {
+        return Profile.builder().birth(birth).content(content).position(position).mbti(mbti)
+                .image(imageUrl).createdBy(foundUser).build();
     }
 }

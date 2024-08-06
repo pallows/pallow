@@ -37,7 +37,7 @@ public class ProfileMapper {
         ProfileFlaskReseponseDto.ProfileFlaskReseponseDtoBuilder builder = ProfileFlaskReseponseDto.builder();
 
         builder.id(profile.getId());
-        builder.photo(profile.getPhoto());
+        builder.image(profile.getImage());
         builder.birth(profile.getBirth());
         builder.position(profile.getPosition());
         builder.mbti(profile.getMbti());
