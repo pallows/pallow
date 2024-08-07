@@ -42,7 +42,7 @@ public class User extends TimeStamp {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
+    @JoinColumn(name = "profile_Id")
     private Profile profile;
 
     @Column(unique = true)
