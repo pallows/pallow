@@ -27,6 +27,7 @@ public enum Message {
     USER_READ_ALL_SUCCESS(HttpStatus.OK, "회원 전체 조회를 하였습니다."),
     USER_UPDATE_SUCCESS(HttpStatus.OK, "회원 정보를 수정하였습니다."),
     USER_LOCAL_SIGNUP_SUCCESS(HttpStatus.OK, "LOCAL 회원 가입에 성공하였습니다."),
+    USER_INFO_SUCCESS(HttpStatus.OK, "회원 정보 성공적으로 확인"),
 
     // PROFILE
     PROFILE_READ_SUCCESS(HttpStatus.OK, "프로필을 조회하였습니다."),
@@ -53,6 +54,7 @@ public enum Message {
     DECLINE_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 거절했습니다."),
     INVITATION_READ_SUCCESS(HttpStatus.OK, "신청 목록을 불러왔습니다."),
 
+
     // group(meets)
     MEET_CREATE_SUCCESS(HttpStatus.OK, "그룹을 생성하였습니다."),
     MEET_READ_SUCCESS(HttpStatus.OK, "그룹을 조회하였습니다."),
@@ -73,6 +75,8 @@ public enum Message {
     ROOM_READ_SUCCESS(HttpStatus.OK, "채팅방을 조회하였습니다."),
     ROOM_ENTER_SUCCESS(HttpStatus.OK, "채팅방에 입장하였습니다."),
     ROOM_DELETE_SUCCESS(HttpStatus.OK, "채팅방을 삭제하였습니다"),
+    INVITATION_SENT_SUCCESS(HttpStatus.OK, "채팅방 초대 보내기를 성공하였습니다."),
+    INVITATION_ACCEPTED_SUCCESS(HttpStatus.OK, "채팅방 초대받기를 성공하였습니다."),
 
     //chatmessage
     MESSAGE_CREATE_SUCCESS(HttpStatus.OK, "메시지를 생성하였습니다."),
