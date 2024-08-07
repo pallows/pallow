@@ -5,6 +5,7 @@ import com.pallow.pallow.domain.meetsreview.service.ReviewService;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,7 +24,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     /**
-     * 모임 리뷰 생성
+     * 리뷰 생성
      * @param meets_id  그룹 ID
      * @param requestDto  생성 데이터 [content]
      * @param userDetails 유저 데이터
@@ -31,7 +32,7 @@ public class ReviewController {
      */
     @PostMapping("/meets/{meets_id}/review")
     public ResponseEntity<CommonResponseDto> createReview(@PathVariable Long meets_id,
-            @RequestBody ReviewRequestDto requestDto,
+            @RequestBody @Valid ReviewRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new CommonResponseDto(
@@ -39,7 +40,7 @@ public class ReviewController {
     }
 
     /**
-     * 모임 리뷰 생성
+     * 리뷰 선택 조회
      * @param meets_id  그룹 ID
      * @param review_id 리뷰 ID
      * @return 조회 성공 메시지 + 데이터
@@ -54,7 +55,7 @@ public class ReviewController {
     }
 
     /**
-     * 모임 전체 조회
+     * 리뷰 전체 조회
      * @param meets_id  그룹 ID
      * @return 조회 성공 메시지 + 데이터
      */
@@ -66,7 +67,7 @@ public class ReviewController {
     }
 
     /**
-     * 모임 리뷰 생성
+     * 리뷰 업데이트
      * @param meets_id  그룹 ID
      * @param review_id 리뷰 ID
      * @param requestDto  변경할 데이터 [content]
@@ -76,7 +77,7 @@ public class ReviewController {
     @PatchMapping("/meets/{meets_id}/review/{review_id}")
     public ResponseEntity<CommonResponseDto> updateReview(@PathVariable Long meets_id,
             @PathVariable Long review_id,
-            @RequestBody ReviewRequestDto requestDto,
+            @RequestBody @Valid ReviewRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new CommonResponseDto(
@@ -85,7 +86,7 @@ public class ReviewController {
     }
 
     /**
-     * 모임 리뷰 생성
+     * 리뷰 삭제
      * @param meets_id  그룹 ID
      * @param review_id 리뷰 ID
      * @param userDetails 유저 데이터
@@ -101,7 +102,7 @@ public class ReviewController {
     }
 
     /**
-     * 리뷰 좋아요 생성
+     * 좋아요 토글
      * @param reviewId
      * @param userDetails
      * @return

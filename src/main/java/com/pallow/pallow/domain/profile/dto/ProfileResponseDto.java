@@ -11,7 +11,6 @@ import com.pallow.pallow.domain.profile.enums.Pros;
 import com.pallow.pallow.domain.profile.enums.Relationship;
 import com.pallow.pallow.domain.profile.enums.Religion;
 import com.pallow.pallow.domain.profile.enums.Smoking;
-import com.pallow.pallow.domain.user.entity.User;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,11 +24,12 @@ public class ProfileResponseDto {
     private String position;
     private Mbti mbti;
     private String hobby;
-    private String photo;
+    private String image;
 
+    private String interest;
     private Alcohol alcohol;
     private Education education;
-    private IDEAL ideal;
+    private String ideal;
     private Jobs jobs;
     private Personality personality;
     private Relationship relationship;
@@ -41,29 +41,25 @@ public class ProfileResponseDto {
     private String name;
 
     @QueryProjection
-    public ProfileResponseDto(Long id, String content, String birth, String position, Mbti mbti, String hobby, String photo, String name) {
+    public ProfileResponseDto(Long id, String content, String birth, String position, Mbti mbti, String hobby, String image, String name) {
         this.content = content;
         this.birth = birth;
         this.position = position;
         this.mbti = mbti;
         this.hobby = hobby;
-        this.photo = photo;
+        this.image = image;
         this.name = name.trim();
         this.id = id;
     }
 
     public ProfileResponseDto(Profile foundUser, String name) {
+        this.id = foundUser.getId();
         this.content = foundUser.getContent();
         this.birth = foundUser.getBirth();
         this.position = foundUser.getPosition();
         this.mbti = foundUser.getMbti();
+        this.image = foundUser.getImage();
         this.hobby = foundUser.getHobby();
-        this.photo = foundUser.getPhoto();
         this.name = name.trim();
-    }
-
-    public Profile toEntity(User user) {
-        return Profile.builder().content(content).birth(birth).position(position)
-                .mbti(mbti).createdBy(user).hobby(hobby).photo(photo).build();
     }
 }

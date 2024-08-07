@@ -1,9 +1,11 @@
 package com.pallow.pallow.domain.userboardcomment.entity;
 
+import com.pallow.pallow.domain.like.entity.Likeable;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.userboard.entity.UserBoard;
 import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentRequestDto;
 import com.pallow.pallow.global.entity.TimeStamp;
+import com.pallow.pallow.global.enums.ContentType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class UserBoardComment extends TimeStamp {
+public class UserBoardComment extends TimeStamp implements Likeable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +38,7 @@ public class UserBoardComment extends TimeStamp {
     @JoinColumn(nullable = false)
     private String content;
 
-    @Column(nullable = false)
+    @Column
     private int likesCount;
 
     @Builder
@@ -52,5 +54,20 @@ public class UserBoardComment extends TimeStamp {
 
     public void update(UserBoardCommentRequestDto requestDto) {
         this.content = requestDto.getContent();
+    }
+
+    @Override
+    public ContentType contentType() {
+        return ContentType.USER_BOARD_COMMENT;
+    }
+
+    @Override
+    public void addLikesCount() {
+        this.likesCount++;
+    }
+
+    @Override
+    public void minusLikesCount() {
+        this.likesCount--;
     }
 }

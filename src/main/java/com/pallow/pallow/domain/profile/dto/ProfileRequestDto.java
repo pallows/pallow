@@ -13,9 +13,12 @@ import com.pallow.pallow.domain.profile.enums.Religion;
 import com.pallow.pallow.domain.profile.enums.Smoking;
 import com.pallow.pallow.domain.user.entity.User;
 import jakarta.validation.constraints.NotNull;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -29,25 +32,39 @@ public class ProfileRequestDto {
     private String position;
     private Mbti mbti;
     private String hobby;
-    private String photo;
+    private MultipartFile image;
 
-    private Alcohol alcohol;
-    private Education education;
-    private IDEAL ideal;
-    private Jobs jobs;
-    private Personality personality;
-    private Relationship relationship;
-    private Religion religion;
-    private Smoking smoking;
-    private Pros pros;
-
+    private String interest;
+    private String alcohol;
+    private String education;
+    private String ideal;
+    private String jobs;
+    private String personality;
+    private String relationship;
+    private String religion;
+    private String smoking;
+    private String pros;
 
     // 프로필 화면에 띄우기 위함
     private String username;
 
+    public Profile toEntity(User foundUser, String imageUrl) {
+        return Profile.builder()
+                .birth(birth).hobby(hobby).content(content).position(position).mbti(mbti)
+                .image(imageUrl).createdBy(foundUser).interest(interest).ideal(ideal)
+                .alcohol(convertToEnum(Alcohol.class, alcohol)).education(convertToEnum(Education.class, education))
+                .jobs(convertToEnum(Jobs.class, jobs)).personality(convertToEnum(Personality.class, personality))
+                .relationship(convertToEnum(Relationship.class, relationship)).religion(convertToEnum(Religion.class, religion))
+                .smoking(convertToEnum(Smoking.class, smoking)).pros(convertToEnum(Pros.class, pros)).build();
+    }
 
-    public Profile toEntity(User foundUser) {
-        return Profile.builder().content(content).birth(birth).position(position).mbti(mbti)
-                .createdBy(foundUser).hobby(hobby).photo(photo).build();
+    @SuppressWarnings("unchecked")
+    private <E extends Enum<E>> E convertToEnum(Class<E> enumClass, String value) {
+        try {
+            Method valueOfMethod = enumClass.getMethod("valueOf", String.class);
+            return (E) valueOfMethod.invoke(null, value);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

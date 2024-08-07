@@ -1,15 +1,13 @@
 package com.pallow.pallow.domain.profile.enums;
 
 public enum Religion {
-    None("무교"),
-    Christian("기독교"),
-    Catholic("천주교"),
-    Buddhism("불교"),
-    WonBuddhism("원불교"),
+    NONE("무교"),
+    CHRISTIAN("기독교"),
+    CATHOLIC("천주교"),
+    BUDDHISM("불교"),
+    WONBUDDHISM("원불교"),
     ETC("기타 종교");
-
     private String description;
-
     Religion(String description) {
         this.description = description;
     }

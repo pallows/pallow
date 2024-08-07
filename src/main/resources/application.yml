@@ -26,6 +26,12 @@ spring:
           starttls:
             enable: 'true'
             required: 'true'
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2MB
+      max-request-size: 10MB
+      max-file-size: 10MB
 data:
   redis:
     host: localhost
@@ -55,3 +61,16 @@ jwt:
 kakao:
   clientId: ${CLIENT_ID}
   redirectUri: ${REDIRECT_URI}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: us-east-1
+    stack:
+      auto: false
+    s3:
+      bucket: pallowbucket
+
