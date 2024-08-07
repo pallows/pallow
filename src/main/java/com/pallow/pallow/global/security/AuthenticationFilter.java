@@ -1,5 +1,8 @@
 package com.pallow.pallow.global.security;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_OK;
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pallow.pallow.domain.user.dto.LoginRequestDto;
 import com.pallow.pallow.domain.user.service.RefreshTokenService;
@@ -8,17 +11,13 @@ import com.pallow.pallow.global.dtos.UnauthenticatedResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.io.IOException;
-import java.util.UUID;
-
-import static jakarta.servlet.http.HttpServletResponse.SC_OK;
-import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 @Slf4j
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {

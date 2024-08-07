@@ -3,8 +3,8 @@ package com.pallow.pallow.domain.user.entity;
 import com.pallow.pallow.domain.chat.entity.UserAndChatRoom;
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.profile.entity.Profile;
-import com.pallow.pallow.global.common.CommonOauth;
 import com.pallow.pallow.domain.user.dto.SignupRequestDto;
+import com.pallow.pallow.global.common.CommonOauth;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.Gender;
@@ -18,14 +18,15 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Entity

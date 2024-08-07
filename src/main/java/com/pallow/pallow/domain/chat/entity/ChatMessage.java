@@ -1,6 +1,5 @@
 package com.pallow.pallow.domain.chat.entity;
 
-import com.pallow.pallow.domain.chat.dto.ChatMessageDto;
 import com.pallow.pallow.domain.chat.model.MessageType;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.entity.TimeStamp;
@@ -16,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -50,7 +48,6 @@ public class ChatMessage extends TimeStamp {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     @Column(nullable = false)
-    @Builder.Default
     private MessageType type = MessageType.CHAT;
 
     /**

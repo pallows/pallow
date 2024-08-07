@@ -8,7 +8,6 @@ import com.pallow.pallow.domain.profile.enums.Jobs;
 import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.enums.Personality;
 import com.pallow.pallow.domain.profile.enums.Pros;
-import com.pallow.pallow.domain.profile.enums.Region;
 import com.pallow.pallow.domain.profile.enums.Relationship;
 import com.pallow.pallow.domain.profile.enums.Religion;
 import com.pallow.pallow.domain.profile.enums.Smoking;

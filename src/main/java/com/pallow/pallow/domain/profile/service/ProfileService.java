@@ -11,6 +11,7 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.dtos.FlaskRequestDto;
 import com.pallow.pallow.global.dtos.FlaskResponseDto;
+import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import java.util.ArrayList;
@@ -69,28 +70,18 @@ public class ProfileService {
 
     @Transactional
     public List<ProfileFlaskResponseDto> recommendProfiles(User user) {
+
         user = userRepository.save(user);
-        // save 로 할지, findBy 로 할지, em.persist 로 할지
+
         Profile currentUserProfile = profileRepository.findByUserId(user.getId());
-        List<Profile> profileList = profileRepository.findAllByPosition(user.getProfile().getPosition());
+
+        List<Profile> profileList = profileRepository.findAllByPositionAndUserStatus(
+                user.getProfile().getPosition(), user.getStatus());
+
         List<ProfileItem> items = new ArrayList<>();
-        // cascade = cascadeType.persist 영속성 컨텍스트 걸어주는게 요걸로 알고 있는데 문제는 어디에 걸어야할질 모름   그 user나 profile에 <- 저거 걸어주는걸론 안되나요?
-        // 어우야 ... 모쪼록 감사합니다...
-        // 어 그 profile에 이미 해놨는데 아하 ?
         profileList.forEach(profile -> items.add(profileMapper.toRequestItem(profile)));
 
         user = userRepository.findById(user.getId()).orElseThrow();
-        // 넵! 감사합니다!
-        // 요 아래거 다 해봤는데 안됐어요  넹  gpt도 해보고 인터넷 검색도 해봤는데 안돼서 꺾임 ㅋㅋㅋㅋ 인가 없어서 그런건가요?
-        // 진짜 눈앞에 다이아가 있는데 돌아가버렷네
-//        트랜잭션이 제대로 걸려 있는지 다시 비즈니스 로직을 검토한다.
-//        필요한 부분에 대해서 단방향 연관 관계를 맺는다.
-//        @EntityGraph 어노테이션을 통해 연관관계를 명확히 지정해준다.
-        // 근데 요 아래거 했을때 안되던데
-//        UserRepository의 findById를 통해 명시적으로 가져온다. (이렇게 되면 sql 연산이 2번 날라가서 비효율적이긴 함.)
-//        @OneToOne 어노테이션으로 직접 엔티티를 정의한 것 외로도, Private Long userId;라는 멤버 변수를 선언하여 조회 시에는 해당 멤버 변수를 이용해 조인한다.
-
-        // 그 원래 user에 담아도 될 정보인데 그냥 따로 profile 이란 클래스 만들어서 관리하려고 onetoone 되어 있는 정보
 
         // 로그 추가: 전송 데이터 확인
         log.info("Items to be sent to Flask: {}", items);

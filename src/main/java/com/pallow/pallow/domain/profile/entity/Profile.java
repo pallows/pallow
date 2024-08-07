@@ -9,21 +9,17 @@ import com.pallow.pallow.domain.profile.enums.Jobs;
 import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.enums.Personality;
 import com.pallow.pallow.domain.profile.enums.Pros;
-import com.pallow.pallow.domain.profile.enums.Region;
 import com.pallow.pallow.domain.profile.enums.Relationship;
 import com.pallow.pallow.domain.profile.enums.Religion;
 import com.pallow.pallow.domain.profile.enums.Smoking;
 import com.pallow.pallow.domain.user.entity.User;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import lombok.Builder;
@@ -101,7 +97,6 @@ public class Profile {
 
     @OneToOne(mappedBy = "profile")
     private User user;
-    
 
 
     @Builder

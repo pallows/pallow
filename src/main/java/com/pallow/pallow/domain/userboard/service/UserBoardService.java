@@ -2,7 +2,6 @@ package com.pallow.pallow.domain.userboard.service;
 
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
-import com.pallow.pallow.domain.user.service.UserService;
 import com.pallow.pallow.domain.userboard.dto.UserBoardRequestDto;
 import com.pallow.pallow.domain.userboard.dto.UserBoardResponseDto;
 import com.pallow.pallow.domain.userboard.entity.UserBoard;
@@ -28,7 +27,7 @@ public class UserBoardService {
             long userId) {
         User createdBy = userRepository.findById(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        if (!isSameIdAndUser(userId, user)) {
+        if (isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         UserBoard userBoard = userBoardRepository.save(requestDto.toEntity(createdBy));
@@ -51,7 +50,7 @@ public class UserBoardService {
             UserBoardRequestDto requestDto, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
-        if (!isSameIdAndUser(userId, user)) {
+        if (isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         userBoard.update(requestDto);
@@ -62,13 +61,13 @@ public class UserBoardService {
     public void deleteUserBoard(long userId, long userBoardId, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
-        if (!isSameIdAndUser(userId, user)) {
+        if (isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         userBoardRepository.delete(userBoard);
     }
 
     private boolean isSameIdAndUser(Long userId, User user) {
-        return user.getId().equals(userId);
+        return !user.getId().equals(userId);
     }
 }

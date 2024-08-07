@@ -1,6 +1,5 @@
 package com.pallow.pallow.domain.user.service;
 
-import com.pallow.pallow.domain.user.dto.LoginRequestDto;
 import com.pallow.pallow.domain.user.dto.SignupRequestDto;
 import com.pallow.pallow.domain.user.dto.UserRequestDto;
 import com.pallow.pallow.domain.user.dto.UserResponseDto;
@@ -11,11 +10,9 @@ import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

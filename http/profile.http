@@ -1,6 +1,5 @@
 ### 회원 프로필 생성
 POST http://localhost:8080/profiles/1
-Authorization: {{Authorization}}
 Cookie: {{Cookie}}
 Content-Type: application/json
 
@@ -39,6 +38,6 @@ DELETE http://localhost:8080/profiles/1
 Authorization: {{Authorization}}
 
 ### 회원 추천 받기
-GET http://localhost:8080/profiles/1/recommendations
+GET http://localhost:8080/profiles/recommendations
 Authorization: {{Authorization}}
 Content-Type: application/json

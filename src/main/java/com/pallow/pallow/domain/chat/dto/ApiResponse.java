@@ -3,8 +3,8 @@ package com.pallow.pallow.domain.chat.dto; // 적절한 패키지로 변경하�
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.Message;
-import lombok.Getter;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
