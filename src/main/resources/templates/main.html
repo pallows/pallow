@@ -141,7 +141,7 @@
         </svg>
         <span class="text-xs mt-1">Chat</span>
     </button>
-    <button id="goToIndexBtn">test Button</button>
+
 </footer>
 <script type="module">
     document.addEventListener('DOMContentLoaded', function () {
@@ -160,13 +160,11 @@
             return fetch(url, options);
         }
 
-        document.getElementById('goToIndexBtn').addEventListener('click', async () => {
+        document.getElementById('chatBtn').addEventListener('click', async () => {
             try {
                 const response = await fetchWithAuth('/chat.html');
-                const response = await fetchWithAuth('/meets.html');
                 if (response.ok) {
                     window.location.href = '/chat.html'; // This will redirect the user to index.html
-                    window.location.href = '/meets.html'; // This will redirect the user to index.html
                 } else {
                     console.error('Failed to load chat.html');
                 }
@@ -253,9 +251,6 @@
         //     }
         // });
 
-        document.getElementById('chatBtn').addEventListener('click', () => {
-            window.location.href = '/chat';
-        });
     });
 </script>
 
