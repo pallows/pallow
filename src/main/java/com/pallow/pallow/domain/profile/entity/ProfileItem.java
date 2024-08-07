@@ -22,7 +22,7 @@ public class ProfileItem {
     private Alcohol alcohol;
     private Education education;
     private IDEAL ideal;
-    private Interest interest;
+    private String interest;
     private Jobs jobs;
     private Mbti mbti;
     private Personality personality;

@@ -57,13 +57,12 @@ public class ProfileService {
     }
 
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user) {
-        String imageUrl = null;
+        String imageUrl;
         try {
             imageUrl = imageService.imageUpload(requestDto.getImage());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("image URL" + imageUrl);
         Profile profile = profileRepository.save(requestDto.toEntity(user, imageUrl));
         return new ProfileResponseDto(profile, profile.getUser().getName());
     }

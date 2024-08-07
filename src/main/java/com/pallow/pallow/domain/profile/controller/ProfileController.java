@@ -70,10 +70,8 @@ public class ProfileController {
             @ModelAttribute("ProfileRequestDto") @Valid ProfileRequestDto requestDto,
             @RequestParam("username") String username) {
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_USER)
-        );
-        ProfileResponseDto responseDto = profileService.createProfile(requestDto,
-                user);
+                () -> new CustomException(ErrorType.NOT_FOUND_USER));
+        ProfileResponseDto responseDto = profileService.createProfile(requestDto, user);
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
     }
