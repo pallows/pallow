@@ -55,28 +55,71 @@ public class ChatService {
     }
 
     /**
-     * 채팅방 생성
-     * @param chatRoomDto 채팅방 정보
-     * @param nickname 유저의 닉네임
+     * 새로운 채팅방생성 (이미 존재하는 경우 기존 방 반환)
+     * @param roomName
+     * @param user1Nickname
+     * @param user2Nickname
      * @return
+     * @throws CustomException
      */
-    public ChatRoomDto createChatRoom(ChatRoomDto chatRoomDto, String nickname) {
-        User user = findUserByNickname(nickname);
+    @Transactional
+    public ChatRoomDto createChatRoom(String roomName, String user1Nickname, String user2Nickname) throws CustomException {
+        log.info("Creating chat room: {}, User1: {}, User2: {}", roomName, user1Nickname, user2Nickname);
+
+        User user1 = findUserByNickname(user1Nickname);
+        User user2 = findUserByNickname(user2Nickname);
+
+        if (user1 == null || user2 == null) {
+            log.error("One or both users not found: {}, {}", user1Nickname, user2Nickname);
+            throw new CustomException(ErrorType.NOT_FOUND_USER);
+        }
+
+        if (user1.equals(user2)) {
+            log.error("Cannot create a chat room with the same user: {}", user1Nickname);
+            throw new CustomException(ErrorType.INVALID_USER_COMBINATION);
+        }
+
+        // 이미 존재하는 1:1 채팅방인지 확인
+        Optional<ChatRoom> existingRoom = chatRoomRepository.findByUsersIn(Arrays.asList(user1, user2), 2L);
+        if (existingRoom.isPresent()) {
+            log.info("Existing chat room found: {}", existingRoom.get());
+            return convertToChatRoomDto(existingRoom.get());
+        }
+
         ChatRoom chatRoom = ChatRoom.builder()
-                .name(chatRoomDto.getName())
-                .sender(user)
-                .inviteCode(generateInviteCode()) // 이 부분 추가
+                .name(roomName)
                 .build();
         chatRoom = chatRoomRepository.save(chatRoom);
+        log.info("Chat room saved: {}", chatRoom);
 
+        UserAndChatRoom userAndChatRoom = new UserAndChatRoom(user1, user2, chatRoom);
+        chatRoom.getUserAndChatRooms().add(userAndChatRoom);
+        chatRoomRepository.save(chatRoom);
+        log.info("Users added to chat room: {}, {}", user1, user2);
+
+        // 초대 메시지 생성
+        ChatMessage inviteMessage = ChatMessage.builder()
+                .chatRoom(chatRoom)
+                .sender(user1)
+                .content(user1Nickname + "님이 " + user2Nickname + "님과 채팅방을 생성했습니다.")
+                .type(MessageType.INVITATION)
+                .build();
+        chatMessageRepository.save(inviteMessage);
+        log.info("Invitation message saved: {}", inviteMessage);
+
+        return convertToChatRoomDto(chatRoom);
+    }
+
+
+    private void addUsersToChatRoom(User user1, User user2, ChatRoom chatRoom) {
         UserAndChatRoom userAndChatRoom = UserAndChatRoom.builder()
-                .user(user)
+                .user1(user1)
+                .user2(user2)
                 .chatRoom(chatRoom)
                 .isActive(true)
                 .build();
         userAndChatRoomRepository.save(userAndChatRoom);
-
-        return convertToChatRoomDto(chatRoom);
+        log.info("UserAndChatRoom saved: {}", userAndChatRoom);
     }
 
 
@@ -84,22 +127,25 @@ public class ChatService {
      * 채팅방 입장
      * @param chatRoomId 채팅방 ID
      * @param nickname 유저의 닉네임
-     * @return
+     * @return ChatRoomResponseDto
      */
     public ChatRoomResponseDto enterChatRoom(Long chatRoomId, String nickname) {
         User user = findUserByNickname(nickname);
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new RuntimeException("Chat room not found"));
+        if (user == null) {
+            throw new CustomException(ErrorType.NOT_FOUND_USER);
+        }
 
-        UserAndChatRoom userAndChatRoom = userAndChatRoomRepository.findByUserAndChatRoom(user, chatRoom)
-                .orElseGet(() -> {
-                    UserAndChatRoom newUserAndChatRoom = UserAndChatRoom.builder()
-                            .user(user)
-                            .chatRoom(chatRoom)
-                            .isActive(true)
-                            .build();
-                    return userAndChatRoomRepository.save(newUserAndChatRoom);
-                });
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_CHATROOM));
+
+        // 사용자가 채팅방의 멤버인지 확인
+        UserAndChatRoom userAndChatRoom = userAndChatRoomRepository.findByChatRoomAndUser1OrUser2(chatRoom, user, user)
+                .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_IN_CHATROOM));
+
+        // 채팅방이 활성 상태인지 확인
+        if (!userAndChatRoom.isActive()) {
+            throw new CustomException(ErrorType.INACTIVE_CHATROOM);
+        }
 
         List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(chatRoomId);
 
@@ -108,6 +154,7 @@ public class ChatService {
                 messages.stream().map(this::convertToChatMessageDto).collect(Collectors.toList())
         );
     }
+
 
     /**
      * 메시지 보내기 + 저장하기 (db에)
@@ -122,7 +169,7 @@ public class ChatService {
 
         ChatMessage message = ChatMessage.builder()
                 .chatRoom(chatRoom)
-                .sender(user.getNickname())
+                .sender(user)
                 .content(messageDto.getContent())
                 .type(messageDto.getType() != null ? messageDto.getType() : MessageType.CHAT)
                 .build();
@@ -151,6 +198,74 @@ public class ChatService {
     }
 
     /**
+     * 두 사용자 간의 채팅방을 찾거나 새로 생성
+     * @param userId
+     * @param nickname
+     * @return
+     */
+    @Transactional
+    public ChatRoomDto findOrCreateChatRoom(Long userId, String nickname) {
+        User currentUser = findUserByNickname(nickname);
+        User otherUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Optional<ChatRoom> existingRoom = chatRoomRepository.findByUsersIn(Arrays.asList(currentUser, otherUser), 2L);
+
+        if (existingRoom.isPresent()) {
+            return convertToChatRoomDto(existingRoom.get());
+        } else {
+            ChatRoom newRoom = ChatRoom.builder()
+                    .name(currentUser.getNickname() + " & " + otherUser.getNickname())
+                    .build();
+            newRoom = chatRoomRepository.save(newRoom);
+
+            addUsersToChatRoom(currentUser, otherUser, newRoom);
+
+            return convertToChatRoomDto(newRoom);
+        }
+    }
+
+    /**
+     * 채팅방 나가기
+     * @param chatRoomId
+     * @param username
+     */
+    public void leaveChatRoom(Long chatRoomId, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new RuntimeException("Chat room not found"));
+
+        userAndChatRoomRepository.deleteByChatRoomAndUser(chatRoom, user);
+
+        // If the user was the last one in the room, delete the room
+        if (chatRoom.getUserCount() == 0) {
+            chatRoomRepository.delete(chatRoom);
+        }
+    }
+
+    /**
+     * 채팅방 삭제
+     * @param roomId
+     * @param nickname
+     */
+    @Transactional
+    public void deleteChatRoom(Long roomId, String nickname) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new RuntimeException("Chat room not found"));
+        User user = findUserByNickname(nickname);
+
+        userAndChatRoomRepository.deleteByChatRoomAndUser(chatRoom, user);
+
+        // 채팅방에 남아있는 사용자 수 확인
+        long remainingUsers = userAndChatRoomRepository.countByChatRoom(chatRoom);
+
+        if (remainingUsers == 0) {
+            chatRoomRepository.delete(chatRoom);
+        }
+    }
+
+    /**
      * chatroom엔티티 dto로 바꾸는 로직
      * @param chatRoom
      * @return
@@ -159,7 +274,6 @@ public class ChatService {
         return ChatRoomDto.builder()
                 .id(chatRoom.getId())
                 .name(chatRoom.getName())
-                .creatorNickname(chatRoom.getSender().getNickname())
                 .build();
     }
 
@@ -212,7 +326,7 @@ public class ChatService {
         ChatMessageDto.ChatMessageDtoBuilder builder = ChatMessageDto.builder()
                 .id(message.getId())
                 .chatRoomId(message.getChatRoom().getId())
-                .sender(message.getSender())
+                .sender(message.getSender().getNickname())
                 .content(message.getContent())
                 .type(message.getType())
                 .createdAt(message.getCreatedAt())
@@ -226,161 +340,9 @@ public class ChatService {
         return builder.build();
     }
 
-    public Map<Long, Integer> getUnreadCountsForUser(Long userId) {
-        Map<Long, Integer> unreadCounts = new HashMap<>();
-        List<UserAndChatRoom> userChatRooms = userAndChatRoomRepository.findByUserIdAndIsActiveTrue(userId);
-
-        for (UserAndChatRoom userChatRoom : userChatRooms) {
-            Long roomId = userChatRoom.getChatRoom().getId();
-            LocalDateTime lastReadTime = userChatRoom.getUpdatedAt();
-            int unreadCount = chatMessageRepository.countByCreatedAtAfterAndChatRoomId(lastReadTime, roomId);
-            unreadCounts.put(roomId, unreadCount);
-        }
-
-        return unreadCounts;
-    }
-
-    @Transactional
-    public ChatRoomDto findOrCreateChatRoom(Long userId, String username) {
-        User currentUser = findUserByNickname(username);
-        User otherUser = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        List<User> users = Arrays.asList(currentUser, otherUser);
-        Optional<ChatRoom> existingRoom = chatRoomRepository.findByUsersIn(users);
-
-        if (existingRoom.isPresent()) {
-            return convertToChatRoomDto(existingRoom.get());
-        } else {
-            ChatRoom newRoom = ChatRoom.builder()
-                    .name(currentUser.getNickname() + " & " + otherUser.getNickname())
-                    .sender(currentUser)
-                    .build();
-            newRoom.getUsers().addAll(users);
-            newRoom = chatRoomRepository.save(newRoom);
-
-            return convertToChatRoomDto(newRoom);
-        }
-    }
-
-    public void markRoomAsRead(Long roomId, Long userId) {
-        UserAndChatRoom userChatRoom = userAndChatRoomRepository
-                .findByUserIdAndChatRoomId(userId, roomId)
-                .orElseThrow(() -> new RuntimeException("User is not in this chat room"));
-
-        userChatRoom.setUpdatedAt(LocalDateTime.now());
-        userAndChatRoomRepository.save(userChatRoom);
-    }
 
 
-    public ChatRoomDto getChatRoomByInviteCode(String inviteCode) {
-        ChatRoom chatRoom = chatRoomRepository.findByInviteCode(inviteCode)
-                .orElseThrow(() -> new RuntimeException("Chat room not found"));
-        return convertToChatRoomDto(chatRoom);
-    }
 
-    public ChatRoomResponseDto addUserToChatRoom(Long chatRoomId, String username, boolean isAnonymous) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new RuntimeException("Chat room not found"));
-
-        User user;
-        if (isAnonymous) {
-            user = createAnonymousUser(username);
-        } else {
-            user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-        }
-
-        UserAndChatRoom userAndChatRoom = userAndChatRoomRepository
-                .findByUserAndChatRoom(user, chatRoom)
-                .orElseGet(() -> {
-                    UserAndChatRoom newUserAndChatRoom = new UserAndChatRoom(user, chatRoom);
-                    return userAndChatRoomRepository.save(newUserAndChatRoom);
-                });
-        List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(chatRoomId);
-
-        return new ChatRoomResponseDto(
-                convertToChatRoomDto(chatRoom),
-                messages.stream().map(this::convertToChatMessageDto).collect(Collectors.toList())
-        );
-    }
-
-    public void leaveChatRoom(Long chatRoomId, String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new RuntimeException("Chat room not found"));
-
-        UserAndChatRoom userAndChatRoom = userAndChatRoomRepository
-                .findByUserAndChatRoom(user, chatRoom)
-                .orElseThrow(() -> new RuntimeException("User is not in this chat room"));
-
-        userAndChatRoomRepository.delete(userAndChatRoom);
-
-        // If the user was the last one in the room, delete the room
-        if (chatRoom.getUsers().size() == 1) {
-            chatRoomRepository.delete(chatRoom);
-        }
-    }
-
-    private User createAnonymousUser(String username) {
-        User anonymousUser = new User();
-        anonymousUser.setUsername(username);
-        anonymousUser.setAnonymous(true);
-        return userRepository.save(anonymousUser);
-    }
-
-    private String generateInviteCode() {
-        return UUID.randomUUID().toString().substring(0, 8);
-    }
-
-    @Transactional
-    public ChatRoomDto createChatRoomWithUser(String roomName, String creatorNickname, String invitedUserNickname) throws CustomException {
-        User creator = findUserByNickname(creatorNickname);
-        User invitedUser = findUserByNickname(invitedUserNickname);
-
-        if (invitedUser == null) {
-            throw new CustomException(ErrorType.NOT_FOUND_APPLY);
-        }
-
-        ChatRoom chatRoom = ChatRoom.builder()
-                .name(roomName)
-                .sender(creator)
-                .build();
-        chatRoom = chatRoomRepository.save(chatRoom);
-
-        // ... 기존 코드 ...
-
-        // 이벤트 발생
-        applicationEventPublisher.publishEvent(new ChatInvitationEvent(this, creator, invitedUser, chatRoom));
-
-        return convertToChatRoomDto(chatRoom);
-    }
-
-    @Transactional
-    public void deleteChatRoom(Long roomId, String nickname) {
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("Chat room not found"));
-        User user = findUserByNickname(nickname);
-
-        userAndChatRoomRepository.deleteByUserAndChatRoom(user, chatRoom);
-
-        // 채팅방에 남아있는 사용자 수 확인
-        long remainingUsers = userAndChatRoomRepository.countByChatRoom(chatRoom);
-
-        if (remainingUsers == 0) {
-            chatRoomRepository.delete(chatRoom);
-        }
-    }
 
 }
 
-/**
- * 공감 관련
- * 유저 / 메시지 있나 확인 -> 없다면 익셉션(유저가 없습니다 메시지가 없습니다)
- *              -> 유저 / 메시지 있다면 공감 표시가 있나 확인
- *                      -> 공감 표시 있다면 공감 삭제
- *                      -> 공감 표시 없다면 공감 생기게
- *                      이렇게 하면 아무것도 없는 메시지를 눌렀을 때 공감 생성
- *                      공감이 이미 있는 메시지를 클릭했을 때 공감 삭제
- */
