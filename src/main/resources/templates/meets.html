@@ -65,13 +65,15 @@
 
 <script>
     document.getElementById('InvitationList').addEventListener('click', async () => {
-        const meetId = 1; // TODO 받아온 meet id
+        // TODO 받아온 meet id
+        const meetId = 1;
         window.open(`http://localhost:8080/InvitationList.html?meetId=${meetId}`, '신청 목록', `width=800,height=600,top=${(screen.height - 600) / 2},left=${(screen.width - 800) / 2}`);
     });
 
     document.addEventListener('DOMContentLoaded', function () {
         const accessToken = localStorage.getItem('Authorization');
-        const meetId = 1; // TODO 받아온 meet id
+        // TODO 받아온 meet id
+        const meetId = 1;
         if (!accessToken) {
             window.location.href = '/login';
             return;
