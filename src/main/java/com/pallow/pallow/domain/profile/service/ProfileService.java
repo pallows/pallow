@@ -44,12 +44,9 @@ public class ProfileService {
     }
 
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user) {
-        User foundUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        Profile profile = profileRepository.save(requestDto.toEntity(foundUser));
+        Profile profile = profileRepository.save(requestDto.toEntity(user));
         return new ProfileResponseDto(profile);
     }
-
 
     @Transactional
     public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
@@ -158,4 +155,5 @@ public class ProfileService {
     private boolean isSameIdAndUser(Long userId, User user) {
         return user.getId().equals(userId);
     }
+
 }

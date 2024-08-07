@@ -25,6 +25,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,7 +47,7 @@ public class Profile {
     private String content;
 
     @Column(nullable = false)
-    private String birth;
+    private LocalDate birth;
 
     @Column
     private String position;
@@ -95,22 +96,31 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Smoking smoking;
 
+    @Column(nullable = false)
+    private String hobby;
+
     @OneToOne(mappedBy = "profile")
     private User user;
+    
+
 
     @Builder
-    public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
-            Interest interest, String photo) {
+    public Profile(String content, LocalDate birth, String position, Mbti mbti, User createdBy,
+            String hobby, String photo) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
         this.position = position;
+        this.hobby = hobby;
         this.photo = photo;
         this.user = createdBy;
     }
 
     public void update(ProfileRequestDto requestDto) {
         this.content = requestDto.getContent();
+        this.birth = requestDto.getBirth();
+        this.position = requestDto.getPosition();
         this.mbti = requestDto.getMbti();
+        this.hobby = requestDto.getHobby();
     }
 }

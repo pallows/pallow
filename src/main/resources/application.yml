@@ -36,27 +36,22 @@ data:
       add-mappings: true
   mvc:
     static-path-pattern: /static/**
-
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
-  access:
-    expiration: ${ACCESS_TOKEN_TTL}
-  refresh:
-    expiration: ${REFRESH_TOKEN_TTL}
+  access-token:
+    ttl: ${ACCESS_TOKEN_TTL}
+  refresh-token:
+    ttl: ${REFRESH_TOKEN_TTL}
+
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
     password: ${REDIS_PASSWORD}
 
-custom:
-  headers:
-    access: "Authorization"
-    refresh: "X-Refresh-Token"
-    authorization: "auth"
-    bearer: "Bearer "
-
-logging:
-  level:
-    org.springframework.security: DEBUG
-    com.pallow.pallow: DEBUG
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+kakao:
+  clientId: ${CLIENT_ID}
+  redirectUri: ${REDIRECT_URI}
