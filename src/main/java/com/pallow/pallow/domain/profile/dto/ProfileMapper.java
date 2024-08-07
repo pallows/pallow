@@ -11,36 +11,31 @@ public class ProfileMapper {
 
     public ProfileItem toRequestItem(Profile profile) {
 
-        ProfileItem.ProfileItemBuilder builder = ProfileItem.builder();
-
-        builder.id(profile.getId());
-        builder.alcohol(profile.getAlcohol());
-        builder.ideal(profile.getIdeal());
-        builder.jobs(profile.getJobs());
-        builder.pros(profile.getPros());
-        builder.mbti(profile.getMbti());
-        builder.relationship(profile.getRelationship());
-        builder.education(profile.getEducation());
-        builder.personality(profile.getPersonality());
-        builder.religion(profile.getReligion());
-        builder.smoking(profile.getSmoking());
-        builder.interest(profile.getInterest());
-        builder.position(profile.getPosition());
-
-        return builder.build();
-
+        return ProfileItem.builder()
+                .id(profile.getId())
+                .alcohol(profile.getAlcohol())
+                .ideal(profile.getIdeal())
+                .jobs(profile.getJobs())
+                .pros(profile.getPros())
+                .mbti(profile.getMbti())
+                .relationship(profile.getRelationship())
+                .education(profile.getEducation())
+                .personality(profile.getPersonality())
+                .religion(profile.getReligion())
+                .smoking(profile.getSmoking())
+                .interest(profile.getInterest())
+                .position(profile.getPosition())
+                .build();
     }
 
 
     public ProfileFlaskResponseDto getResponseDto(Profile profile) {
 
-        ProfileFlaskResponseDto.ProfileFlaskResponseDtoBuilder builder = ProfileFlaskResponseDto.builder();
-
-        builder.id(profile.getId());
-        builder.name(profile.getUser().getName());
-        builder.photo(profile.getPhoto());
-        builder.mbti(profile.getMbti());
-
-        return builder.build();
+        return ProfileFlaskResponseDto.builder()
+                .id(profile.getId())
+                .name(profile.getUser().getName())
+                .photo(profile.getPhoto())
+                .mbti(profile.getMbti())
+                .build();
     }
 }
