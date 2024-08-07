@@ -58,8 +58,7 @@ public class Profile {
     private Mbti mbti;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private Interest interest;
+    private String interest;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -106,7 +105,7 @@ public class Profile {
 
     @Builder
     public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
-            Interest interest, String image, String hobby, Alcohol alcohol, Education education,
+            String interest, String image, String hobby, Alcohol alcohol, Education education,
             IDEAL ideal, Jobs jobs, Personality personality, Pros pros,
             Relationship relationship, Religion religion, Smoking smoking) {
         this.content = content;

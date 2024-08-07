@@ -33,6 +33,7 @@ public class ProfileRequestDto {
     private String hobby;
     private MultipartFile image;
 
+    private String interest;
     private Alcohol alcohol;
     private Education education;
     private IDEAL ideal;
@@ -48,6 +49,6 @@ public class ProfileRequestDto {
 
     public Profile toEntity(User foundUser, String imageUrl) {
         return Profile.builder().birth(birth).content(content).position(position).mbti(mbti)
-                .image(imageUrl).createdBy(foundUser).build();
+                .image(imageUrl).createdBy(foundUser).interest(interest).build();
     }
 }
