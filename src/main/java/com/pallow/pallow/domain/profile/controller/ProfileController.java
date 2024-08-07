@@ -68,69 +68,13 @@ public class ProfileController {
     @PostMapping
     public ResponseEntity<CommonResponseDto> createProfile(
             @ModelAttribute("ProfileRequestDto") @Valid ProfileRequestDto requestDto,
-            @RequestParam("username") String username,
-            @RequestParam(value = "defaultImage", required = false) String defaultImage) {
+            @RequestParam("username") String username, @RequestParam(value = "defaultImage", required = false) String defaultImage) {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new CustomException(ErrorType.NOT_FOUND_USER));
         ProfileResponseDto responseDto = profileService.createProfile(requestDto, user, defaultImage);
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
     }
-
-//    @PostMapping
-//    public ResponseEntity<CommonResponseDto> createProfile(
-//            @RequestParam("content") String content,
-//            @RequestParam("birth") String birth,
-//            @RequestParam("mbti") String mbti,
-//            @RequestParam("hobby") String hobby,
-//            @RequestParam("photo") MultipartFile photo,
-//            @RequestParam(value = "defaultPhoto", required = false) String defaultPhoto,
-//            @RequestParam("position") String position,
-//            @RequestParam("username") String username) throws IOException {
-//
-//        Mbti mbtiEnum = Mbti.valueOf(mbti);
-//
-//        String photoPath;
-//        if (photo.isEmpty() && defaultPhoto != null && !defaultPhoto.isEmpty()) {
-//            photoPath = defaultPhoto;
-//        } else {
-//            photoPath = saveFile(photo);
-//        }
-//
-//        ProfileRequestDto requestDto = new ProfileRequestDto();
-//        requestDto.setContent(content);
-//        requestDto.setBirth(birth);
-//        requestDto.setMbti(mbtiEnum);
-//        requestDto.setPhoto(photoPath);
-//        requestDto.setPosition(position);
-//        requestDto.setUsername(username);
-//        requestDto.setHobby(hobby);
-//
-//        User user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-//
-//        ProfileResponseDto responseDto = profileService.createProfile(requestDto, user);
-//        return ResponseEntity.ok(
-//                new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
-//    }
-//
-//    private String saveFile(MultipartFile file) throws IOException {
-//        if (file.isEmpty()) {
-//            throw new IOException("Failed to store empty file.");
-//        }
-//
-//        String fileName = UUID.randomUUID().toString() + "_" + StringUtils.cleanPath(
-//                Objects.requireNonNull(file.getOriginalFilename()));
-//        Path uploadPath = Paths.get(UPLOAD_DIR);
-//
-//        if (!Files.exists(uploadPath)) {
-//            Files.createDirectories(uploadPath);
-//        }
-//
-//        Path filePath = uploadPath.resolve(fileName);
-//        Files.copy(file.getInputStream(), filePath);
-//        return "/images/" + fileName;
-//    }
 
     /**
      * 프로필 수정
@@ -140,7 +84,7 @@ public class ProfileController {
      * @param userId      수정하려는 유저 데이터
      * @return 수정 성공 메시지 + 수정된 프로필 데이터
      */
-    @PatchMapping
+    @PatchMapping("/{userId}")
     public ResponseEntity<CommonResponseDto> updateProfile(
             @ModelAttribute @Valid ProfileRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -152,7 +96,7 @@ public class ProfileController {
                 new CommonResponseDto(Message.PROFILE_UPDATE_SUCCESS, responseDto));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{userId}")
     public ResponseEntity<CommonResponseDto> deleteProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable Long userId) {

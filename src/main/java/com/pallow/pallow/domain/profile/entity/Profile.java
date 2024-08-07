@@ -49,10 +49,6 @@ public class Profile {
     @Column
     private String position;
 
-    // 인트로 받아와서 스트링으로 변환해야함
-    @Column
-    private String district;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
@@ -69,8 +65,7 @@ public class Profile {
     private Education education;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private IDEAL ideal;
+    private String ideal;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -106,7 +101,7 @@ public class Profile {
     @Builder
     public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
             String interest, String image, String hobby, Alcohol alcohol, Education education,
-            IDEAL ideal, Jobs jobs, Personality personality, Pros pros,
+            String ideal, Jobs jobs, Personality personality, Pros pros,
             Relationship relationship, Religion religion, Smoking smoking) {
         this.content = content;
         this.birth = birth;

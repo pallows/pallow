@@ -87,3 +87,140 @@ export const regionData ={
     "밀양시", "거제시", "양산시", "의령군", "함안군", "창녕군", "고성군", "남해군", "하동군", "산청군", "함양군", "거창군", "합천군"],
   "제주": ["제주시", "서귀포시"]
 }
+
+export const ideals = {
+  HANDSOME_BEAUTIFUL: "이쁘고 잘생긴",
+  STYLISH: "스타일리시한",
+  RELIABLE: "듬직한",
+  PETITE: "아담한",
+  SAME_AGE: "또래",
+  OLDER: "연상",
+  YOUNGER: "연하",
+  CLOSE_DISTANCE: "거리가 가까운",
+  SAME_HOBBIES: "취미가 같은",
+  COMMUNICATIVE: "말이 통하는",
+  SMILEY: "잘 웃어주는",
+  NO_SWEARING: "욕 안하는",
+  PLEASANT_VOICE: "목소리 좋은",
+  GOOD_LISTENER: "잘 들어주는",
+  ENERGETIC: "활발한",
+  QUIET: "조용한",
+  CUTE: "애교가 넘치는",
+  MATURE: "어른스러운",
+  PASSIONATE: "열정적인",
+  CALM: "침착한",
+  UNIQUE: "개성 넘치는",
+  POLITE: "예의 바른",
+  HUMOROUS: "유머러스한",
+  PRUDENT: "신중한",
+  CONFIDENT: "자신감 넘치는",
+  NO_PRETENSE: "허세없는",
+  QUIRKY: "엉뚱한",
+  INTELLECTUAL: "지적인",
+  DILIGENT: "성실한",
+  FREE_SPIRITED: "자유로운",
+  SENSITIVE: "감성적인",
+  LOGICAL: "논리적인",
+  IMPULSIVE: "즉흥적인",
+  SHY: "소심한",
+  COOL: "쿨한",
+  TALL: "키가 큰",
+  CAPABLE: "능력 있는",
+  SMART: "똑똑한",
+  CULTURED: "교양 있는",
+  CUTE_APPEARANCE: "귀여운"
+};
+
+export const alcoholPreferences = {
+  NOPE: "술은 안 마셔요",
+  SOMETIMES: "술은 가끔 마셔요",
+  ALWAYS: "술은 내 친구"
+};
+
+export const educationLevels = {
+  HIGH: "고졸",
+  UNIV: "대졸",
+  UNIV_ON: "대학교 재학",
+  GRADUATE_ON: "대학원 재학",
+  ETC: "기타"
+};
+
+export const jobTypes = {
+  STUDENT: "학생",
+  PART_TIME: "알바",
+  FREE_LANCER: "프리랜서",
+  OFFICE: "회사원",
+  SELF: "자영업",
+  PRO: "전문직",
+  MEDICAL: "의료직",
+  EDUCATION: "교육직",
+  FINANCE: "금융직",
+  RESEARCH: "연구, 기술직",
+  PUBLIC: "공무원",
+  BUSINESS: "사업가",
+  SOLDIER: "군인",
+  PREPARE: "취업 준비중",
+  ARTIST: "예술가",
+  ATHLETIC: "체육인",
+  MUSICIAN: "음악가",
+  INFLUENCER: "인플루언서",
+  YOUTUBER: "유튜버",
+  REST: "쉬고 있어요",
+  ETC: "기타"
+};
+
+export const personalities = {
+  CALM: "차분한",
+  KIND: "상냥한",
+  POSITIVE: "긍정적인",
+  CREATIVE: "창의적인",
+  OPTIMISTIC: "낙천적인",
+  CARING: "자상한",
+  PRIM: "꼼꼼한",
+  CAREFUL: "신중한",
+  HUMOR: "유머러스한",
+  HOT: "화끈한",
+  UPSTAGE: "도도한",
+  ENTHUSIASTIC: "열정적인",
+  BOLD: "대범한",
+  CUTE: "귀여운",
+  SMOOTH: "부드러운",
+  SENTIMENTAL: "감성적인",
+  SOCIABLE: "사교적인",
+  FAITHFUL: "성실한",
+  LOGICAL: "논리적인",
+};
+
+export const pros = {
+  FASHION: "패션 센스",
+  EXPRESS: "표현을 잘해요",
+  EMPATHY: "공감 능력",
+  FOREIGN: "외국어",
+  CAREER: "뛰어난 커리어",
+  MONEY: "높은 경제력",
+  DETAILED: "섬세하다",
+  BRAIN: "섹시한 두뇌",
+};
+
+export const relationships = {
+  FINDING_FRIEND: "내 취향에 맞는 친구 찾는 중",
+  FRIENDSHIP_OR_DATING_OK: "친구도 연애도 좋아요",
+  LOOKING_FOR_SERIOUS_RELATIONSHIP: "진지한 연애 상대 찾는 중",
+  UNDECIDED: "아직 모르겠어요",
+};
+
+export const religions = {
+  NONE: "무교",
+  CHRISTIAN: "기독교",
+  CATHOLIC: "천주교",
+  BUDDHISM: "불교",
+  WONBUDDHISM: "원불교",
+  ETC: "기타 종교",
+};
+
+export const smokings = {
+  NONE: "비흡연",
+  QUITTING: "금연 중",
+  ELECTRIC: "전자 담배",
+  CIGAR: "흡연 중",
+};

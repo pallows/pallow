@@ -26,9 +26,10 @@ public class ProfileResponseDto {
     private String hobby;
     private String image;
 
+    private String interest;
     private Alcohol alcohol;
     private Education education;
-    private IDEAL ideal;
+    private String ideal;
     private Jobs jobs;
     private Personality personality;
     private Relationship relationship;
