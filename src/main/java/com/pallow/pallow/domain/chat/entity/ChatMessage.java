@@ -48,6 +48,7 @@ public class ChatMessage extends TimeStamp {
      */
     @Setter
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     @Column(nullable = false)
     private MessageType type = MessageType.CHAT;
 
@@ -55,6 +56,7 @@ public class ChatMessage extends TimeStamp {
      * 기본 메시지의 공감 수를 0개로 초기화 해놓음
      */
     @Column
+    @Builder.Default
     private int chatReactionCount = 0;
 
 
@@ -63,6 +65,7 @@ public class ChatMessage extends TimeStamp {
     @JoinColumn(name = "chatroom_id", nullable = false)
     private ChatRoom chatRoom;
 
+    @Builder.Default
     @OneToMany(mappedBy = "chatMessage", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChatReaction> chatReactions = new HashSet<>();
 
