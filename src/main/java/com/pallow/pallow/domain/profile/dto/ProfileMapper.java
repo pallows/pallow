@@ -2,7 +2,6 @@ package com.pallow.pallow.domain.profile.dto;
 
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.domain.profile.entity.ProfileItem;
-import com.pallow.pallow.global.region.Region;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,21 +25,20 @@ public class ProfileMapper {
         builder.religion(profile.getReligion());
         builder.smoking(profile.getSmoking());
         builder.interest(profile.getInterest());
-        builder.region(profile.getPosition());
+        builder.position(profile.getPosition());
 
         return builder.build();
 
     }
 
 
-    public ProfileFlaskReseponseDto getResponseDto(Profile profile) {
+    public ProfileFlaskResponseDto getResponseDto(Profile profile) {
 
-        ProfileFlaskReseponseDto.ProfileFlaskReseponseDtoBuilder builder = ProfileFlaskReseponseDto.builder();
+        ProfileFlaskResponseDto.ProfileFlaskResponseDtoBuilder builder = ProfileFlaskResponseDto.builder();
 
         builder.id(profile.getId());
         builder.photo(profile.getPhoto());
         builder.birth(profile.getBirth());
-        builder.district(profile.getDistrict());
         builder.position(profile.getPosition());
         builder.mbti(profile.getMbti());
 

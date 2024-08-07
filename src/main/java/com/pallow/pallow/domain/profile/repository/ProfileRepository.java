@@ -10,5 +10,5 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     Profile findByUserId(Long id);
 
-    List<Profile> findAllByPosition(Region position);
+    List<Profile> findAllByPosition(String position);
 }

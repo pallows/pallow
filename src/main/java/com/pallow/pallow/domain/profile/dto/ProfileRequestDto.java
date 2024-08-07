@@ -17,7 +17,7 @@ public class ProfileRequestDto {
     @NotNull(message = "생일을 입력해 주세요.")
     private String birth;
     @NotNull(message = "지역을 선택해 주세요.")
-    private Region position;
+    private String position;
     private Mbti mbti;
     private String photo;
     private int districtCode;

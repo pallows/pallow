@@ -1,6 +1,6 @@
 package com.pallow.pallow.domain.profile.service;
 
-import com.pallow.pallow.domain.profile.dto.ProfileFlaskReseponseDto;
+import com.pallow.pallow.domain.profile.dto.ProfileFlaskResponseDto;
 import com.pallow.pallow.domain.profile.dto.ProfileMapper;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
@@ -13,12 +13,10 @@ import com.pallow.pallow.global.dtos.FlaskRequestDto;
 import com.pallow.pallow.global.dtos.FlaskResponseDto;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
-import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -73,7 +71,7 @@ public class ProfileService {
     }
 
     @Transactional
-    public List<ProfileFlaskReseponseDto> recommendProfiles(User user) {
+    public List<ProfileFlaskResponseDto> recommendProfiles(User user) {
         user = userRepository.save(user);
         // save 로 할지, findBy 로 할지, em.persist 로 할지
         Profile currentUserProfile = profileRepository.findByUserId(user.getId());
@@ -115,7 +113,7 @@ public class ProfileService {
         log.info("Received sorted ID list from Flask: {}", responseDto.getData().getSortedIdList());
 
         // make response
-        List<ProfileFlaskReseponseDto> results = new ArrayList<>();
+        List<ProfileFlaskResponseDto> results = new ArrayList<>();
         responseDto.getData().getSortedIdList().forEach(id -> {
             Profile profile = profileRepository.findById(id)
                     .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));

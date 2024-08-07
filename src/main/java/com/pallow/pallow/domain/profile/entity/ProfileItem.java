@@ -28,7 +28,7 @@ public class ProfileItem {
     private Mbti mbti;
     private Personality personality;
     private Pros pros;
-    private Region region;
+    private String position;
     private Relationship relationship;
     private Religion religion;
     private Smoking smoking;

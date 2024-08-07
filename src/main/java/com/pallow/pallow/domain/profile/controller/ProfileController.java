@@ -1,15 +1,12 @@
 package com.pallow.pallow.domain.profile.controller;
 
-import com.pallow.pallow.domain.profile.dto.ProfileFlaskReseponseDto;
+import com.pallow.pallow.domain.profile.dto.ProfileFlaskResponseDto;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
-import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.domain.profile.repository.ProfileRepository;
 import com.pallow.pallow.domain.profile.service.ProfileService;
 import com.pallow.pallow.global.common.CommonResponseDto;
-import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.Message;
-import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -18,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -95,7 +91,7 @@ public class ProfileController {
     @GetMapping("/recommendations") //유저가 날려용 인증 인가 하신분이 인가 필터 안만들고 어떻게 구현하셨따는데 모르겠어요 그 auth 패키지 봐보실래용 domain에
     public ResponseEntity<CommonResponseDto> getRecommendedProfiles(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<ProfileFlaskReseponseDto> responseDto = profileService.recommendProfiles(
+        List<ProfileFlaskResponseDto> responseDto = profileService.recommendProfiles(
                 userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS, responseDto));
