@@ -6,6 +6,7 @@ import com.pallow.pallow.domain.meetsreview.dto.ReviewRequestDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.ContentType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,10 +26,13 @@ public class MeetsReview extends TimeStamp implements Likeable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String content;
 
+    @Column
     private int likesCount;
 
+    @Column(nullable = false)
     private int starRating;
 
     @ManyToOne

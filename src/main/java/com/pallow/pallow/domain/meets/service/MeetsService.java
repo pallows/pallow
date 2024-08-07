@@ -2,6 +2,7 @@ package com.pallow.pallow.domain.meets.service;
 
 import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
 import com.pallow.pallow.domain.invitedboard.repository.InvitedBoardRepository;
+import com.pallow.pallow.domain.like.service.LikeService;
 import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
 import com.pallow.pallow.domain.meets.dto.MeetsResponseDto;
 import com.pallow.pallow.domain.meets.entity.Meets;
@@ -13,6 +14,8 @@ import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.InviteStatus;
 import com.pallow.pallow.global.exception.CustomException;
+import com.pallow.pallow.global.s3.service.ImageService;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,8 @@ public class MeetsService {
 
     private final MeetsRepository meetsRepository;
     private final UserRepository userRepository;
+    private final LikeService likeService;
+    private final ImageService imageService;
     private final InvitedBoardRepository invitedBoardRepository;
 
     /**
@@ -36,12 +41,21 @@ public class MeetsService {
                 () -> new CustomException(ErrorType.NOT_FOUND_USER)
         );
 
+        // 이미지 업로드
+        String imageUrl = null;
+        try {
+            imageUrl = imageService.imageUpload(requestDto.getImage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         // requestDto -> entity
         Meets meets = Meets.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
-                .image(requestDto.getImage())
+                .image(imageUrl)
                 .maxMemberCount(requestDto.getMaxMemberCount())
+                .position(requestDto.getPosition())
                 .user(existUser)
                 .status(CommonStatus.ACTIVE)
                 .build();
@@ -84,7 +98,20 @@ public class MeetsService {
             throw new CustomException(ErrorType.UNAPPROVED_USER);
         }
 
-        meets.update(requestDto);
+        // 이미지 업로드
+        String imageUrl = null;
+        if (requestDto.getImage() != null && !requestDto.getImage().isEmpty()) {
+            try {
+                imageService.deleteImage(meets.getImage());
+                imageUrl = imageService.imageUpload(requestDto.getImage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            imageUrl = meets.getImage(); // 기존 이미지 URL 유지
+        }
+
+        meets.update(requestDto, imageUrl);
 
         return new MeetsResponseDto(meets);
     }
@@ -100,6 +127,11 @@ public class MeetsService {
         // 로그인된 유저와 그룹 생성자가 일치하는지 확인
         if (!user.getId().equals(meets.getGroupCreator().getId())) {
             throw new CustomException(ErrorType.UNAPPROVED_USER);
+        }
+
+        // 이미지 삭제
+        if (meets.getImage() != null && !meets.getImage().isEmpty()) {
+            imageService.deleteImage(meets.getImage());
         }
 
         meets.delete();
@@ -146,5 +178,15 @@ public class MeetsService {
         );
 
         invitedBoardRepository.delete(invitedMember);
+    }
+
+    /**
+     * 좋아요 토글
+     * @param meetsId
+     * @param user
+     */
+    @Transactional
+    public void toggleLike(Long meetsId, User user) {
+        likeService.toggleLike(meetsId, user, meetsRepository);
     }
 }

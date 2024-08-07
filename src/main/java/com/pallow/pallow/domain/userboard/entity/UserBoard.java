@@ -1,8 +1,10 @@
 package com.pallow.pallow.domain.userboard.entity;
 
+import com.pallow.pallow.domain.like.entity.Likeable;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.userboard.dto.UserBoardRequestDto;
 import com.pallow.pallow.global.entity.TimeStamp;
+import com.pallow.pallow.global.enums.ContentType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class UserBoard extends TimeStamp {
+public class UserBoard extends TimeStamp implements Likeable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,27 +37,42 @@ public class UserBoard extends TimeStamp {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private String photo;
+    @Column
+    private String image;
 
-    @Column(nullable = false)
+    @Column
     private int likesCount;
 
     @Builder
-    public UserBoard(Long id, User user, String title, String content, String photo,
+    public UserBoard(Long id, User user, String title, String content, String image,
             int likesCount) {
         this.id = id;
         this.user = user;
         this.title = title;
         this.content = content;
-        this.photo = photo;
+        this.image = image;
         this.likesCount = likesCount;
     }
 
 
-    public void update(UserBoardRequestDto requestDto) {
+    public void update(UserBoardRequestDto requestDto, String imageUrl) {
         this.content = requestDto.getContent();
-        this.photo = requestDto.getPhoto();
+        this.image = imageUrl;
         this.title = requestDto.getTitle();
+    }
+
+    @Override
+    public ContentType contentType() {
+        return ContentType.USER_BOARD;
+    }
+
+    @Override
+    public void addLikesCount() {
+        this.likesCount++;
+    }
+
+    @Override
+    public void minusLikesCount() {
+        this.likesCount--;
     }
 }

@@ -15,6 +15,8 @@ public class MeetsResponseDto {
 
     private String content;
 
+    private String image;
+
     private int memberCount;
 
     private int maxMemberCount;
@@ -23,7 +25,9 @@ public class MeetsResponseDto {
 
     private CommonStatus status;
 
-    private String creatorProfilePhoto; // 추가한 필드
+    private int likesCount;
+
+//    private String creatorProfilePhoto; // 추가한 필드
 
     private LocalDateTime createdAt;
 
@@ -32,11 +36,13 @@ public class MeetsResponseDto {
         this.id = meets.getId();
         this.title = meets.getTitle();
         this.content = meets.getContent();
+        this.image = meets.getImage();
         this.memberCount = meets.getMemberCount();
         this.maxMemberCount = meets.getMaxMemberCount();
         this.position = meets.getPosition();
         this.status = meets.getStatus();
-        this.creatorProfilePhoto = meets.getGroupCreator().getProfile().getPhoto(); // 생성자의 프로필 사진 URL 설정
+        this.likesCount = meets.getLikesCount();
+//        this.creatorProfilePhoto = meets.getGroupCreator().getProfile().getPhoto(); // 생성자의 프로필 사진 URL 설정
         this.createdAt = meets.getCreatedAt();
     }
 }

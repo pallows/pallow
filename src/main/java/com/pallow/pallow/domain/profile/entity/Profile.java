@@ -38,7 +38,7 @@ public class Profile {
     private Long id;
 
     @Column
-    private String photo;
+    private String image;
 
     @Column(nullable = false)
     private String content;
@@ -49,13 +49,12 @@ public class Profile {
     @Column
     private String position;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private Interest interest;
+    private String interest;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -66,8 +65,7 @@ public class Profile {
     private Education education;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private IDEAL ideal;
+    private String ideal;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -102,14 +100,14 @@ public class Profile {
 
     @Builder
     public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
-            Interest interest, String photo, String hobby, Alcohol alcohol, Education education,
-            IDEAL ideal, Jobs jobs, Personality personality, Pros pros,
+            String interest, String image, String hobby, Alcohol alcohol, Education education,
+            String ideal, Jobs jobs, Personality personality, Pros pros,
             Relationship relationship, Religion religion, Smoking smoking) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
         this.position = position;
-        this.photo = photo;
+        this.image = image;
         this.user = createdBy;
         this.hobby = hobby;
         this.interest = interest;
@@ -124,10 +122,11 @@ public class Profile {
         this.pros = pros;
     }
 
-    public void update(ProfileRequestDto requestDto) {
+    public void update(ProfileRequestDto requestDto, String imageUrl) {
         this.content = requestDto.getContent();
-        this.mbti = requestDto.getMbti();
         this.position = requestDto.getPosition();
+        this.mbti = requestDto.getMbti();
         this.hobby = requestDto.getHobby();
+        this.image = imageUrl;
     }
 }

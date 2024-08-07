@@ -22,12 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/{userId}/userboards/{userBoardId}/comments")
 public class UserBoardCommentController {
 
     private final UserBoardCommentService userBoardCommentService;
 
-    @PostMapping
+    @PostMapping("/users/{userId}/userboards/{userBoardId}/comments")
     public ResponseEntity<CommonResponseDto> createComment(
             @PathVariable long userBoardId,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -38,7 +37,7 @@ public class UserBoardCommentController {
                 new CommonResponseDto(Message.COMMENT_CREATE_SUCCESS, responseDto));
     }
 
-    @GetMapping
+    @GetMapping("/users/{userId}/userboards/{userBoardId}/comments")
     public ResponseEntity<CommonResponseDto> getAllComment(
             @PathVariable long userBoardId) {
         List<UserBoardCommentResponseDto> responseDtos = userBoardCommentService.getComments(
@@ -46,7 +45,7 @@ public class UserBoardCommentController {
         return ResponseEntity.ok(new CommonResponseDto(Message.COMMENT_READ_SUCCESS, responseDtos));
     }
 
-    @PatchMapping("/{commentId}")
+    @PatchMapping("/users/{userId}/userboards/{userBoardId}/comments/{commentId}")
     public ResponseEntity<CommonResponseDto> updateComment(
             @PathVariable long commentId,
             @RequestBody @Valid UserBoardCommentRequestDto requestDto,
@@ -58,7 +57,7 @@ public class UserBoardCommentController {
 
     }
 
-    @DeleteMapping("/{commentId}")
+    @DeleteMapping("/users/{userId}/userboards/{userBoardId}/comments/{commentId}")
     public ResponseEntity<CommonResponseDto> deleteComment(
             @PathVariable long commentId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -66,4 +65,16 @@ public class UserBoardCommentController {
         return ResponseEntity.ok(new CommonResponseDto(Message.COMMNET_DELETE_SUCCESS));
     }
 
+    /**
+     * 좋아요 토글
+     * @param commentId
+     * @param userDetails
+     * @return
+     */
+    @PostMapping("/userboardscomment/{commentId}/like")
+    public ResponseEntity<CommonResponseDto> likeReview(@PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userBoardCommentService.toggleLike(commentId, userDetails.getUser());
+        return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_TOGGLE_SUCCESS));
+    }
 }
