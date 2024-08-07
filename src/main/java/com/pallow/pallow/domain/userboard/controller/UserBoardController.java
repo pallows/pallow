@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,24 +22,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/users/{userId}/userboards")
 @RequiredArgsConstructor
 public class UserBoardController {
 
     private final UserBoardService userBoardService;
 
-    @PostMapping
+    @PostMapping("/users/{userId}/userboards")
     public ResponseEntity<CommonResponseDto> createUserBoard(
             @PathVariable("userId") long userId,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestBody @Valid UserBoardRequestDto requestDto) {
+            @ModelAttribute @Valid UserBoardRequestDto requestDto) {
         UserBoardResponseDto responseDto = userBoardService.createBoard(requestDto,
                 userDetails.getUser(), userId);
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.USERBOARD_CREATE_SUCCESS, responseDto));
     }
 
-    @GetMapping
+    @GetMapping("/users/{userId}/userboards")
     public ResponseEntity<CommonResponseDto> getAllUserBoard(
             @PathVariable("userId") long userId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -48,7 +48,7 @@ public class UserBoardController {
                 new CommonResponseDto(Message.USERBOARD_READ_SUCCESS, responseDtos));
     }
 
-    @GetMapping("/{userBoardId}")
+    @GetMapping("/users/{userId}/userboards/{userBoardId}")
     public ResponseEntity<CommonResponseDto> getUserBoard(
             @PathVariable("userId") long userId,
             @PathVariable("userBoardId") long userBoardId,
@@ -59,11 +59,11 @@ public class UserBoardController {
                 new CommonResponseDto(Message.USERBOARD_READ_SUCCESS, responseDto));
     }
 
-    @PatchMapping("/{userBoardId}")
+    @PatchMapping("/users/{userId}/userboards/{userBoardId}")
     public ResponseEntity<CommonResponseDto> updateUserBoard(
             @PathVariable("userId") long userId,
             @PathVariable("userBoardId") long userBoardId,
-            @RequestBody @Valid UserBoardRequestDto requestDto,
+            @ModelAttribute @Valid UserBoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserBoardResponseDto responseDto = userBoardService.updateUserBoard(userId, userBoardId,
                 requestDto, userDetails.getUser());
@@ -71,7 +71,7 @@ public class UserBoardController {
                 new CommonResponseDto(Message.USERBOARD_UPDATE_SUCCESS, responseDto));
     }
 
-    @DeleteMapping("/{userBoardId}")
+    @DeleteMapping("/users/{userId}/userboards/{userBoardId}")
     public ResponseEntity<CommonResponseDto> deleteUserBoard(
             @PathVariable("userId") long userId,
             @PathVariable("userBoardId") long userBoardId,
@@ -80,5 +80,16 @@ public class UserBoardController {
         return ResponseEntity.ok(new CommonResponseDto(Message.USERBOARD_DELETE_SUCCESS));
     }
 
-
+    /**
+     * 좋아요 토글
+     * @param userboard_id
+     * @param userDetails
+     * @return
+     */
+    @PostMapping("/userboards/{userboard_id}/like")
+    public ResponseEntity<CommonResponseDto> likeReview(@PathVariable Long userboard_id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userBoardService.toggleLike(userboard_id, userDetails.getUser());
+        return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_TOGGLE_SUCCESS));
+    }
 }

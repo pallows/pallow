@@ -36,7 +36,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             FilterChain filterChain) throws ServletException, IOException {
         String accessToken = tokenProvider.getAccessToken(req);
         String refreshToken = tokenProvider.getRefreshToken(req);
-
         if (StringUtils.hasText(accessToken)) {
             // 액세스 토큰 검증
             if (tokenProvider.validateAccessToken(accessToken)) {
@@ -62,7 +61,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                     setAuthentication(username);
                 } else {
                     log.error("리프레시 토큰 검증 실패");
-                    // 리프레시 토큰이 공격당한 것으로 간주, 리프레시 토큰 삭제
                     refreshTokenService.delete(refreshToken);
                     unverifiedRefreshTokenHandler(res);
                     return;

@@ -22,11 +22,23 @@ public class ChatMessageDto {
         private MessageType type;
         private LocalDateTime createdAt;
         private String formattedTime;
-        private int ChatReactionCount;
+        private int chatReactionCount;
 
         /**
          * 현재 사용자의 반응 여부
          */
         private boolean hasChatReacted;
 
+        @Builder.Default
+        ChatMessageDto message = ChatMessageDto.builder()
+                .id(1L)
+                .chatRoomId(2L)
+                .sender("User")
+                .content("Hello")
+                .type(MessageType.CHAT)
+                .createdAt(LocalDateTime.now())
+                .formattedTime("10:30 AM")
+                .chatReactionCount(5)
+                .hasChatReacted(true)
+                .build();
 }

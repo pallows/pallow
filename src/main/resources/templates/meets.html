@@ -1,93 +1,195 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Details</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-    }
-  </style>
-  <link rel="icon" href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+    <link rel="icon"
+          href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png"
+          type="image/x-icon">
 </head>
 <body class="bg-gray-100 p-6">
-<div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-  <div class="flex items-center mb-6">
-    <img src="https://source.unsplash.com/random/100x100" alt="Profile" class="w-24 h-24 rounded-full mr-6">
-    <div>
-      <h1 class="text-2xl font-bold">조회수</h1>
-      <p class="text-gray-500">2024.07.20 작성됨</p>
-    </div>
-  </div>
-  <div class="grid grid-cols-2 gap-4 mb-6">
-    <div>
-      <label class="block text-gray-700">참가인원</label>
-      <input type="text" value="8명" class="w-full p-2 border border-gray-300 rounded">
-    </div>
-    <div>
-      <label class="block text-gray-700">위치</label>
-      <input type="text" value="가락동동 거래교육 노블PC방 2층" class="w-full p-2 border border-gray-300 rounded">
-    </div>
-    <div>
-      <label class="block text-gray-700">제목</label>
-      <input type="text" value="챌린지 파티" class="w-full p-2 border border-gray-300 rounded">
-    </div>
-  </div>
-  <div class="mb-6">
-    <label class="block text-gray-700">모임설명</label>
-    <textarea class="w-full p-2 border border-gray-300 rounded" rows="4">나의 챌린지 찍는 길 같이 가실 분</textarea>
-  </div>
-  <div class="flex justify-between items-center mb-6">
-    <button class="bg-red-500 text-white px-4 py-2 rounded">참가 신청자 목록</button>
-    <div>
-      <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded">참가신청</button>
-      <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded">받기</button>
-    </div>
-  </div>
-  <div class="mb-6">
-    <h2 class="text-xl font-bold mb-4">리뷰 작성란</h2>
-    <div class="flex items-center mb-4">
-      <textarea class="w-full p-2 border border-gray-300 rounded" rows="2" placeholder="리뷰를 작성하세요..."></textarea>
-      <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded ml-4">작성</button>
-    </div>
-  </div>
-  <div>
-    <div class="flex items-start mb-4">
-      <img src="https://source.unsplash.com/random/50x50" alt="Reviewer" class="w-12 h-12 rounded-full mr-4">
-      <div class="bg-gray-100 p-4 rounded-lg w-full">
-        <div class="flex justify-between items-center mb-2">
-          <span class="font-bold">이름</span>
-          <div class="flex">
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-          </div>
+<div id="meets-container" class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <div class="flex items-center mb-6">
+        <img id="profile-image" src="https://source.unsplash.com/random/100x100" alt="Profile"
+             class="w-24 h-24 rounded-full mr-6">
+        <div>
+            <h1 class="text-2xl font-bold">조회수</h1>
+            <p id="meets-date" class="text-gray-500">2024.07.20 작성됨</p>
         </div>
-        <p>아싸~ 챌린지 달성!! 담에 또 같이해요~~</p>
-      </div>
     </div>
-    <div class="flex items-start">
-      <img src="https://source.unsplash.com/random/50x50" alt="Reviewer" class="w-12 h-12 rounded-full mr-4">
-      <div class="bg-gray-100 p-4 rounded-lg w-full">
-        <div class="flex justify-between items-center mb-2">
-          <span class="font-bold">이름</span>
-          <div class="flex">
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-            <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/></svg>
-          </div>
+    <div class="grid grid-cols-2 gap-4 mb-6">
+        <div>
+            <label class="block text-gray-700">참가인원</label>
+            <input id="member-count" type="text" class="w-full p-2 border border-gray-300 rounded">
         </div>
-        <p>아싸~ 챌린지 달성!! 담에 또 같이해요~~</p>
-      </div>
+        <div>
+            <label class="block text-gray-700">위치</label>
+            <input id="position" type="text" class="w-full p-2 border border-gray-300 rounded">
+        </div>
+        <div>
+            <label class="block text-gray-700">제목</label>
+            <input id="title" type="text" class="w-full p-2 border border-gray-300 rounded">
+        </div>
     </div>
-  </div>
+    <div class="mb-6">
+        <label class="block text-gray-700">모임설명</label>
+        <textarea id="content" class="w-full p-2 border border-gray-300 rounded" rows="4">나의 챌린지 찍는 길 같이 가실 분</textarea>
+    </div>
+    <div class="flex justify-between items-center mb-6">
+        <button id="InvitationList" class="bg-red-500 text-white px-4 py-2 rounded">참가 신청자 목록</button>
+        <div>
+            <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded">참가신청</button>
+            <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded">닫기</button>
+        </div>
+    </div>
+    <div class="mb-6">
+        <h2 class="text-xl font-bold mb-4">리뷰 작성란</h2>
+        <div class="flex items-center mb-4">
+            <textarea id="review-content" class="w-full p-2 border border-gray-300 rounded" rows="2"
+                      placeholder="리뷰를 작성하세요..."></textarea>
+            <button id="submit-review" class="bg-gray-200 text-gray-700 px-4 py-2 rounded ml-4">작성</button>
+        </div>
+    </div>
+    <div id="reviews">
+    </div>
 </div>
+
+
+<script>
+    document.getElementById('InvitationList').addEventListener('click', async () => {
+        const meetId = 1; // TODO 받아온 meet id
+        window.open(`http://localhost:8080/InvitationList.html?meetId=${meetId}`, '신청 목록', `width=800,height=600,top=${(screen.height - 600) / 2},left=${(screen.width - 800) / 2}`);
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const accessToken = localStorage.getItem('Authorization');
+        const meetId = 1; // TODO 받아온 meet id
+        if (!accessToken) {
+            window.location.href = '/login';
+            return;
+        }
+
+        function fetchWithAuth(url, options = {}) {
+            options.headers = {
+                ...options.headers,
+                'Authorization': accessToken,
+                'Content-Type': 'application/json'
+            };
+            return fetch(url, options);
+        }
+
+        async function fetchMeetDetails() {
+            try {
+                const response = await fetchWithAuth(`/api/meets/${meetId}`, {
+                    method: 'GET'
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                const resData = data.data;
+                console.log("response data 데이터", resData);
+                displayMeetData(resData);
+                fetchReviews(); // Fetch all reviews for the meet
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        function displayMeetData(resData) {
+            document.getElementById('meets-container').classList.remove('hidden');
+            document.getElementById('profile-image').src = resData.creatorProfilePhoto || 'https://source.unsplash.com/random/100x100';
+            document.getElementById('meets-date').innerText = new Date(resData.createdAt).toLocaleDateString();
+            document.getElementById('member-count').value = `${resData.memberCount}명`;
+            document.getElementById('position').value = resData.position || '위치 정보 없음';
+            document.getElementById('title').value = resData.title;
+            document.getElementById('content').value = resData.content;
+        }
+
+        async function fetchReviews() {
+            try {
+                const response = await fetchWithAuth(`/meets/${meetId}/review`, {
+                    method: 'GET'
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("리뷰데이터", data);
+                displayReviews(data);
+            } catch (error) {
+                console.error('Error fetching reviews:', error);
+            }
+        }
+
+        function displayReviews(data) {
+            const reviewsContainer = document.getElementById('reviews');
+            reviewsContainer.innerHTML = ''; // 기존 리뷰 초기화
+
+            if (data && data.data && Array.isArray(data.data)) { // data.data가 배열인지 확인
+                data.data.forEach(review => {
+                    const reviewElement = document.createElement('div');
+                    reviewElement.classList.add('flex', 'items-start', 'mb-4');
+                    reviewElement.innerHTML = `
+                        <img src="${review.reviewerProfilePhoto || 'https://source.unsplash.com/random/50x50'}" alt="Reviewer" class="w-12 h-12 rounded-full mr-4">
+                        <div class="bg-gray-100 p-4 rounded-lg w-full">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-bold">${review.reviewerName || 'Anonymous'}</span>
+                                <div class="flex">
+                                    ${[...Array(review.starRating)].map(() => `
+                                        <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M10 15l-5.878 3.09 1.122-6.545L.488 6.91l6.564-.955L10 0l2.948 5.955 6.564.955-4.756 4.635 1.122 6.545z"/>
+                                        </svg>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <p>${review.content}</p>
+                        </div>
+                    `;
+                    reviewsContainer.appendChild(reviewElement);
+                });
+            }
+        }
+
+        fetchMeetDetails();
+
+        // 리뷰 작성 이벤트 리스너
+        document.getElementById('submit-review').addEventListener('click', async function () {
+            const reviewContent = document.getElementById('review-content').value;
+            const reviewData = {
+                content: reviewContent,
+                starRating: 0 //TODO :  실제로 아직 프론트에 구현 되어 있지 않습니다.
+            };
+
+            try {
+                const response = await fetchWithAuth(`/api/meets/${meetId}/review`, {
+                    method: 'POST',
+                    body: JSON.stringify(reviewData)
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                if (data.message === 'REVIEW_CREATE_SUCCESS') {
+                    alert('리뷰가 성공적으로 추가되었습니다.');
+                    fetchReviews(); // Fetch the updated list of reviews
+                } else {
+                    throw new Error('리뷰 작성에 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error creating review:', error);
+                alert('리뷰를 작성하는 중 오류가 발생했습니다. 나중에 다시 시도해주세요.');
+            }
+        });
+    });
+</script>
 </body>
 </html>

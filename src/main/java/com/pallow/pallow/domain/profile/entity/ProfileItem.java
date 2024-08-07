@@ -21,13 +21,13 @@ public class ProfileItem {
     private Long id;
     private Alcohol alcohol;
     private Education education;
-    private IDEAL ideal;
-    private Interest interest;
+    private String ideal;
+    private String interest;
     private Jobs jobs;
     private Mbti mbti;
     private Personality personality;
     private Pros pros;
-    private String position;
+    private String region;
     private Relationship relationship;
     private Religion religion;
     private Smoking smoking;

@@ -1,19 +1,30 @@
 package com.pallow.pallow.domain.profile.service;
 
+
+import com.pallow.pallow.domain.profile.dto.ProfileFlaskReseponseDto;
+import com.pallow.pallow.domain.profile.dto.ProfileMapper;
 import com.pallow.pallow.domain.profile.dto.ProfileFlaskResponseDto;
 import com.pallow.pallow.domain.profile.dto.ProfileMapper;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.domain.profile.entity.ProfileItem;
+import com.pallow.pallow.domain.profile.repository.ProfileCustomRepository;
+import com.pallow.pallow.domain.profile.entity.ProfileItem;
 import com.pallow.pallow.domain.profile.repository.ProfileRepository;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.dtos.FlaskRequestDto;
 import com.pallow.pallow.global.dtos.FlaskResponseDto;
+import com.pallow.pallow.global.dtos.FlaskRequestDto;
+import com.pallow.pallow.global.dtos.FlaskResponseDto;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+import com.pallow.pallow.global.s3.service.ImageService;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -31,40 +42,84 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class ProfileService {
 
+    private final ImageService imageService;
+
     /**
      * TODO 인증 인가 부분과 병합 후 메소드 작동시 유저 확인 받게끔 코드 변경 필요!
      */
     private final ProfileRepository profileRepository;
     private final UserRepository userRepository;
     private final ProfileMapper profileMapper;
+    private final ProfileCustomRepository profileCustomRepository;
 
     public ProfileResponseDto getProfile(Long userId) {
         Profile foundUser = profileRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        return new ProfileResponseDto(foundUser);
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getUsername());
     }
 
-    public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user) {
-        Profile profile = profileRepository.save(requestDto.toEntity(user));
-        return new ProfileResponseDto(profile);
+    public ProfileResponseDto getMyProfile(Long userId) {
+        Profile foundUser = profileRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
+    }
+
+    public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user, String defaultImage) {
+        String imageUrl;
+        if (requestDto.getImage() == null || requestDto.getImage().isEmpty()) {
+            imageUrl = defaultImage;
+        } else {
+            try {
+                imageUrl = imageService.imageUpload(requestDto.getImage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Profile profile = profileRepository.save(requestDto.toEntity(user, imageUrl));
+        return new ProfileResponseDto(profile, profile.getUser().getName());
     }
 
     @Transactional
     public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
         Profile foundUser = profileRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
-        foundUser.update(requestDto);
-        return new ProfileResponseDto(foundUser);
+
+        // 이미지 업로드
+        String imageUrl = null;
+        if (requestDto.getImage() != null && !requestDto.getImage().isEmpty()) {
+            try {
+                imageService.deleteImage(foundUser.getImage());
+                imageUrl = imageService.imageUpload(requestDto.getImage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            imageUrl = foundUser.getImage(); // 기존 이미지 URL 유지
+        }
+
+        foundUser.update(requestDto, imageUrl);
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
     }
 
     @Transactional
     public void deleteProfile(Long userId, User user) {
+        Profile profile = profileRepository.findByUserId(userId).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_USER)
+        );
+
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
+
+        // 이미지 삭제
+        if (profile.getImage() != null && !profile.getImage().isEmpty()) {
+            imageService.deleteImage(profile.getImage());
+        }
+
         profileRepository.deleteById(userId);
     }
 
@@ -144,5 +199,4 @@ public class ProfileService {
     private boolean isSameIdAndUser(Long userId, User user) {
         return user.getId().equals(userId);
     }
-
 }

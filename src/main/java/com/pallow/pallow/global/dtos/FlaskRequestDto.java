@@ -10,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class FlaskRequestDto {
+
     private Long id;
     private List<ProfileItem> profiles;
 }

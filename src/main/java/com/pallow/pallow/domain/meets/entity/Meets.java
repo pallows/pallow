@@ -2,11 +2,13 @@ package com.pallow.pallow.domain.meets.entity;
 
 import com.pallow.pallow.domain.chat.entity.ChatRoom;
 import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
+import com.pallow.pallow.domain.like.entity.Likeable;
 import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
 import com.pallow.pallow.domain.meetsreview.entity.MeetsReview;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.CommonStatus;
+import com.pallow.pallow.global.enums.ContentType;
 import com.pallow.pallow.global.enums.InviteStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -30,11 +32,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Meets extends TimeStamp {
+public class Meets extends TimeStamp implements Likeable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true)
     private Long id;
 
     @Column(nullable = false)
@@ -43,14 +44,20 @@ public class Meets extends TimeStamp {
     @Column(nullable = false)
     private String content;
 
+    @Column
     private String image;
 
+    @Column(nullable = false)
+    private String position;
+
+    @Column
     private int memberCount;
 
     @Column(nullable = false)
     private int maxMemberCount;
 
-    private String position;
+    @Column
+    private int likesCount;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -71,21 +78,22 @@ public class Meets extends TimeStamp {
 
     @Builder
     public Meets(String title, String content, String image, int maxMemberCount, String position,
-            CommonStatus status, User user) {
+            int likesCount, CommonStatus status, User user) {
         this.title = title;
         this.content = content;
         this.image = image;
         this.memberCount = calculatedMemberList().size() + 1;
         this.maxMemberCount = maxMemberCount;
         this.position = position;
+        this.likesCount = likesCount;
         this.status = status;
         this.groupCreator = user;
     }
 
-    public void update(MeetsRequestDto requestDto) {
+    public void update(MeetsRequestDto requestDto, String imageUrl) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.image = requestDto.getImage();
+        this.image = imageUrl;
         this.maxMemberCount = requestDto.getMaxMemberCount();
         this.position = requestDto.getPosition();
     }
@@ -112,5 +120,20 @@ public class Meets extends TimeStamp {
     // 멤버 리스트를 업데이트하는 메서드
     public void updateMemberList() {
         this.memberCount = calculatedMemberList().size() + 1;
+    }
+
+    @Override
+    public ContentType contentType() {
+        return ContentType.MEETS;
+    }
+
+    @Override
+    public void addLikesCount() {
+        this.likesCount++;
+    }
+
+    @Override
+    public void minusLikesCount() {
+        this.likesCount--;
     }
 }

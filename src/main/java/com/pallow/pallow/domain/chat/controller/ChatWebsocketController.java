@@ -1,7 +1,11 @@
 package com.pallow.pallow.domain.chat.controller;
 
+import ch.qos.logback.classic.ViewStatusMessagesServlet;
 import com.pallow.pallow.domain.chat.dto.ChatRoomDto;
 import com.pallow.pallow.domain.chat.dto.ChatRoomResponseDto;
+import com.pallow.pallow.domain.chat.dto.JoinRoomRequest;
+import com.pallow.pallow.domain.chat.dto.LeaveRoomRequest;
+import com.pallow.pallow.domain.chat.dto.StatusMessage;
 import com.pallow.pallow.domain.chat.entity.ChatMessage;
 import com.pallow.pallow.domain.chat.model.MessageType;
 import com.pallow.pallow.domain.chat.model.WebSocketChatMessage;
@@ -94,4 +98,31 @@ public class ChatWebsocketController {
     public String handleException(Throwable exception) {
         return exception.getMessage();
     }
+
+    @MessageMapping("/chat.joinRoom")
+    @SendTo("/topic/public")
+    public ChatRoomResponseDto joinRoom(@Payload JoinRoomRequest joinRequest, SimpMessageHeaderAccessor headerAccessor) {
+        String username = headerAccessor.getUser().getName();
+        ChatRoomResponseDto response = chatService.addUserToChatRoom(
+                joinRequest.getRoomId(),
+                username,
+                joinRequest.isAnonymous()
+        );
+        headerAccessor.getSessionAttributes().put("room_id", joinRequest.getRoomId());
+        return response;
+    }
+
+    @MessageMapping("/chat.leaveRoom")
+    @SendTo("/topic/public")
+    public StatusMessage leaveRoom(@Payload LeaveRoomRequest leaveRequest, SimpMessageHeaderAccessor headerAccessor) {
+        String username = headerAccessor.getUser().getName();
+        chatService.leaveChatRoom(leaveRequest.getRoomId(), username);
+        headerAccessor.getSessionAttributes().remove("room_id");
+        return new StatusMessage("User left the room");
+    }
+
+
+
+
+
 }

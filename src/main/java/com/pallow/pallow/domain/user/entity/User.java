@@ -27,6 +27,9 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Entity
@@ -70,7 +73,7 @@ public class User extends TimeStamp {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private CommonStatus status;
+    private CommonStatus status = CommonStatus.ACTIVE;
 
     @Column
     private CommonOauth oauth;
@@ -116,4 +119,17 @@ public class User extends TimeStamp {
         return new User(dto, encodedPassword);
     }
 
+
+//    public static User createdUser(String username, String nickname, String email, String name,Gender gender,
+//            String password, Role role) {
+//        User user = new User();
+//        user.username = username;
+//        user.nickname = nickname;
+//        user.password = password;
+//        user.email = email;
+//        user.name = name;
+//        user.gender = gender;
+//        user.userRole = role;
+//        user.status = CommonStatus.ACTIVE;
+//        return user;
 }

@@ -1,5 +1,6 @@
 package com.pallow.pallow.domain.userboardcomment.service;
 
+import com.pallow.pallow.domain.like.service.LikeService;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.service.UserService;
 import com.pallow.pallow.domain.userboard.entity.UserBoard;
@@ -21,8 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserBoardCommentService {
 
-    private final UserBoardCommentRepository userBoardCommentRepository;
     private final UserService userService;
+    private final LikeService likeService;
+    private final UserBoardCommentRepository userBoardCommentRepository;
     private final UserBoardRepository userBoardRepository;
 
     public UserBoardCommentResponseDto createComment(long boardId, User user,
@@ -62,6 +64,16 @@ public class UserBoardCommentService {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
         userBoardCommentRepository.delete(comment);
+    }
+
+    /**
+     * 좋아요 토글
+     * @param userBoardId
+     * @param user
+     */
+    @Transactional
+    public void toggleLike(Long userBoardId, User user) {
+        likeService.toggleLike(userBoardId, user, userBoardRepository);
     }
 
     private boolean isSameIdAndUser(long userId, User user) {

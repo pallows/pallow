@@ -21,7 +21,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
-import java.time.LocalDate;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,16 +33,16 @@ public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
-    private Long Id;
+    private Long id;
 
     @Column
-    private String photo;
+    private String image;
 
     @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)
-    private LocalDate birth;
+    private String birth;
 
     @Column
     private String position;
@@ -53,8 +52,7 @@ public class Profile {
     private Mbti mbti;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private Interest interest;
+    private String interest;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -65,8 +63,7 @@ public class Profile {
     private Education education;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private IDEAL ideal;
+    private String ideal;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -92,7 +89,7 @@ public class Profile {
     @Enumerated(EnumType.STRING)
     private Smoking smoking;
 
-    @Column(nullable = false)
+    @Column
     private String hobby;
 
     @OneToOne(mappedBy = "profile")
@@ -100,22 +97,34 @@ public class Profile {
 
 
     @Builder
-    public Profile(String content, LocalDate birth, String position, Mbti mbti, User createdBy,
-            String hobby, String photo) {
+    public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
+            String interest, String image, String hobby, Alcohol alcohol, Education education,
+            String ideal, Jobs jobs, Personality personality, Pros pros,
+            Relationship relationship, Religion religion, Smoking smoking) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
         this.position = position;
-        this.hobby = hobby;
-        this.photo = photo;
+        this.image = image;
         this.user = createdBy;
+        this.hobby = hobby;
+        this.interest = interest;
+        this.alcohol = alcohol;
+        this.education = education;
+        this.ideal = ideal;
+        this.jobs = jobs;
+        this.personality = personality;
+        this.relationship = relationship;
+        this.religion = religion;
+        this.smoking = smoking;
+        this.pros = pros;
     }
 
-    public void update(ProfileRequestDto requestDto) {
+    public void update(ProfileRequestDto requestDto, String imageUrl) {
         this.content = requestDto.getContent();
-        this.birth = requestDto.getBirth();
         this.position = requestDto.getPosition();
         this.mbti = requestDto.getMbti();
         this.hobby = requestDto.getHobby();
+        this.image = imageUrl;
     }
 }

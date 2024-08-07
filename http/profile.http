@@ -1,5 +1,6 @@
 ### 회원 프로필 생성
-POST http://localhost:8080/profiles/1
+POST http://localhost:8080/profiles/2
+Authorization: {{Authorization}}
 Cookie: {{Cookie}}
 Content-Type: application/json
 

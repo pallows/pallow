@@ -1,8 +1,9 @@
 package com.pallow.pallow.domain.chat.controller;
-
+import com.pallow.pallow.domain.chat.event.ChatInvitationEvent;
 import com.pallow.pallow.domain.chat.model.MessageType;
 import com.pallow.pallow.domain.chat.model.WebSocketChatMessage;
 import com.pallow.pallow.domain.chat.service.ChatService;
+import com.pallow.pallow.domain.chat.service.NotificationService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 public class WebSocketEventListener {
 
     private final ChatService chatService;
+    private final NotificationService notificationService;
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
 
     @Autowired
@@ -43,5 +45,18 @@ public class WebSocketEventListener {
 
             messagingTemplate.convertAndSend("/topic/public", webSocketChatMessage);
         }
+
     }
+    @EventListener
+    public void handleChatInvitation(ChatInvitationEvent event) {
+        logger.info("Chat invitation sent: {} invited {} to room {}",
+                event.getCreator().getNickname(),
+                event.getInvitedUser().getNickname(),
+                event.getChatRoom().getName());
+
+        notificationService.sendChatInvitation(event.getInvitedUser(), event.getCreator(), event.getChatRoom());
+    }
+
+
+
 }

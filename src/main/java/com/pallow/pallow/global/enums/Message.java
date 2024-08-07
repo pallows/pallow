@@ -61,7 +61,6 @@ public enum Message {
     MEET_MEMBER_READ_SUCCESS(HttpStatus.OK, "그룹의 전체 회원을 조회하였습니다."),
     MEET_WITHDRAW_MEMBER_SUCCESS(HttpStatus.OK, "회원을 성공적으로 퇴장시켰습니다."),
 
-
     // meetsReview
     REVIEW_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다."),
     REVIEW_READ_SUCCESS(HttpStatus.OK, "리뷰를 조회하였습니다."),
@@ -72,16 +71,15 @@ public enum Message {
     ROOM_CREATE_SUCCESS(HttpStatus.OK, "채팅방을 생성하였습니다."),
     ROOM_READ_SUCCESS(HttpStatus.OK, "채팅방을 조회하였습니다."),
     ROOM_ENTER_SUCCESS(HttpStatus.OK, "채팅방에 입장하였습니다."),
+    ROOM_DELETE_SUCCESS(HttpStatus.OK, "채팅방을 삭제하였습니다"),
 
     //chatmessage
     MESSAGE_CREATE_SUCCESS(HttpStatus.OK, "메시지를 생성하였습니다."),
 
-    //message reaction
-    LIKES_TOGGLE_SUCCESS(HttpStatus.OK, "좋아요 생성에 성공하였습니다."),
+    //likes
+    LIKES_TOGGLE_SUCCESS(HttpStatus.OK, "좋아요")
 
-
-    // Likes
-    LIKES_CREATE_SUCCESS(HttpStatus.OK, "리뷰를 생성하였습니다.");
+   ;
 
 
     private final HttpStatus status;

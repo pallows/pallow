@@ -24,7 +24,7 @@ public class ProfileMapper {
                 .religion(profile.getReligion())
                 .smoking(profile.getSmoking())
                 .interest(profile.getInterest())
-                .position(profile.getPosition())
+                .region(profile.getPosition())
                 .build();
     }
 
@@ -34,7 +34,7 @@ public class ProfileMapper {
         return ProfileFlaskResponseDto.builder()
                 .id(profile.getId())
                 .name(profile.getUser().getName())
-                .photo(profile.getPhoto())
+                .photo(profile.getImage())
                 .mbti(profile.getMbti())
                 .build();
     }

@@ -11,12 +11,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,6 +48,11 @@ public class ChatRoom extends TimeStamp {
     @Column
     private LocalDateTime deletedAt;
 
+    @Setter
+    @Getter
+    @Column(unique = true)
+    private String inviteCode;
+
     @Builder.Default
     @Column(nullable = false)
     private boolean isDeleted = false;
@@ -63,6 +72,16 @@ public class ChatRoom extends TimeStamp {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meets_id")
     private Meets meets;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_chat_room",
+            joinColumns = @JoinColumn(name = "chat_room_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+
+    @Builder.Default
+    private Set<User> users = new HashSet<>();
 
     public void updateDeletedAt() {
         this.isDeleted = true;

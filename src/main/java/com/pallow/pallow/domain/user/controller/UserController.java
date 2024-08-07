@@ -23,15 +23,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<CommonResponseDto> signup(
-            @Valid @RequestBody SignupRequestDto dto) {
+    public ResponseEntity<CommonResponseDto> signup(@Valid @RequestBody SignupRequestDto dto) {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.USER_LOCAL_SIGNUP_SUCCESS, userService.signup(dto)));
     }

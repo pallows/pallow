@@ -31,8 +31,7 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    String[] WHITE_LIST = {"/", "/api/v1/login", "/signup", "/email/send", "/email/verify", "/api/v1/signup"
-    , "/register_information", "/profiles"};
+    String[] WHITE_LIST = {"/", "/users/login", "/email/**", "/users/signup", "/public/**", "/profiles", "/chat.html", "/ws/**", "/api/chat/**", "/InvitationList.html", "/meets.html"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -69,15 +68,12 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers(WHITE_LIST).permitAll()
-                .requestMatchers(HttpMethod.GET, "api/popups/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "api/coupons/**").permitAll()
                 .anyRequest().authenticated()
         );
 
         // 필터 관리
-        http.addFilterBefore(jwtAuthorizationFilter(), AuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
+        http.addFilterBefore(jwtAuthorizationFilter(), AuthenticationFilter.class);
         return http.build();
     }
 
