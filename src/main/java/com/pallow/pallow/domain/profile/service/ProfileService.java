@@ -81,8 +81,6 @@ public class ProfileService {
         List<ProfileItem> items = new ArrayList<>();
         profileList.forEach(profile -> items.add(profileMapper.toRequestItem(profile)));
 
-        user = userRepository.findById(user.getId()).orElseThrow();
-
         // 로그 추가: 전송 데이터 확인
         log.info("Items to be sent to Flask: {}", items);
         log.info("Sending request to Flask with data: {}", FlaskRequestDto.builder()
