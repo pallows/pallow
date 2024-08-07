@@ -29,15 +29,18 @@ public class ChatMessageDto {
          */
         private boolean hasChatReacted;
 
-        ChatMessageDto message = ChatMessageDto.builder()
-                .id(1L)
-                .chatRoomId(2L)
-                .sender("User")
-                .content("Hello")
-                .type(MessageType.CHAT)
-                .createdAt(LocalDateTime.now())
-                .formattedTime("10:30 AM")
-                .chatReactionCount(5)
-                .hasChatReacted(true)
-                .build();
+        // 정적 팩토리 메서드로 기본 메시지 생성
+        public static ChatMessageDto createDefaultMessage() {
+                return ChatMessageDto.builder()
+                        .id(1L)
+                        .chatRoomId(2L)
+                        .sender("User")
+                        .content("Hello")
+                        .type(MessageType.CHAT)
+                        .createdAt(LocalDateTime.now())
+                        .formattedTime("10:30 AM")
+                        .chatReactionCount(5)
+                        .hasChatReacted(true)
+                        .build();
+        }
 }
