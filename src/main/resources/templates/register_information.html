@@ -159,8 +159,9 @@
 
     const photoInput = document.getElementById('photoInput');
     if (photoInput.files.length === 0) {
-      formData.append('photo', '');
-      formData.append('defaultPhoto',
+      const emptyFile = new File([], 'empty.png', { type: 'image/png' });
+      formData.set('image', emptyFile);
+      formData.append('defaultImage',
           'https://github.com/user-attachments/assets/bce3db08-6dfc-4ccb-b3dd-38d75a465955');
     }
 

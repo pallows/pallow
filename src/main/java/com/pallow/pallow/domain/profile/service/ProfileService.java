@@ -56,12 +56,16 @@ public class ProfileService {
         return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
     }
 
-    public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user) {
+    public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user, String defaultImage) {
         String imageUrl;
-        try {
-            imageUrl = imageService.imageUpload(requestDto.getImage());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (requestDto.getImage() == null || requestDto.getImage().isEmpty()) {
+            imageUrl = defaultImage;
+        } else {
+            try {
+                imageUrl = imageService.imageUpload(requestDto.getImage());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         Profile profile = profileRepository.save(requestDto.toEntity(user, imageUrl));
         return new ProfileResponseDto(profile, profile.getUser().getName());
