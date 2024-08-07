@@ -1,8 +1,6 @@
 package com.pallow.pallow.domain.profile.service;
 
 
-import com.pallow.pallow.domain.profile.dto.ProfileFlaskReseponseDto;
-import com.pallow.pallow.domain.profile.dto.ProfileMapper;
 import com.pallow.pallow.domain.profile.dto.ProfileFlaskResponseDto;
 import com.pallow.pallow.domain.profile.dto.ProfileMapper;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
@@ -10,23 +8,18 @@ import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.domain.profile.entity.ProfileItem;
 import com.pallow.pallow.domain.profile.repository.ProfileCustomRepository;
-import com.pallow.pallow.domain.profile.entity.ProfileItem;
 import com.pallow.pallow.domain.profile.repository.ProfileRepository;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.dtos.FlaskRequestDto;
 import com.pallow.pallow.global.dtos.FlaskResponseDto;
-import com.pallow.pallow.global.dtos.FlaskRequestDto;
-import com.pallow.pallow.global.dtos.FlaskResponseDto;
-import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.s3.service.ImageService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -128,7 +121,7 @@ public class ProfileService {
 
         user = userRepository.save(user);
 
-        Profile currentUserProfile = profileRepository.findByUserId(user.getId());
+        Optional<Profile> currentUserProfile = profileRepository.findByUserId(user.getId());
 
         List<Profile> profileList = profileRepository.findAllByPositionAndUserStatus(
                 user.getProfile().getPosition(), user.getStatus());
@@ -139,13 +132,13 @@ public class ProfileService {
         // 로그 추가: 전송 데이터 확인
         log.info("Items to be sent to Flask: {}", items);
         log.info("Sending request to Flask with data: {}", FlaskRequestDto.builder()
-                .id(currentUserProfile.getId())
+                .id(currentUserProfile.get().getId())
                 .profiles(items)
                 .build());
 
         // send request to flask
         FlaskResponseDto responseDto = sendRequestToFlask(FlaskRequestDto.builder()
-                .id(currentUserProfile.getId())
+                .id(currentUserProfile.get().getId())
                 .profiles(items)
                 .build());
 

@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import jdk.jshell.spi.ExecutionControl.UserException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -326,7 +325,7 @@ public class ChatService {
     private User createAnonymousUser(String username) {
         User anonymousUser = new User();
         anonymousUser.setUsername(username);
-        anonymousUser.setAnonymous(true);
+//        anonymousUser.setAnonymous(true);
         return userRepository.save(anonymousUser);
     }
 

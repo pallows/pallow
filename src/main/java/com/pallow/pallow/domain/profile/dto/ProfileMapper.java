@@ -34,7 +34,7 @@ public class ProfileMapper {
         return ProfileFlaskResponseDto.builder()
                 .id(profile.getId())
                 .name(profile.getUser().getName())
-                .photo(profile.getImage())
+                .image(profile.getImage())
                 .mbti(profile.getMbti())
                 .build();
     }

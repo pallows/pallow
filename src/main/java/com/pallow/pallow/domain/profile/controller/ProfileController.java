@@ -1,10 +1,8 @@
 package com.pallow.pallow.domain.profile.controller;
 
-import com.pallow.pallow.domain.profile.dto.ProfileFlaskReseponseDto;
 import com.pallow.pallow.domain.profile.dto.ProfileFlaskResponseDto;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
-import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.service.ProfileService;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
@@ -14,29 +12,19 @@ import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/profiles")

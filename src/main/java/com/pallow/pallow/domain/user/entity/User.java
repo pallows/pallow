@@ -27,13 +27,12 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Entity
 @Getter
+@Setter
 @Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -115,21 +114,18 @@ public class User extends TimeStamp {
         this.password = password;
     }
 
-    public static User of(SignupRequestDto dto, String encodedPassword) {
-        return new User(dto, encodedPassword);
+    public static User createdUser(String username, String nickname, String email, String name,
+            Gender gender,
+            String password, Role role) {
+        User user = new User();
+        user.username = username;
+        user.nickname = nickname;
+        user.password = password;
+        user.email = email;
+        user.name = name;
+        user.gender = gender;
+        user.userRole = role;
+        user.status = CommonStatus.ACTIVE;
+        return user;
     }
-
-
-//    public static User createdUser(String username, String nickname, String email, String name,Gender gender,
-//            String password, Role role) {
-//        User user = new User();
-//        user.username = username;
-//        user.nickname = nickname;
-//        user.password = password;
-//        user.email = email;
-//        user.name = name;
-//        user.gender = gender;
-//        user.userRole = role;
-//        user.status = CommonStatus.ACTIVE;
-//        return user;
 }
