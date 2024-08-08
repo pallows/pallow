@@ -39,7 +39,9 @@
         <img id="profilePicture" src="https://source.unsplash.com/random/100x100"
              alt="Profile Picture" class="w-full h-full rounded-full">
         <button id="editPictureButton"
-                class="absolute inset-0 bg-black bg-opacity-50 text-white opacity-0 hover:opacity-100 flex items-center justify-center rounded-full">수정</button>
+                class="absolute inset-0 bg-black bg-opacity-50 text-white opacity-0 hover:opacity-100 flex items-center justify-center rounded-full">
+          사진 수정
+        </button>
         <input type="file" id="profilePictureInput" class="hidden">
       </div>
       <div>
@@ -136,12 +138,25 @@
       console.error('Error fetching profile data:', error);
     });
 
+    const profilePictureInput = document.getElementById('profilePictureInput');
+    let selectedImageFile = null;
+
+    profilePictureInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file) {
+        selectedImageFile = file;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('profilePicture').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
     document.getElementById('updateButton').addEventListener('click', function () {
       const formData = new FormData();
 
-      if (document.getElementById('profilePictureInput').files.length > 0) {
-        formData.append('image', document.getElementById('profilePictureInput').files[0]);
-      }
+      if (selectedImageFile) {formData.append('image', selectedImageFile);}
 
       formData.append('username', document.getElementById('profileName').textContent.trim());
       formData.append('position', document.getElementById('profileRegion').textContent.trim());
@@ -218,6 +233,11 @@
         subRegionDropdown.classList.add('hidden');
       }
     });
+
+    document.getElementById('editPictureButton').addEventListener('click', function () {
+      document.getElementById('profilePictureInput').click();
+    });
+
   });
 </script>
 
