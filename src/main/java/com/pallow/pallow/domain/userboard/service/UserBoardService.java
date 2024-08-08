@@ -32,7 +32,7 @@ public class UserBoardService {
             long userId) {
         User createdBy = userRepository.findById(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        if (!isSameIdAndUser(userId, user)) {
+        if (isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
 
@@ -64,7 +64,7 @@ public class UserBoardService {
             UserBoardRequestDto requestDto, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
-        if (!isSameIdAndUser(userId, user)) {
+        if (isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
 
@@ -89,7 +89,7 @@ public class UserBoardService {
     public void deleteUserBoard(long userId, long userBoardId, User user) {
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
-        if (!isSameIdAndUser(userId, user)) {
+        if (isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
 
@@ -112,6 +112,6 @@ public class UserBoardService {
     }
 
     private boolean isSameIdAndUser(Long userId, User user) {
-        return user.getId().equals(userId);
+        return !user.getId().equals(userId);
     }
 }

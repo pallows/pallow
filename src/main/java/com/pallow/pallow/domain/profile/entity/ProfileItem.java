@@ -2,8 +2,6 @@ package com.pallow.pallow.domain.profile.entity;
 
 import com.pallow.pallow.domain.profile.enums.Alcohol;
 import com.pallow.pallow.domain.profile.enums.Education;
-import com.pallow.pallow.domain.profile.enums.IDEAL;
-import com.pallow.pallow.domain.profile.enums.Interest;
 import com.pallow.pallow.domain.profile.enums.Jobs;
 import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.enums.Personality;

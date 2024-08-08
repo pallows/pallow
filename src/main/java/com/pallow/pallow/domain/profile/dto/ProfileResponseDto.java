@@ -3,7 +3,6 @@ package com.pallow.pallow.domain.profile.dto;
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.domain.profile.enums.Alcohol;
 import com.pallow.pallow.domain.profile.enums.Education;
-import com.pallow.pallow.domain.profile.enums.IDEAL;
 import com.pallow.pallow.domain.profile.enums.Jobs;
 import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.enums.Personality;
@@ -12,10 +11,14 @@ import com.pallow.pallow.domain.profile.enums.Relationship;
 import com.pallow.pallow.domain.profile.enums.Religion;
 import com.pallow.pallow.domain.profile.enums.Smoking;
 import com.querydsl.core.annotations.QueryProjection;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
+@Builder
+@AllArgsConstructor
 public class ProfileResponseDto {
 
     private Long id;
@@ -61,5 +64,15 @@ public class ProfileResponseDto {
         this.image = foundUser.getImage();
         this.hobby = foundUser.getHobby();
         this.name = name.trim();
+        this.smoking = foundUser.getSmoking();
+        this.interest = foundUser.getInterest();
+        this.education = foundUser.getEducation();
+        this.personality = foundUser.getPersonality();
+        this.relationship = foundUser.getRelationship();
+        this.religion = foundUser.getReligion();
+        this.alcohol = foundUser.getAlcohol();
+        this.ideal = foundUser.getIdeal();
+        this.jobs = foundUser.getJobs();
+        this.pros = foundUser.getPros();
     }
 }

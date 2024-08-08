@@ -98,6 +98,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+jar{
+    enabled = false
+}
+
 sourceSets {
     main {
         java {

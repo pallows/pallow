@@ -3,8 +3,6 @@ package com.pallow.pallow.domain.profile.entity;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.enums.Alcohol;
 import com.pallow.pallow.domain.profile.enums.Education;
-import com.pallow.pallow.domain.profile.enums.IDEAL;
-import com.pallow.pallow.domain.profile.enums.Interest;
 import com.pallow.pallow.domain.profile.enums.Jobs;
 import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.enums.Personality;
@@ -34,7 +32,6 @@ public class Profile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true)
     private Long id;
 
     @Column
@@ -94,9 +91,10 @@ public class Profile {
     @Column
     private String hobby;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userId", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
+
 
     @Builder
     public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
@@ -128,5 +126,15 @@ public class Profile {
         this.mbti = requestDto.getMbti();
         this.hobby = requestDto.getHobby();
         this.image = imageUrl;
+        this.smoking = requestDto.getSmoking();
+        this.education = requestDto.getEducation();
+        this.ideal = requestDto.getIdeal();
+        this.jobs = requestDto.getJobs();
+        this.personality = requestDto.getPersonality();
+        this.relationship = requestDto.getRelationship();
+        this.religion = requestDto.getReligion();
+        this.pros = requestDto.getPros();
+        this.interest = requestDto.getInterest();
+        this.alcohol = requestDto.getAlcohol();
     }
 }

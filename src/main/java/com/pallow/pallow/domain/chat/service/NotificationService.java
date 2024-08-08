@@ -3,10 +3,10 @@ package com.pallow.pallow.domain.chat.service;
 import com.pallow.pallow.domain.chat.entity.ChatRoom;
 import com.pallow.pallow.domain.chat.model.MessageType;
 import com.pallow.pallow.domain.chat.model.WebSocketChatMessage;
+import com.pallow.pallow.domain.user.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import com.pallow.pallow.domain.user.entity.User;
 
 @Service
 public class NotificationService {
