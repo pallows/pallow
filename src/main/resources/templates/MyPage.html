@@ -110,13 +110,29 @@
       </div>
 
       <div>
-        <label class="block text-gray-700">직업</label>
-        <select id="profileJobs" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+        <label class="block text-gray-700">이상형</label>
+        <div id="selectedIdeals" class="flex flex-wrap gap-2 mb-2"></div>
+        <p id="idealLimitMessage" class="text-red-500 text-sm hidden">최대 3개의 이상형를 선택할 수 있습니다.</p>
+        <div id="profileIdealContainer" class="w-full border border-gray-300 rounded px-4 py-2 flex items-center justify-between bg-gray-100 text-gray-700 cursor-pointer hover:bg-gray-200">
+          <span id="profileIdealText">선택하세요</span>
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
+        <div id="idealDropdown" class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10"></div>
       </div>
 
       <div>
         <label class="block text-gray-700">관심사</label>
-        <select id="profileInterest" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+        <div id="selectedInterests" class="flex flex-wrap gap-2 mb-2"></div>
+        <p id="interestLimitMessage" class="text-red-500 text-sm hidden">최대 3개의 관심사를 선택할 수 있습니다.</p>
+        <div id="profileInterestContainer" class="w-full border border-gray-300 rounded px-4 py-2 flex items-center justify-between bg-gray-100 text-gray-700 cursor-pointer hover:bg-gray-200">
+          <span id="profileInterestText">선택하세요</span>
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
+        <div id="interestDropdown" class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10"></div>
       </div>
 
       <div>
@@ -125,8 +141,8 @@
       </div>
 
       <div>
-        <label class="block text-gray-700">이상형</label>
-        <select id="profileIdeal" class="w-full border border-gray-300 rounded px-4 py-2" ></select>
+        <label class="block text-gray-700">직업</label>
+        <select id="profileJobs" class="w-full border border-gray-300 rounded px-4 py-2"></select>
       </div>
 
       <div>
@@ -159,6 +175,16 @@
   import { regionData, interests, ideals, alcoholPreferences, educationLevels, jobTypes, personalities,
     pros, relationships, religions, smokings} from "/js/predefinedData.js";
   const accessToken = localStorage.getItem('Authorization');
+  const profileInterestContainer = document.getElementById('profileInterestContainer');
+  const interestDropdown = document.getElementById('interestDropdown');
+  const profileInterestText = document.getElementById('profileInterestText');
+  const selectedInterests = document.getElementById('selectedInterests');
+  let selectedInterestValues = new Set();
+  const profileIdealContainer = document.getElementById('profileIdealContainer');
+  const idealDropdown = document.getElementById('idealDropdown');
+  const profileIdealText = document.getElementById('profileIdealText');
+  const selectedIdeals = document.getElementById('selectedIdeals');
+  let selectedIdealValues = new Set();
 
   document.addEventListener('DOMContentLoaded', function () {
     function populateSelectElement(elementId, dataObject, selectedValue) {
@@ -172,6 +198,104 @@
           option.selected = true;
         }
         selectElement.appendChild(option);
+      });
+    }
+
+    function updateSelectedInterests() {
+      selectedInterests.innerHTML = '';
+      selectedInterestValues.forEach(value => {
+        const span = document.createElement('span');
+        span.className = 'bg-gray-200 px-2 py-1 rounded text-gray-700 flex items-center gap-1';
+        span.textContent = interests[value];
+        const removeButton = document.createElement('button');
+        removeButton.textContent = '×';
+        removeButton.className = 'text-red-500';
+        removeButton.addEventListener('click', function () {
+          selectedInterestValues.delete(value);
+          updateSelectedInterests();
+          Array.from(interestDropdown.children).forEach(child => {
+            if (child.dataset.value === value) {
+              child.classList.remove('bg-gray-200');
+            }
+          });
+        });
+        span.appendChild(removeButton);
+        selectedInterests.appendChild(span);
+      });
+      profileInterestText.textContent = selectedInterestValues.size ? '선택됨' : '선택하세요';
+      document.getElementById('interestLimitMessage').classList.toggle('hidden', selectedInterestValues.size <= 3);
+    }
+
+    function initializeInterestDropdown() {
+      Object.keys(interests).forEach(key => {
+        const div = document.createElement('div');
+        div.className = 'p-2 cursor-pointer hover:bg-gray-100';
+        div.textContent = interests[key];
+        div.dataset.value = key;
+        div.addEventListener('click', function () {
+          const value = this.dataset.value;
+          if (selectedInterestValues.has(value)) {
+            selectedInterestValues.delete(value);
+            this.classList.remove('bg-gray-200');
+          } else if (selectedInterestValues.size < 3) {
+            selectedInterestValues.add(value);
+            this.classList.add('bg-gray-200');
+          } else {
+            document.getElementById('interestLimitMessage').classList.remove('hidden');
+            return;
+          }
+          updateSelectedInterests();
+        });
+        interestDropdown.appendChild(div);
+      });
+    }
+
+    function updateSelectedIdeals() {
+      selectedIdeals.innerHTML = '';
+      selectedIdealValues.forEach(value => {
+        const span = document.createElement('span');
+        span.className = 'bg-gray-200 px-2 py-1 rounded text-gray-700 flex items-center gap-1';
+        span.textContent = ideals[value];
+        const removeButton = document.createElement('button');
+        removeButton.textContent = '×';
+        removeButton.className = 'text-red-500';
+        removeButton.addEventListener('click', function () {
+          selectedIdealValues.delete(value);
+          updateSelectedIdeals();
+          Array.from(interestDropdown.children).forEach(child => {
+            if (child.dataset.value === value) {
+              child.classList.remove('bg-gray-200');
+            }
+          });
+        });
+        span.appendChild(removeButton);
+        selectedIdeals.appendChild(span);
+      });
+      profileIdealText.textContent = selectedIdealValues.size ? '선택됨' : '선택하세요';
+      document.getElementById('idealLimitMessage').classList.toggle('hidden', selectedIdealValues.size <= 3);
+    }
+
+    function initializeIdealDropdown() {
+      Object.keys(ideals).forEach(key => {
+        const div = document.createElement('div');
+        div.className = 'p-2 cursor-pointer hover:bg-gray-100';
+        div.textContent = ideals[key];
+        div.dataset.value = key;
+        div.addEventListener('click', function () {
+          const value = this.dataset.value;
+          if (selectedIdealValues.has(value)) {
+            selectedIdealValues.delete(value);
+            this.classList.remove('bg-gray-200');
+          } else if (selectedIdealValues.size < 3) {
+            selectedIdealValues.add(value);
+            this.classList.add('bg-gray-200');
+          } else {
+            document.getElementById('idealLimitMessage').classList.remove('hidden');
+            return;
+          }
+          updateSelectedIdeals();
+        });
+        idealDropdown.appendChild(div);
       });
     }
 
@@ -198,13 +322,26 @@
         populateSelectElement('profileSmoking', smokings, data.smoking);
         populateSelectElement('profileAlcohol', alcoholPreferences, data.alcohol);
         populateSelectElement('profileJobs', jobTypes, data.jobs);
-        populateSelectElement('profileInterest', interests, data.interest);
         populateSelectElement('profileEducation', educationLevels, data.education);
-        populateSelectElement('profileIdeal', ideals, data.ideal);
         populateSelectElement('profilePersonality', personalities, data.personality);
         populateSelectElement('profileReligion', religions, data.religion);
         populateSelectElement('profilePros', pros, data.pros);
         populateSelectElement('profileRelationship', relationships, data.relationship);
+
+        if (data.interest) {
+          data.interest.split(', ').forEach(value => {
+            selectedInterestValues.add(value);
+          });
+          updateSelectedInterests();
+        }
+
+        if (data.ideal) {
+          data.ideal.split(', ').forEach(value => {
+            selectedIdealValues.add(value);
+          });
+          updateSelectedIdeals();
+        }
+
       } else {
         console.error('Error:', responseData.message);
       }
@@ -244,9 +381,9 @@
       formData.append('smoking', document.getElementById('profileSmoking').value.trim());
       formData.append('alcohol', document.getElementById('profileAlcohol').value.trim());
       formData.append('jobs', document.getElementById('profileJobs').value.trim());
-      formData.append('interest', document.getElementById('profileInterest').value.trim());
+      formData.append('interest', Array.from(selectedInterestValues).join(', '));
       formData.append('education', document.getElementById('profileEducation').value.trim());
-      formData.append('ideal', document.getElementById('profileIdeal').value.trim());
+      formData.append('ideal', Array.from(selectedIdealValues).join(', '));
       formData.append('personality', document.getElementById('profilePersonality').value.trim());
       formData.append('religion', document.getElementById('profileReligion').value.trim());
       formData.append('pros', document.getElementById('profilePros').value.trim());
@@ -325,7 +462,30 @@
       document.getElementById('profilePictureInput').click();
     });
 
+    initializeInterestDropdown();
+    initializeIdealDropdown();
+
+    profileInterestContainer.addEventListener('click', function () {
+      interestDropdown.classList.toggle('hidden');
+    });
+
+    profileIdealContainer.addEventListener('click', function () {
+      idealDropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('#profileInterestContainer') && !event.target.closest('#interestDropdown')) {
+        interestDropdown.classList.add('hidden');
+      }
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('#profileIdealContainer') && !event.target.closest('#idealDropdown')) {
+        idealDropdown.classList.add('hidden');
+      }
+    });
   });
+
 </script>
 
 </html>
