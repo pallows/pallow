@@ -7,9 +7,8 @@
     <title>Pallow</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        body {font-family: 'Noto Sans KR', sans-serif;}
+
 
         .carousel {
             display: flex;
@@ -74,10 +73,11 @@
             <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
         </a>
         <nav>
-<!--            인기급상승html추가필요-->
             <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
-            <a href="/public/html페이지 만들어지면 수정해야합니다" class="mr-4">인기 급 상승 모임</a>
+            <a th:href="@{/public/popularMeets}" class="mr-4">인기 급 상승 모임</a>
             <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
+            <a href="/public/MyPage" class="mr-4">MyPage</a>
+
         </nav>
     </div>
     <div class="flex items-center">
@@ -104,7 +104,7 @@
     <section class="mb-8">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">인기 급 상승 모임</h2>
-            <a href="html페이지 만들어지면 수정해야합니다" class="text-blue-500">더보기</a>
+            <a th:href="@{/public/popularMeets}" class="text-blue-500">더보기</a>
         </div>
         <div class="relative">
             <div class="carousel" id="carousel2"></div>
