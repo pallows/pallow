@@ -105,7 +105,7 @@
     .then(responseData => {
       if (responseData.statusCode === 200) {
         const data = responseData.data;
-        document.getElementById('profilePicture').src = data.photo;
+        document.getElementById('profilePicture').src = data.image;
         document.getElementById('profileName').textContent = data.name;
         document.getElementById('profileRegion').textContent = data.position;
         document.getElementById('profileLocation').textContent  = data.position;
