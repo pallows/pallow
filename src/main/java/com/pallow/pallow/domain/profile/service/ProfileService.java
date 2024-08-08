@@ -1,7 +1,7 @@
 package com.pallow.pallow.domain.profile.service;
 
 
-import com.pallow.pallow.domain.profile.dto.ProfileFlaskReseponseDto;
+import com.pallow.pallow.domain.profile.dto.ProfileFlaskResponseDto;
 import com.pallow.pallow.domain.profile.dto.ProfileMapper;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
@@ -19,6 +19,7 @@ import com.pallow.pallow.global.s3.service.ImageService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -116,25 +117,28 @@ public class ProfileService {
     }
 
     @Transactional
-    public List<ProfileFlaskReseponseDto> recommendProfiles(User user) {
-        Profile currentUserProfile = profileRepository.findByUserId(user.getId()).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_USER)
-        );
-        List<Profile> profileList = profileRepository.findAllByPosition(user.getProfile().getPosition());
-        List<ProfileItem> items = new ArrayList<>();
+    public List<ProfileFlaskResponseDto> recommendProfiles(User user) {
 
+        user = userRepository.save(user);
+
+        Optional<Profile> currentUserProfile = profileRepository.findByUserId(user.getId());
+
+        List<Profile> profileList = profileRepository.findAllByPositionAndUserStatus(
+                user.getProfile().getPosition(), user.getStatus());
+
+        List<ProfileItem> items = new ArrayList<>();
         profileList.forEach(profile -> items.add(profileMapper.toRequestItem(profile)));
 
         // 로그 추가: 전송 데이터 확인
         log.info("Items to be sent to Flask: {}", items);
         log.info("Sending request to Flask with data: {}", FlaskRequestDto.builder()
-                .id(currentUserProfile.getId())
+                .id(currentUserProfile.get().getId())
                 .profiles(items)
                 .build());
 
         // send request to flask
         FlaskResponseDto responseDto = sendRequestToFlask(FlaskRequestDto.builder()
-                .id(currentUserProfile.getId())
+                .id(currentUserProfile.get().getId())
                 .profiles(items)
                 .build());
 
@@ -143,7 +147,7 @@ public class ProfileService {
         log.info("Received sorted ID list from Flask: {}", responseDto.getData().getSortedIdList());
 
         // make response
-        List<ProfileFlaskReseponseDto> results = new ArrayList<>();
+        List<ProfileFlaskResponseDto> results = new ArrayList<>();
         responseDto.getData().getSortedIdList().forEach(id -> {
             Profile profile = profileRepository.findById(id)
                     .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
@@ -182,31 +186,6 @@ public class ProfileService {
             log.error("HTTP error while sending request to Flask: {}", e.getMessage());
             throw new CustomException(ErrorType.NOT_FOUND_USER);
         }
-    }
-
-    @Transactional
-    public List<ProfileResponseDto> getNearest9Users(User user) {
-        String[] userPositionParts = user.getProfile().getPosition().split(" ");
-        String first = userPositionParts.length > 0 ? userPositionParts[0] : "";
-        String second = userPositionParts.length > 1 ? userPositionParts[1] : "";
-        String third = userPositionParts.length > 2 ? userPositionParts[2] : "";
-        return profileCustomRepository.findTop9NearestProfiles(user.getId(), first, second, third);
-    }
-
-    private int comparePositions(String userPosition, String profilePosition) {
-        String[] userPositionParts = userPosition.split(" ");
-        String[] profilePositionParts = profilePosition.split(" ");
-        int matchScore = 0;
-        if (userPositionParts.length > 0 && profilePositionParts.length > 0 && userPositionParts[0].equals(profilePositionParts[0])) {
-            matchScore += 3;
-        }
-        if (userPositionParts.length > 1 && profilePositionParts.length > 1 && userPositionParts[1].equals(profilePositionParts[1])) {
-            matchScore += 2;
-        }
-        if (userPositionParts.length > 2 && profilePositionParts.length > 2 && userPositionParts[2].equals(profilePositionParts[2])) {
-            matchScore += 1;
-        }
-        return -matchScore;
     }
 
 

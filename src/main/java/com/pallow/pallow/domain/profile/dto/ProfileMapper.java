@@ -11,37 +11,31 @@ public class ProfileMapper {
 
     public ProfileItem toRequestItem(Profile profile) {
 
-        ProfileItem.ProfileItemBuilder builder = ProfileItem.builder();
-
-        builder.id(profile.getId());
-        builder.alcohol(profile.getAlcohol());
-        builder.ideal(profile.getIdeal());
-        builder.jobs(profile.getJobs());
-        builder.pros(profile.getPros());
-        builder.mbti(profile.getMbti());
-        builder.relationship(profile.getRelationship());
-        builder.education(profile.getEducation());
-        builder.personality(profile.getPersonality());
-        builder.religion(profile.getReligion());
-        builder.smoking(profile.getSmoking());
-        builder.interest(profile.getInterest());
-        builder.region(profile.getPosition());
-
-        return builder.build();
-
+        return ProfileItem.builder()
+                .id(profile.getId())
+                .alcohol(profile.getAlcohol())
+                .ideal(profile.getIdeal())
+                .jobs(profile.getJobs())
+                .pros(profile.getPros())
+                .mbti(profile.getMbti())
+                .relationship(profile.getRelationship())
+                .education(profile.getEducation())
+                .personality(profile.getPersonality())
+                .religion(profile.getReligion())
+                .smoking(profile.getSmoking())
+                .interest(profile.getInterest())
+                .region(profile.getPosition())
+                .build();
     }
 
 
-    public ProfileFlaskReseponseDto getResponseDto(Profile profile) {
+    public ProfileFlaskResponseDto getResponseDto(Profile profile) {
 
-        ProfileFlaskReseponseDto.ProfileFlaskReseponseDtoBuilder builder = ProfileFlaskReseponseDto.builder();
-
-        builder.id(profile.getId());
-        builder.image(profile.getImage());
-        builder.birth(profile.getBirth());
-        builder.position(profile.getPosition());
-        builder.mbti(profile.getMbti());
-
-        return builder.build();
+        return ProfileFlaskResponseDto.builder()
+                .id(profile.getId())
+                .name(profile.getUser().getName())
+                .image(profile.getImage())
+                .mbti(profile.getMbti())
+                .build();
     }
 }

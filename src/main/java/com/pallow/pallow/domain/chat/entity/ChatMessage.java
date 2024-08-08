@@ -46,8 +46,8 @@ public class ChatMessage extends TimeStamp {
      */
     @Setter
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     @Builder.Default
+    @Column(nullable = false)
     private MessageType type = MessageType.CHAT;
 
     /**
