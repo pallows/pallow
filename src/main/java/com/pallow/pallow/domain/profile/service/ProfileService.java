@@ -80,8 +80,6 @@ public class ProfileService {
         if (!isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
-
-        // 이미지 업로드
         String imageUrl;
         if (requestDto.getImage() != null && !requestDto.getImage().isEmpty()) {
             try {
@@ -91,9 +89,8 @@ public class ProfileService {
                 throw new RuntimeException(e);
             }
         } else {
-            imageUrl = foundUser.getImage(); // 기존 이미지 URL 유지
+            imageUrl = foundUser.getImage();
         }
-
         foundUser.update(requestDto, imageUrl);
         return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
     }
