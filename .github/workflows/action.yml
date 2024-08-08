@@ -2,7 +2,7 @@ on:
   push:
     branches:
       - main
-      - front-2-test
+      - dev
 
 env:
   DOCKER_IMAGE_TAG_NAME: pal-world
