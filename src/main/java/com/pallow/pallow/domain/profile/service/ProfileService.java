@@ -82,7 +82,7 @@ public class ProfileService {
         }
 
         // 이미지 업로드
-        String imageUrl = null;
+        String imageUrl;
         if (requestDto.getImage() != null && !requestDto.getImage().isEmpty()) {
             try {
                 imageService.deleteImage(foundUser.getImage());

@@ -41,11 +41,10 @@ public class User extends TimeStamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name="user_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_Id")
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Profile profile;
 
     @Column(unique = true)
