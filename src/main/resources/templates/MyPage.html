@@ -100,6 +100,13 @@
         <label class="block text-gray-700">본인 소개</label>
         <textarea id="profileDescription" class="w-full border border-gray-300 rounded px-4 py-2">헬로우에서 좋은 모임을 갖고 싶은 사람입니다.</textarea>
       </div>
+
+      <div>
+        <label class="block text-gray-700">흡연 여부</label>
+        <select id="profileSmoking" class="w-full border border-gray-300 rounded px-4 py-2">
+        </select>
+      </div>
+
     </div>
     <button class="bg-black text-white px-4 py-2 rounded" id="updateButton">수정</button>
   </div>
@@ -107,7 +114,7 @@
 </body>
 
 <script type="module">
-  import {regionData} from "/js/predefinedData.js";
+  import {regionData, smokings} from "/js/predefinedData.js";
   const accessToken = localStorage.getItem('Authorization');
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -130,6 +137,20 @@
         document.getElementById('profileHobby').value = data.hobby;
         document.getElementById('profileMbti').value = data.mbti;
         document.getElementById('profileDescription').textContent = data.content;
+        const profileSmoking = document.getElementById('profileSmoking');
+        profileSmoking.innerHTML = ''; // Clear existing options
+
+        // Populate options
+        Object.keys(smokings).forEach(key => {
+          const option = document.createElement('option');
+          option.value = key;
+          option.textContent = smokings[key];
+          profileSmoking.appendChild(option);
+        });
+
+        // Set selected value
+        profileSmoking.value = data.smoking;
+
       } else {
         console.error('Error:', responseData.message);
       }
@@ -164,6 +185,7 @@
       formData.append('hobby', document.getElementById('profileHobby').value.trim());
       formData.append('mbti', document.getElementById('profileMbti').value.trim());
       formData.append('content', document.getElementById('profileDescription').value.trim());
+      formData.append('smoking', document.getElementById('profileSmoking').value.trim());
 
       fetch(`/profiles/0`, {
         method: 'PATCH',

@@ -39,7 +39,7 @@ public class ProfileRequestDto {
     private String personality;
     private String relationship;
     private String religion;
-    private String smoking;
+    private Smoking smoking;
     private String pros;
 
     // 프로필 화면에 띄우기 위함
@@ -52,7 +52,7 @@ public class ProfileRequestDto {
                 .alcohol(convertToEnum(Alcohol.class, alcohol)).education(convertToEnum(Education.class, education))
                 .jobs(convertToEnum(Jobs.class, jobs)).personality(convertToEnum(Personality.class, personality))
                 .relationship(convertToEnum(Relationship.class, relationship)).religion(convertToEnum(Religion.class, religion))
-                .smoking(convertToEnum(Smoking.class, smoking)).pros(convertToEnum(Pros.class, pros)).build();
+                .smoking(smoking).pros(convertToEnum(Pros.class, pros)).build();
     }
 
     @SuppressWarnings("unchecked")

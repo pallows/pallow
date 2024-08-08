@@ -126,5 +126,6 @@ public class Profile {
         this.mbti = requestDto.getMbti();
         this.hobby = requestDto.getHobby();
         this.image = imageUrl;
+        this.smoking = requestDto.getSmoking();
     }
 }

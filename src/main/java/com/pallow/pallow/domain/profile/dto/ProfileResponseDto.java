@@ -60,5 +60,6 @@ public class ProfileResponseDto {
         this.image = foundUser.getImage();
         this.hobby = foundUser.getHobby();
         this.name = name.trim();
+        this.smoking = foundUser.getSmoking();
     }
 }
