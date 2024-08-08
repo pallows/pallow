@@ -219,6 +219,12 @@
             btn.classList.remove('bg-indigo-600', 'text-white');
             btn.classList.add('bg-gray-200');
           });
+        } else {
+          const selectedButtons = document.querySelectorAll(`#${divId} button.bg-indigo-600`);
+          if (selectedButtons.length >= 3 && !button.classList.contains('bg-indigo-600')) {
+            alert('최대 3개까지 선택가능합니다');
+            return;
+          }
         }
         button.classList.toggle('bg-indigo-600');
         button.classList.toggle('text-white');
