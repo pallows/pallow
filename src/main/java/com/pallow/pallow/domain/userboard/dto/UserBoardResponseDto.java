@@ -25,7 +25,7 @@ public class UserBoardResponseDto {
         this.image = userBoard.getImage();
         this.likesCount = userBoard.getLikesCount();
         this.userNickName = userBoard.getUser().getNickname();
-        this.userProfileImage = userBoard.getUser().getProfile().getPhoto();
+        this.userProfileImage = userBoard.getUser().getProfile().getImage();
         this.createdAt = userBoard.getCreatedAt();
         this.boardUserId = userBoard.getUser().getId();
     }
