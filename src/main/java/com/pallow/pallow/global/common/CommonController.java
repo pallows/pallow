@@ -76,4 +76,7 @@ public class CommonController {
     public String userboard() {
         return "userboard";
     }
+
+    @GetMapping("/public/popularMeets")
+    public String popularMeets() { return "popularMeets"; }
 }
