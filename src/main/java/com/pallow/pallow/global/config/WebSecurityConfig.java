@@ -30,7 +30,7 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    String[] WHITE_LIST = {"/", "/users/login", "/email/**", "/users/signup", "/public/**", "/profiles", "/chat.html", "/ws/**", "/api/chat/**", "/InvitationList.html", "/meets.html"};
+    String[] WHITE_LIST = {"/", "/users/login", "/email/**", "/users/signup","/users/me", "/public/**", "/profiles", "/chat.html", "/ws/**", "/InvitationList.html", "/meets.html", "/chat", "/ws/**", "/topic/**", "/app/**", "/api/**"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {

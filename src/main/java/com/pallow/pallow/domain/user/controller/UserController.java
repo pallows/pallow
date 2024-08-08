@@ -1,16 +1,20 @@
 package com.pallow.pallow.domain.user.controller;
 
 
+import com.pallow.pallow.domain.chat.dto.ApiResponse;
 import com.pallow.pallow.domain.user.dto.SignupRequestDto;
 import com.pallow.pallow.domain.user.dto.UserRequestDto;
 import com.pallow.pallow.domain.user.dto.UserResponseDto;
+import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.service.UserService;
 import com.pallow.pallow.global.common.CommonResponseDto;
+import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -62,6 +66,18 @@ public class UserController {
         UserResponseDto user = userService.updateUser(userId, requestDto);
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_UPDATE_SUCCESS, user));
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse> getCurrentUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(ErrorType.NOT_FOUND_USER, null));
+        }
+        User user = userDetails.getUser();
+        UserResponseDto currentUser = new UserResponseDto(user);
+        return ResponseEntity.ok(new ApiResponse(Message.USER_INFO_SUCCESS, currentUser));
+    }
+
+
 
 
 }

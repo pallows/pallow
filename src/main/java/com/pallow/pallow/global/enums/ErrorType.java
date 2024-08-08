@@ -67,7 +67,10 @@ public enum ErrorType {
     // message
     NOT_FOUND_MESSAGE(HttpStatus.NOT_FOUND, "메시지를 찾을 수 없습니다."),
     // Room
-    NOT_FOUND_CHATROOM(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다.")
+    NOT_FOUND_CHATROOM(HttpStatus.NOT_FOUND, "채팅방을 찾을 수 없습니다."),
+    INACTIVE_CHATROOM(HttpStatus.BAD_REQUEST, "활성화되지 않은 채팅방입니다."),
+    USER_NOT_IN_CHATROOM(HttpStatus.NOT_FOUND, "채팅방에서 유저를 찾을 수 없습니다."),
+    INVALID_USER_COMBINATION(HttpStatus.MULTI_STATUS, "중복 유저입니다.")
     ;
 
     private final HttpStatus status;

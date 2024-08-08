@@ -22,6 +22,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -80,8 +81,12 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserAndChatRoom> userAndChatRooms = new ArrayList<>();
+    @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAndChatRoom> userAndChatRoomsAsUser1 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAndChatRoom> userAndChatRoomsAsUser2 = new ArrayList<>();
+
 
     public User(Long id, Profile profile, String username, String password, String email,
             String nickname, Role userRole, String name, List<Meets> meets, Gender gender) {
@@ -95,7 +100,6 @@ public class User extends TimeStamp {
         this.meets = meets;
         this.name = name;
         this.gender = gender;
-        this.userAndChatRooms = new ArrayList<>();
     }
 
     private User(SignupRequestDto dto, String encryptedPassword) {
@@ -128,4 +132,18 @@ public class User extends TimeStamp {
         user.status = CommonStatus.ACTIVE;
         return user;
     }
+    public void addUserAndChatRoom(UserAndChatRoom userAndChatRoom) {
+        if (this.equals(userAndChatRoom.getUser1())) {
+            userAndChatRoomsAsUser1.add(userAndChatRoom);
+        } else if (this.equals(userAndChatRoom.getUser2())) {
+            userAndChatRoomsAsUser2.add(userAndChatRoom);
+        }
+    }
+
+    public List<UserAndChatRoom> getAllUserAndChatRooms() {
+        List<UserAndChatRoom> allRooms = new ArrayList<>(userAndChatRoomsAsUser1);
+        allRooms.addAll(userAndChatRoomsAsUser2);
+        return allRooms;
+    }
+
 }

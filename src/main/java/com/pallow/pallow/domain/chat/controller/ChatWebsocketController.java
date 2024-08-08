@@ -34,6 +34,13 @@ public class ChatWebsocketController {
     private final SimpMessagingTemplate messagingTemplate;
     private static final Logger logger = LoggerFactory.getLogger(ChatWebsocketController.class);
 
+    @MessageMapping("/chat.connect")
+    public void connect(SimpMessageHeaderAccessor headerAccessor) {
+        Authentication auth = (Authentication) headerAccessor.getUser();
+        String nickname = ((UserDetailsImpl) auth.getPrincipal()).getNickname();
+        log.info("WebSocket connected for user: {}", nickname);
+    }
+
     @Autowired
     public ChatWebsocketController(ChatService chatService, SimpMessagingTemplate messagingTemplate) {
         this.chatService = chatService;
@@ -43,10 +50,13 @@ public class ChatWebsocketController {
     @MessageMapping("/chat.createRoom")
     public ChatRoomDto createRoom(@Payload ChatRoomDto chatRoomDto, SimpMessageHeaderAccessor headerAccessor) {
         Authentication auth = (Authentication) headerAccessor.getUser();
-        String nickname = ((UserDetailsImpl) auth.getPrincipal()).getNickname();
-       ChatRoomDto createdChatRoom = chatService.createChatRoom(chatRoomDto, nickname);
-       messagingTemplate.convertAndSend("/topic/room/" + createdChatRoom.getId(), createdChatRoom);
-       return createdChatRoom;
+        String user1Nickname = ((UserDetailsImpl) auth.getPrincipal()).getNickname();
+        // chatRoomDto에서 필요한 정보 추출
+        String roomName = chatRoomDto.getName();
+        String user2Nickname = chatRoomDto.getOtherUserNickname(); // ChatRoomDto에 이 필드가 있어야 합니다
+        ChatRoomDto createdChatRoom = chatService.createChatRoom(roomName, user1Nickname, user2Nickname);
+        messagingTemplate.convertAndSend("/topic/room/" + createdChatRoom.getId(), createdChatRoom);
+        return createdChatRoom;
     }
 
     @MessageMapping("/chat.enterRoom")
@@ -101,12 +111,9 @@ public class ChatWebsocketController {
     @MessageMapping("/chat.joinRoom")
     @SendTo("/topic/public")
     public ChatRoomResponseDto joinRoom(@Payload JoinRoomRequest joinRequest, SimpMessageHeaderAccessor headerAccessor) {
-        String username = headerAccessor.getUser().getName();
-        ChatRoomResponseDto response = chatService.addUserToChatRoom(
-                joinRequest.getRoomId(),
-                username,
-                joinRequest.isAnonymous()
-        );
+        Authentication auth = (Authentication) headerAccessor.getUser();
+        String nickname = ((UserDetailsImpl) auth.getPrincipal()).getNickname();
+        ChatRoomResponseDto response = chatService.enterChatRoom(joinRequest.getRoomId(), nickname);
         headerAccessor.getSessionAttributes().put("room_id", joinRequest.getRoomId());
         return response;
     }

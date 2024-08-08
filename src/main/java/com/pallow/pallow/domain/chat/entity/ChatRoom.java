@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,9 +39,6 @@ public class ChatRoom extends TimeStamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String roomId;
-
     @Setter
     @Column(nullable = false)
     private String name;
@@ -48,18 +46,11 @@ public class ChatRoom extends TimeStamp {
     @Column
     private LocalDateTime deletedAt;
 
-    @Setter
-    @Getter
-    @Column(unique = true)
-    private String inviteCode;
 
     @Builder.Default
     @Column(nullable = false)
     private boolean isDeleted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", nullable = false)
-    private User sender;
 
     @Builder.Default
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -73,24 +64,12 @@ public class ChatRoom extends TimeStamp {
     @JoinColumn(name = "meets_id")
     private Meets meets;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_chat_room",
-            joinColumns = @JoinColumn(name = "chat_room_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-
-    @Builder.Default
-    private Set<User> users = new HashSet<>();
-
-    public void updateDeletedAt() {
-        this.isDeleted = true;
-        this.deletedAt = LocalDateTime.now();
-    }
-
-    public void addMessage(ChatMessage message) {
-        messages.add(message);
-        message.setChatRoom(this);
+    // users 대신 userAndChatRooms를 사용하는 메서드들 추가
+    public List<User> getUsers() {
+        return userAndChatRooms.stream()
+                .flatMap(ucr -> ucr.getUsers().stream())
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     public void addUserAndChatRoom(UserAndChatRoom userAndChatRoom) {
@@ -98,7 +77,33 @@ public class ChatRoom extends TimeStamp {
         userAndChatRoom.setChatRoom(this);
     }
 
+    public void removeUserAndChatRoom(UserAndChatRoom userAndChatRoom) {
+        userAndChatRooms.remove(userAndChatRoom);
+        userAndChatRoom.setChatRoom(null);
+    }
+
     public void setMeets(Meets meets) {
         this.meets = meets;
+    }
+
+    public void addUsers(User user1, User user2) {
+        UserAndChatRoom userAndChatRoom = new UserAndChatRoom(user1, user2, this);
+        userAndChatRooms.add(userAndChatRoom);
+        user1.addUserAndChatRoom(userAndChatRoom);
+        user2.addUserAndChatRoom(userAndChatRoom);
+    }
+
+    public void removeUser(User user) {
+        userAndChatRooms.removeIf(ucr -> ucr.getUser1().equals(user) || ucr.getUser2().equals(user));
+    }
+
+    public int getUserCount() {
+        return userAndChatRooms.size() * 2;
+    }
+
+    // 채팅방에 들어있는 유저가 중복 유저인지 아닌지 확인
+    public boolean hasUser(User user) {
+        return userAndChatRooms.stream()
+                .anyMatch(ucr -> ucr.getUser1().equals(user) || ucr.getUser2().equals(user));
     }
 }
