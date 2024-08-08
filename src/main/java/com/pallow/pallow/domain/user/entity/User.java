@@ -18,6 +18,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -43,7 +44,8 @@ public class User extends TimeStamp {
     @Column(name = "user_id")
     private Long id;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_Id")
     private Profile profile;
 
     @Column(unique = true)
@@ -60,7 +62,6 @@ public class User extends TimeStamp {
 
     @Column
     private String name;
-
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -117,7 +118,8 @@ public class User extends TimeStamp {
         this.password = password;
     }
 
-    public static User createdUser(String username, String nickname, String email, String name,Gender gender,
+    public static User createdUser(String username, String nickname, String email, String name,
+            Gender gender,
             String password, Role role) {
         User user = new User();
         user.username = username;

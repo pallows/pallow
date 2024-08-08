@@ -1,7 +1,5 @@
 package com.pallow.pallow.domain.user.dto;
 
-import com.pallow.pallow.global.common.CommonOauth;
-import com.pallow.pallow.global.enums.Gender;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

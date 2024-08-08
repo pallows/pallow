@@ -1,9 +1,7 @@
 package com.pallow.pallow.global.common;
 
 import com.pallow.pallow.domain.meets.service.MeetsService;
-import com.pallow.pallow.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

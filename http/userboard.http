@@ -1,5 +1,5 @@
 ### 유저 게시글 생성
-POST http://localhost:8080/users/1/userboards
+POST http://localhost:8080/users/5001/userboards
 Authorization: {{Authorization}}
 Cookie: {{Cookie}}
 Content-Type: application/json
@@ -31,6 +31,6 @@ Authorization: {{Authorization}}
 Content-Type: application/json
 
 ### 유저 게시글 모두 조회
-GET http://localhost:8080/users/1/userboards
+GET http://localhost:8080/users/5001/userboards
 Authorization: {{Authorization}}
 Content-Type: application/json
