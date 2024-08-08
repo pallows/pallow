@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <script src="/js/auth.js" defer></script>
     <meta charset="UTF-8">
@@ -64,7 +64,7 @@
         }
     </style>
     <link rel="icon"
-          href="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96"
+          th:href="@{https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96}"
           type="image/x-icon">
 </head>
 <body class="bg-gray-100 text-black">
@@ -74,7 +74,9 @@
             <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
         </a>
         <nav>
+<!--            인기급상승html추가필요-->
             <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
+            <a href="/public/html페이지 만들어지면 수정해야합니다" class="mr-4">인기 급 상승 모임</a>
             <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
         </nav>
     </div>
@@ -85,6 +87,7 @@
 </header>
 
 <main class="p-4">
+    <!-- 오늘의 동친 섹션 -->
     <section class="mb-8">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">오늘의 동친</h2>
@@ -101,7 +104,7 @@
     <section class="mb-8">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">인기 급 상승 모임</h2>
-            <a href="ingimoim.html" class="text-blue-500">더보기</a>
+            <a href="html페이지 만들어지면 수정해야합니다" class="text-blue-500">더보기</a>
         </div>
         <div class="relative">
             <div class="carousel" id="carousel2"></div>
@@ -114,7 +117,7 @@
     <section class="mb-20">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">내 주변 모임</h2>
-            <a href="meetsCollection.html" class="text-blue-500">더보기</a>
+            <a href="/public/meetsCollection" class="text-blue-500">더보기</a>
         </div>
         <div class="relative">
             <div class="carousel" id="carousel3"></div>
