@@ -12,7 +12,9 @@ import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +51,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<CommonResponseDto> deleteUser(@PathVariable Long userId,
-            UserDetailsImpl currentUser) {
+                                                        UserDetailsImpl currentUser) {
         userService.deleteUser(userId, currentUser.getUser().getId()); //본인 계정만 본인이 탈퇴
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_DELETE_SUCCESS));
     }
@@ -62,7 +64,7 @@ public class UserController {
 
     @PutMapping("/{userId}")
     public ResponseEntity<CommonResponseDto> updateUser(@PathVariable Long userId,
-            @RequestBody UserRequestDto requestDto) {
+                                                        @RequestBody UserRequestDto requestDto) {
         UserResponseDto user = userService.updateUser(userId, requestDto);
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_UPDATE_SUCCESS, user));
     }
@@ -72,6 +74,7 @@ public class UserController {
         UserResponseDto users = userService.findById(userDetails.getUser().getId());
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_READ_ALL_SUCCESS, users));
     }
+
     @GetMapping("/me")
     public ResponseEntity<ApiResponse> getCurrentUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         if (userDetails == null) {
@@ -81,8 +84,4 @@ public class UserController {
         UserResponseDto currentUser = new UserResponseDto(user);
         return ResponseEntity.ok(new ApiResponse(Message.USER_INFO_SUCCESS, currentUser));
     }
-
-
-
-
 }

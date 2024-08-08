@@ -114,6 +114,26 @@
                 </button>
             </div>
         </div>
+        <!-- 수정 폼 -->
+        <form id="editForm" class="hidden" enctype="multipart/form-data" onsubmit="submitEditForm(event)">
+            <div>
+                <label for="editTitle">제목:</label>
+                <input type="text" id="editTitle" name="title" class="w-full p-2 border rounded-lg" required>
+            </div>
+            <div>
+                <label for="editContent">내용:</label>
+                <textarea id="editContent" name="content" class="w-full p-2 border rounded-lg" rows="3"
+                          required></textarea>
+            </div>
+            <div>
+                <label for="editImage">이미지:</label>
+                <input type="file" id="editImage" name="image" class="w-full p-2 border rounded-lg">
+            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">저장</button>
+            <button type="button" onclick="toggleEditForm()"
+                    class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700">취소
+            </button>
+        </form>
 
         <!-- TODO BoardComment 입니다 -->
         <div class="w-1/3 p-4 bg-gray-200 rounded-lg relative">
@@ -142,10 +162,12 @@
     }
 
     //BOARD 를 생성하면 BOARD 컬렉션에 BOARD 가 올라가고 거기서 클릭을햇을때, 해당하는 BOARD 로 이동하게된다. 이동할때 해당하는 BOARD 의 ID를 넘겨줘야 한다.
-    const userBoardId = 1; // 클릭한 Board 의 Id
+    const userBoardId = 1;   //TODO 숫자 1 대신에 받아온 BoardId 들어가야 정상 작동 됩니다.
     let userId;
     let isAuthor;
-    //TODO : userBoardId
+
+
+    let originalImgSrc;
 
     // board를 조회합니다. -> board의 작성자 ID를 가져와서 -> 작성자 아이이디로 프로필을 조회합니다. -> 조회한값에서 이미지를 가져온다음 -> 사용
 
@@ -157,7 +179,6 @@
                 .then(el => {
                     return el
                 }).then((elData) => {
-
                 fetchWithAuth(`/users/0/userboards/${userBoardId}`) //TODO 중간에 숫자 0 이 들어간 이유는 컨트롤러 맵핑을 저렇게 하고 있어서
                     .then(response => response.json())              //TODO 사용처가 없음에도 불구하고 0을 넣어줬습니다.
                     .then(data => {
@@ -166,12 +187,13 @@
                         document.getElementById('profileImage').src = data.data.userProfileImage;
                         document.getElementById('boardTitle').textContent = data.data.title;
                         document.getElementById('boardContent').textContent = data.data.content;
-                        document.getElementById('boardImg').src = data.data.photo;
+                        document.getElementById('boardImg').src = data.data.image;
                         document.getElementById('boardDate').textContent = new Date(data.data.createdAt).toLocaleDateString('ko-KR', {
                             year: 'numeric',
                             month: '2-digit',
                             day: '2-digit'
                         });
+                        originalImgSrc = data.data.image;
                     })
                     .then(() => {
                             if (elData.data.id !== userId) { // elData.data.id 접속한 유저의 id // board를 작성한 유저
@@ -365,7 +387,6 @@
             }).then((currentUserId) => {
             return currentUserId.data.id // 현재 접속한 유저의 ID
         }).then((currentUserId) => {
-            console.log("currentUserId : ", currentUserId)
             fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}/comments/${commentId}`, {
                 method: 'PATCH',
                 body: JSON.stringify({content: newContent}),
@@ -403,28 +424,78 @@
         })
     }
 
-    function cancelEdit(commentId, originalContent, likeCount) {
-        const commentElement = document.getElementById(`comment-${commentId}`);
-        const contentElement = commentElement.querySelector('.text-gray-600');
-        contentElement.textContent = originalContent;
-        const likeCountEl = document.getElementById(`likeCount`);
-        if (likeCountEl) {
-            likeCountEl.textContent = likeCount;
-        }
-
-        // 수정 버튼과 삭제 버튼을 다시 추가
-        const actionsElement = commentElement.querySelector('.flex.items-center.space-x-2');
-        actionsElement.innerHTML = `
-        <button class="like-button" onclick="toggleLike(this)">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15a7 7 0 0114 0c0 7-7 7-7 7s-7 0-7-7z"/>
-            </svg>
-        </button>
-          <span id="likeCount" class="like-count">${likeCount}</span>
-        <button class="delete-button text-red-500 hover:text-red-700" onclick="deleteComment(${commentId})">삭제</button>
-        <button class="edit-button text-blue-500 hover:text-blue-700" onclick="editComment(${commentId})">수정</button>
-    `;
+    //////// 수정
+    // Show or hide edit form
+    function toggleEditForm() {
+        const editForm = document.getElementById('editForm');
+        const editButton = document.getElementById('edit-button');
+        editForm.classList.toggle('hidden');
+        editButton.classList.toggle('hidden');
     }
+
+    // Edit button handler
+    function editPost() {
+        toggleEditForm(); // Show the edit form
+    }
+
+    // Submit the edit form
+    function submitEditForm(event) {
+        event.preventDefault();
+
+        const formData = new FormData(document.getElementById('editForm'));
+
+        fetch(`/users/${userId}/userboards/${userBoardId}`, {
+            method: 'PATCH',
+            body: formData,
+            headers: {
+                'Authorization': `${token}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log("data", data)
+                if (data.statusCode === 200) {
+                    alert('게시물이 수정되었습니다.');
+                    location.reload(); // Refresh the page to show updated data
+                } else {
+                    alert('수정에 실패했습니다.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    /////
+
+    function deletePost() {
+        const confirmDelete = confirm("정말로 이 게시글을 삭제하시겠습니까?");
+        if (confirmDelete) {
+            const userBoardId = 1; // 클릭한 Board 의 Id
+            fetchWithAuth(`/users/only`)
+                .then(response => response.json())
+                .then(el => {
+                    return el
+                }).then((currentUserId) => {
+                return currentUserId.data.id // 현재 접속한 유저의 ID
+            }).then((currentUserId) => {
+                fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.statusCode === 200) {
+                            alert('게시글이 삭제되었습니다.');
+                            window.location.href = '/public/main'; // 메인 페이지로 리다이렉트
+                        } else {
+                            alert('게시글 삭제에 실패했습니다.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting post:', error);
+                    });
+            })
+        }
+    }
+
 
     //
 

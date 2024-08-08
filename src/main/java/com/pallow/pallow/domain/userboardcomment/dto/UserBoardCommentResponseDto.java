@@ -20,7 +20,7 @@ public class UserBoardCommentResponseDto {
         this.id = userBoardComment.getId();
         this.content = userBoardComment.getContent();
         this.likesCount = userBoardComment.getLikesCount();
-        this.commentUserPhoto = userBoardComment.getUser().getProfile().getPhoto();
+        this.commentUserPhoto = userBoardComment.getUser().getProfile().getImage();
         this.commentUserNickName = userBoardComment.getUser().getNickname();
         this.createdAt = userBoardComment.getCreatedAt();
         this.commentUserId = userBoardComment.getUser().getId();

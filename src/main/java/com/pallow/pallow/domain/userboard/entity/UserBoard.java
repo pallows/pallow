@@ -3,19 +3,16 @@ package com.pallow.pallow.domain.userboard.entity;
 import com.pallow.pallow.domain.like.entity.Likeable;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.userboard.dto.UserBoardRequestDto;
+import com.pallow.pallow.domain.userboardcomment.entity.UserBoardComment;
 import com.pallow.pallow.global.entity.TimeStamp;
 import com.pallow.pallow.global.enums.ContentType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,9 +40,12 @@ public class UserBoard extends TimeStamp implements Likeable {
     @Column
     private int likesCount;
 
+    @OneToMany(mappedBy = "userBoard", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserBoardComment> comments = new ArrayList<>();
+
     @Builder
     public UserBoard(Long id, User user, String title, String content, String image,
-            int likesCount) {
+                     int likesCount) {
         this.id = id;
         this.user = user;
         this.title = title;
