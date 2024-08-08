@@ -3,6 +3,8 @@ package com.pallow.pallow.domain.profile.dto;
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.domain.profile.enums.Alcohol;
 import com.pallow.pallow.domain.profile.enums.Education;
+import com.pallow.pallow.domain.profile.enums.IDEAL;
+import com.pallow.pallow.domain.profile.enums.Interest;
 import com.pallow.pallow.domain.profile.enums.Jobs;
 import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.enums.Personality;
@@ -32,15 +34,15 @@ public class ProfileRequestDto {
     private MultipartFile image;
 
     private String interest;
-    private String alcohol;
-    private String education;
+    private Alcohol alcohol;
+    private Education education;
     private String ideal;
-    private String jobs;
-    private String personality;
-    private String relationship;
-    private String religion;
+    private Jobs jobs;
+    private Personality personality;
+    private Relationship relationship;
+    private Religion religion;
     private Smoking smoking;
-    private String pros;
+    private Pros pros;
 
     // 프로필 화면에 띄우기 위함
     private String username;
@@ -49,19 +51,7 @@ public class ProfileRequestDto {
         return Profile.builder()
                 .birth(birth).hobby(hobby).content(content).position(position).mbti(mbti)
                 .image(imageUrl).createdBy(foundUser).interest(interest).ideal(ideal)
-                .alcohol(convertToEnum(Alcohol.class, alcohol)).education(convertToEnum(Education.class, education))
-                .jobs(convertToEnum(Jobs.class, jobs)).personality(convertToEnum(Personality.class, personality))
-                .relationship(convertToEnum(Relationship.class, relationship)).religion(convertToEnum(Religion.class, religion))
-                .smoking(smoking).pros(convertToEnum(Pros.class, pros)).build();
-    }
-
-    @SuppressWarnings("unchecked")
-    private <E extends Enum<E>> E convertToEnum(Class<E> enumClass, String value) {
-        try {
-            Method valueOfMethod = enumClass.getMethod("valueOf", String.class);
-            return (E) valueOfMethod.invoke(null, value);
-        } catch (Exception e) {
-            return null;
-        }
+                .alcohol(alcohol).education(education).jobs(jobs).personality(personality)
+                .relationship(relationship).religion(religion).smoking(smoking).pros(pros).build();
     }
 }

@@ -127,5 +127,14 @@ public class Profile {
         this.hobby = requestDto.getHobby();
         this.image = imageUrl;
         this.smoking = requestDto.getSmoking();
+        this.education = requestDto.getEducation();
+        this.ideal = requestDto.getIdeal();
+        this.jobs = requestDto.getJobs();
+        this.personality = requestDto.getPersonality();
+        this.relationship = requestDto.getRelationship();
+        this.religion = requestDto.getReligion();
+        this.pros = requestDto.getPros();
+        this.interest = requestDto.getInterest();
+        this.alcohol = requestDto.getAlcohol();
     }
 }
