@@ -61,10 +61,8 @@
                   d="M19 9l-7 7-7-7"></path>
           </svg>
         </div>
-        <div id="regionDropdown"
-             class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10"></div>
-        <div id="subRegionDropdown"
-             class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10"></div>
+        <div id="regionDropdown" class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10"></div>
+        <div id="subRegionDropdown" class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10"></div>
       </div>
       <div>
         <label class="block text-gray-700">생년월일</label>
@@ -103,8 +101,52 @@
 
       <div>
         <label class="block text-gray-700">흡연 여부</label>
-        <select id="profileSmoking" class="w-full border border-gray-300 rounded px-4 py-2">
-        </select>
+        <select id="profileSmoking" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">음주 여부</label>
+        <select id="profileAlcohol" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">직업</label>
+        <select id="profileJobs" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">관심사</label>
+        <select id="profileInterest" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">교육</label>
+        <select id="profileEducation" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">이상형</label>
+        <select id="profileIdeal" class="w-full border border-gray-300 rounded px-4 py-2" ></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">성격</label>
+        <select id="profilePersonality" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">종교</label>
+        <select id="profileReligion" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">장점</label>
+        <select id="profilePros" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">찾는 친구</label>
+        <select id="profileRelationship" class="w-full border border-gray-300 rounded px-4 py-2"></select>
       </div>
 
     </div>
@@ -114,10 +156,25 @@
 </body>
 
 <script type="module">
-  import {regionData, smokings} from "/js/predefinedData.js";
+  import { regionData, interests, ideals, alcoholPreferences, educationLevels, jobTypes, personalities,
+    pros, relationships, religions, smokings} from "/js/predefinedData.js";
   const accessToken = localStorage.getItem('Authorization');
 
   document.addEventListener('DOMContentLoaded', function () {
+    function populateSelectElement(elementId, dataObject, selectedValue) {
+      const selectElement = document.getElementById(elementId);
+      selectElement.innerHTML = '';
+      Object.keys(dataObject).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = dataObject[key];
+        if (selectedValue === key) {
+          option.selected = true;
+        }
+        selectElement.appendChild(option);
+      });
+    }
+
     fetch('/profiles/', {
       method: 'GET',
       headers: {
@@ -131,26 +188,23 @@
         const data = responseData.data;
         document.getElementById('profilePicture').src = data.image;
         document.getElementById('profileName').textContent = data.name;
-        document.getElementById('profileRegion').textContent = data.position;
+        document.getElementById('profileRegionText').textContent = data.position;
         document.getElementById('profileLocation').textContent = data.position;
         document.getElementById('profileBirth').textContent = data.birth;
         document.getElementById('profileHobby').value = data.hobby;
         document.getElementById('profileMbti').value = data.mbti;
         document.getElementById('profileDescription').textContent = data.content;
-        const profileSmoking = document.getElementById('profileSmoking');
-        profileSmoking.innerHTML = ''; // Clear existing options
 
-        // Populate options
-        Object.keys(smokings).forEach(key => {
-          const option = document.createElement('option');
-          option.value = key;
-          option.textContent = smokings[key];
-          profileSmoking.appendChild(option);
-        });
-
-        // Set selected value
-        profileSmoking.value = data.smoking;
-
+        populateSelectElement('profileSmoking', smokings, data.smoking);
+        populateSelectElement('profileAlcohol', alcoholPreferences, data.alcohol);
+        populateSelectElement('profileJobs', jobTypes, data.jobs);
+        populateSelectElement('profileInterest', interests, data.interest);
+        populateSelectElement('profileEducation', educationLevels, data.education);
+        populateSelectElement('profileIdeal', ideals, data.ideal);
+        populateSelectElement('profilePersonality', personalities, data.personality);
+        populateSelectElement('profileReligion', religions, data.religion);
+        populateSelectElement('profilePros', pros, data.pros);
+        populateSelectElement('profileRelationship', relationships, data.relationship);
       } else {
         console.error('Error:', responseData.message);
       }
@@ -177,7 +231,9 @@
     document.getElementById('updateButton').addEventListener('click', function () {
       const formData = new FormData();
 
-      if (selectedImageFile) {formData.append('image', selectedImageFile);}
+      if (selectedImageFile) {
+        formData.append('image', selectedImageFile);
+      }
 
       formData.append('username', document.getElementById('profileName').textContent.trim());
       formData.append('position', document.getElementById('profileRegion').textContent.trim());
@@ -186,10 +242,19 @@
       formData.append('mbti', document.getElementById('profileMbti').value.trim());
       formData.append('content', document.getElementById('profileDescription').value.trim());
       formData.append('smoking', document.getElementById('profileSmoking').value.trim());
+      formData.append('alcohol', document.getElementById('profileAlcohol').value.trim());
+      formData.append('jobs', document.getElementById('profileJobs').value.trim());
+      formData.append('interest', document.getElementById('profileInterest').value.trim());
+      formData.append('education', document.getElementById('profileEducation').value.trim());
+      formData.append('ideal', document.getElementById('profileIdeal').value.trim());
+      formData.append('personality', document.getElementById('profilePersonality').value.trim());
+      formData.append('religion', document.getElementById('profileReligion').value.trim());
+      formData.append('pros', document.getElementById('profilePros').value.trim());
+      formData.append('relationship', document.getElementById('profileRelationship').value.trim());
 
       fetch(`/profiles/0`, {
         method: 'PATCH',
-        headers: {'Authorization': accessToken},
+        headers: { 'Authorization': accessToken },
         body: formData
       })
       .then(response => response.json())
