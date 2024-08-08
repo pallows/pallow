@@ -99,7 +99,7 @@
       return fetch(url, options);
     }
 
-    document.getElementById('logoutButton').addEventListener('click', function() {
+    document.getElementById('logoutBtn').addEventListener('click', function() {
       localStorage.removeItem('Authorization');
       window.location.href = '/login';
     });

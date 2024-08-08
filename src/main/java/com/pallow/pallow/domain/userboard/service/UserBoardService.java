@@ -125,4 +125,15 @@ public class UserBoardService {
         Page<UserBoard> userBoardPage = userBoardRepository.findAll(pageable);
         return userBoardPage.map(UserBoardResponseDto::new);
     }
+
+    /**
+     * 오늘의 동친 (무작위 선택)
+     */
+    @Transactional(readOnly = true)
+    public List<UserBoardResponseDto> getTodaysFriends(User user, int limit) {
+        List<UserBoard> todaysFriends = userBoardRepository.findRandomByPosition(user.getProfile().getPosition(), limit);
+        return todaysFriends.stream()
+                .map(UserBoardResponseDto::new)
+                .collect(Collectors.toList());
+    }
 }

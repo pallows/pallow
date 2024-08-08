@@ -1,11 +1,13 @@
 package com.pallow.pallow.domain.meets.controller;
 
 import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
+import com.pallow.pallow.domain.meets.dto.MeetsResponseDto;
 import com.pallow.pallow.domain.meets.service.MeetsService;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -141,5 +143,23 @@ public class MeetsController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         meetsService.toggleLike(meets_id, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_TOGGLE_SUCCESS));
+    }
+
+    /**
+     * 내 주변 모임 (무작위 9개)
+     */
+    @GetMapping("/nearby")
+    public ResponseEntity<CommonResponseDto> getNearbyMeets(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<MeetsResponseDto> nearbyMeets = meetsService.getNearbyMeets(userDetails.getUser(), 9);
+        return ResponseEntity.ok(new CommonResponseDto(Message.MEET_READ_SUCCESS, nearbyMeets));
+    }
+
+    /**
+     * 인기 급 상승 모임 (좋아요 순 상위 9개)
+     */
+    @GetMapping("/popular")
+    public ResponseEntity<CommonResponseDto> getPopularMeets() {
+        List<MeetsResponseDto> popularMeets = meetsService.getPopularMeets(9);
+        return ResponseEntity.ok(new CommonResponseDto(Message.MEET_READ_SUCCESS, popularMeets));
     }
 }

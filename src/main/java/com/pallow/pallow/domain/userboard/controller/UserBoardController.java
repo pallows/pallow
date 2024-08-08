@@ -90,4 +90,13 @@ public class UserBoardController {
         userBoardService.toggleLike(userboard_id, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_TOGGLE_SUCCESS));
     }
+
+    /**
+     * 오늘의 동친 (무작위 9개)
+     */
+    @GetMapping("/todays-friends")
+    public ResponseEntity<CommonResponseDto> getTodaysFriends(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<UserBoardResponseDto> todaysFriends = userBoardService.getTodaysFriends(userDetails.getUser(), 9);
+        return ResponseEntity.ok(new CommonResponseDto(Message.USERBOARD_READ_SUCCESS, todaysFriends));
+    }
 }
