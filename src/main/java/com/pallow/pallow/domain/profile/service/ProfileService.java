@@ -170,6 +170,7 @@ public class ProfileService {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<FlaskResponseDto> responseEntity = restTemplate.postForEntity(
                     "http://localhost:8000/api/profile/recommend",
+                    // localhost 환경변수화 해야함
                     new HttpEntity<>(requestDto, headers),
                     FlaskResponseDto.class
             );
