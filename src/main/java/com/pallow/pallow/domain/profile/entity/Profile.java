@@ -98,9 +98,9 @@ public class Profile {
 
     @Builder
     public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
-            String interest, String image, String hobby, Alcohol alcohol, Education education,
-            String ideal, Jobs jobs, Personality personality, Pros pros,
-            Relationship relationship, Religion religion, Smoking smoking) {
+                   String interest, String image, String hobby, Alcohol alcohol, Education education,
+                   String ideal, Jobs jobs, Personality personality, Pros pros,
+                   Relationship relationship, Religion religion, Smoking smoking) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
@@ -137,4 +137,5 @@ public class Profile {
         this.interest = requestDto.getInterest();
         this.alcohol = requestDto.getAlcohol();
     }
+
 }

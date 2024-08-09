@@ -36,13 +36,14 @@ public class MeetsController {
 
     /**
      * 모임 생성
+     *
      * @param requestDto  생성 데이터 [title, content]
      * @param userDetails 유저 데이터
      * @return 생성 성공 메시지 + 생성된 리뷰 데이터
      */
-    @PostMapping("/{user_id}")
+    @PostMapping()
     public ResponseEntity<CommonResponseDto> createMeets(@ModelAttribute @Valid MeetsRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         log.info(String.valueOf(userDetails.getUser().getId()));
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_CREATE_SUCCESS,
@@ -51,6 +52,7 @@ public class MeetsController {
 
     /**
      * 모임 선택 조회
+     *
      * @param meets_id 그룹 ID
      * @return 생성 성공 메시지 + 그룹 데이터
      */
@@ -62,6 +64,7 @@ public class MeetsController {
 
     /**
      * 모임 전체 조회
+     *
      * @return 생성 성공 메시지 + 그룹 데이터
      */
     @GetMapping()
@@ -72,6 +75,7 @@ public class MeetsController {
 
     /**
      * 모임 업데이트
+     *
      * @param meets_id    그룹 ID
      * @param requestDto  변경할 데이터 [title, content]
      * @param userDetails 유저 데이터
@@ -79,8 +83,8 @@ public class MeetsController {
      */
     @PatchMapping("/{meets_id}")
     public ResponseEntity<CommonResponseDto> updateMeets(@PathVariable Long meets_id,
-            @ModelAttribute @Valid MeetsRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                         @ModelAttribute @Valid MeetsRequestDto requestDto,
+                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_UPDATE_SUCCESS,
                         meetsService.update(meets_id, requestDto, userDetails.getUser()))
@@ -89,13 +93,14 @@ public class MeetsController {
 
     /**
      * 모임 삭제
+     *
      * @param meets_id    그룹 ID
      * @param userDetails 유저 데이터
      * @return 삭제 성공 메시지
      */
     @DeleteMapping("/{meets_id}")
     public ResponseEntity<CommonResponseDto> deleteMeets(@PathVariable Long meets_id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         meetsService.delete(meets_id, userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_DELETE_SUCCESS)
@@ -104,6 +109,7 @@ public class MeetsController {
 
     /**
      * 그룹 맴버 조회
+     *
      * @param meets_id
      * @return List<UserResponseDto>
      */
@@ -117,6 +123,7 @@ public class MeetsController {
 
     /**
      * 회원 강퇴
+     *
      * @param meets_id
      * @param user_id
      * @param userDetails
@@ -124,8 +131,8 @@ public class MeetsController {
      */
     @GetMapping("/{meets_id}/withdraw/{user_id}")
     public ResponseEntity<CommonResponseDto> withdrawMember(@PathVariable Long meets_id,
-            @PathVariable Long user_id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                            @PathVariable Long user_id,
+                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         meetsService.withdrawMember(meets_id, user_id, userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_WITHDRAW_MEMBER_SUCCESS)
@@ -134,13 +141,14 @@ public class MeetsController {
 
     /**
      * 좋아요 토글
+     *
      * @param meets_id
      * @param userDetails
      * @return
      */
     @PostMapping("{meets_id}/like")
     public ResponseEntity<CommonResponseDto> likeReview(@PathVariable Long meets_id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         meetsService.toggleLike(meets_id, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_TOGGLE_SUCCESS));
     }

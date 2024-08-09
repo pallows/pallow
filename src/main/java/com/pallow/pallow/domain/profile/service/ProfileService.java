@@ -162,6 +162,11 @@ public class ProfileService {
         return results;
     }
 
+    /**
+     * TODO 배포 전 localhost -> flask 서버 퍼블릭 주소로 변경 필요
+     * @param requestDto
+     * @return
+     */
     private FlaskResponseDto sendRequestToFlask(FlaskRequestDto requestDto) {
         try {
             HttpHeaders headers = new HttpHeaders();

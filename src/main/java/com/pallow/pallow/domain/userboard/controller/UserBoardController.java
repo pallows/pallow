@@ -7,17 +7,13 @@ import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -80,13 +76,14 @@ public class UserBoardController {
 
     /**
      * 좋아요 토글
+     *
      * @param userboard_id
      * @param userDetails
      * @return
      */
     @PostMapping("/userboards/{userboard_id}/like")
     public ResponseEntity<CommonResponseDto> likeReview(@PathVariable Long userboard_id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         userBoardService.toggleLike(userboard_id, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_TOGGLE_SUCCESS));
     }
