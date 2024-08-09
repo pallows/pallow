@@ -2,9 +2,9 @@ package com.pallow.pallow.domain.chat.controller;
 
 import com.pallow.pallow.domain.chat.dto.ApiResponse;
 import com.pallow.pallow.domain.chat.dto.ChatMessageDto;
-import com.pallow.pallow.domain.chat.dto.ChatRoomCreationDto;
 import com.pallow.pallow.domain.chat.dto.ChatRoomDto;
 import com.pallow.pallow.domain.chat.dto.ChatRoomResponseDto;
+import com.pallow.pallow.domain.chat.entity.ChatRoom;
 import com.pallow.pallow.domain.chat.service.ChatService;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.Message;
@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,24 +34,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatRestController {
 
     private final ChatService chatService;
+    private final SimpMessagingTemplate messagingTemplate;
 
 
     @PostMapping(value = "/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> createChatRoom(@RequestBody ChatRoomCreationDto chatRoomCreationDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        log.info("채팅방을 생성합니다. 사용자: {}, 채팅방 이름: {}, 초대 유저: {}",
+    public ResponseEntity<ApiResponse> createChatRoom(@RequestBody ChatRoomDto chatRoomDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        log.info("채팅방을 생성합니다. 사용자: {}, 채팅방 이름: {}, 상대방: {}",
                 userDetails.getNickname(),
-                chatRoomCreationDto.getName(),
-                chatRoomCreationDto.getInvitedUserNickname());
+                chatRoomDto.getName(),
+                chatRoomDto.getOtherUserNickname());
         try {
-            ChatRoomDto chatRoom = chatService.createChatRoomWithUser(
-                    chatRoomCreationDto.getName(),
+            ChatRoomDto chatRoom = chatService.createChatRoom(
+                    chatRoomDto.getName(),
                     userDetails.getNickname(),
-                    chatRoomCreationDto.getInvitedUserNickname()
+                    chatRoomDto.getOtherUserNickname()
             );
             log.info("채팅방 생성 완료: {}", chatRoom.getName());
             return ResponseEntity.ok(new ApiResponse(Message.ROOM_CREATE_SUCCESS, chatRoom));
         } catch (CustomException e) {
-            log.error("초대할 사용자를 찾을 수 없습니다: {}", e.getMessage());
+            log.error("상대방 사용자를 찾을 수 없습니다: {}", e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponse(ErrorType.NOT_FOUND_USER, null));
         } catch (Exception e) {
             log.error("채팅방 생성 실패", e);
@@ -60,10 +62,16 @@ public class ChatRestController {
 
     @GetMapping("/rooms/{roomId}")
     public ResponseEntity<ApiResponse> enterChatRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        log.info("Entering chat room: {}, User: {}", roomId, userDetails.getNickname());
+
         try {
             ChatRoomResponseDto response = chatService.enterChatRoom(roomId, userDetails.getNickname());
+            log.info("Successfully entered chat room: {}, User: {}", roomId, userDetails.getNickname());
+
             return ResponseEntity.ok(new ApiResponse(Message.ROOM_ENTER_SUCCESS, response));
         } catch (Exception e) {
+            log.error("Failed to enter chat room: {}, User: {}", roomId, userDetails.getNickname(), e);
+
             throw new CustomException(ErrorType.NOT_FOUND_CHATROOM);
         }
     }
@@ -74,9 +82,15 @@ public class ChatRestController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(ErrorType.NOT_FOUND_USER, null));
         }
         try {
+            messageDto.setSender(userDetails.getNickname());
             log.info("Attempting to send message. User: {}, ChatRoom: {}", userDetails.getNickname(), messageDto.getChatRoomId());
             ChatMessageDto sendMessage = chatService.sendAndSaveMessage(messageDto, userDetails.getNickname());
             log.info("Message sent successfully. MessageId: {}", sendMessage.getId());
+
+            messagingTemplate.convertAndSend("/topic/chat/" + messageDto.getChatRoomId(), sendMessage);
+
+
+
             return ResponseEntity.ok(new ApiResponse(Message.MESSAGE_CREATE_SUCCESS, sendMessage));
         } catch (CustomException e) {
             log.error("User not found: {}", userDetails.getNickname(), e);
@@ -90,6 +104,7 @@ public class ChatRestController {
     @GetMapping("/rooms")
     public ResponseEntity<ApiResponse> getChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         try {
+       log.info("test get    ");
             List<ChatRoomDto> chatRooms = chatService.getChatRoomsForUser(
                     userDetails.getNickname());
             return ResponseEntity.ok(new ApiResponse(Message.ROOM_READ_SUCCESS, chatRooms));
@@ -109,39 +124,7 @@ public class ChatRestController {
         }
     }
 
-    @PostMapping("/invite/{inviteCode}")
-    public ResponseEntity<ApiResponse> joinChatRoom(
-            @PathVariable String inviteCode,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        try {
-            ChatRoomDto chatRoom = chatService.getChatRoomByInviteCode(inviteCode);
-
-            if (chatRoom == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(new ApiResponse(ErrorType.NOT_FOUND_CHATROOM, null));
-            }
-
-            String username;
-            boolean isAnonymous = false;
-
-            if (userDetails != null) {
-                // 로그인한 사용자
-                username = userDetails.getUsername();
-            } else {
-                // 익명 사용자
-                username = "Anonymous_" + generateRandomString();
-                isAnonymous = true;
-            }
-
-            ChatRoomResponseDto response = chatService.addUserToChatRoom(chatRoom.getId(), username, isAnonymous);
-            return ResponseEntity.ok(new ApiResponse(Message.ROOM_ENTER_SUCCESS, response));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(ErrorType.INTERNAL_SERVER_ERROR, null));
-        }
-    }
 
     @DeleteMapping("/rooms/{roomId}")
     public ResponseEntity<ApiResponse> deleteChatRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -153,9 +136,6 @@ public class ChatRestController {
         }
     }
 
-    private String generateRandomString() {
-        return UUID.randomUUID().toString().substring(0, 8);
-    }
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiResponse> handleCustomException(CustomException ex) {

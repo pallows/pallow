@@ -1,23 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
   <script src="/js/auth.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile Page</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+        rel="stylesheet">
   <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-    }
+    body {font-family: 'Noto Sans KR', sans-serif;}
   </style>
-  <link rel="icon" href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png" type="image/x-icon">
+  <link rel="icon"
+        href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png"
+        type="image/x-icon">
 </head>
 <body class="bg-gray-100">
 <header class="bg-white shadow">
   <div class="container mx-auto px-4 py-4 flex justify-between items-center">
     <a href="/public/main">
-      <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
+      <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96"
+           width="70" height="70" alt="Logo" class="mr-4">
     </a>
     <nav class="space-x-4">
       <a href="/public/userboardCollection" class="text-gray-700">오늘의 동친</a>
@@ -32,7 +35,15 @@
   </div>
   <div class="bg-white shadow rounded-lg p-8">
     <div class="flex items-center mb-8">
-      <img id="profilePicture" src="https://source.unsplash.com/random/100x100" alt="Profile Picture" class="w-24 h-24 rounded-full mr-4">
+      <div class="relative w-24 h-24">
+        <img id="profilePicture" src="https://source.unsplash.com/random/100x100"
+             alt="Profile Picture" class="w-full h-full rounded-full">
+        <button id="editPictureButton"
+                class="absolute inset-0 bg-black bg-opacity-50 text-white opacity-0 hover:opacity-100 flex items-center justify-center rounded-full">
+          사진 수정
+        </button>
+        <input type="file" id="profilePictureInput" class="hidden">
+      </div>
       <div>
         <h2 id="profileName" class="text-xl font-bold">불광동 철리지역</h2>
         <p id="profileLocation" class="text-gray-600">서울</p>
@@ -41,23 +52,22 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
       <div>
         <label class="block text-gray-700">지역</label>
-        <div id="profileRegion" class="w-full border border-gray-300 rounded px-4 py-2 flex items-center justify-between bg-gray-100 text-gray-700 cursor-pointer hover:bg-gray-200">
+        <div id="profileRegion"
+             class="w-full border border-gray-300 rounded px-4 py-2 flex items-center justify-between bg-gray-100 text-gray-700 cursor-pointer hover:bg-gray-200">
           <span id="profileRegionText">서울</span>
-          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+               xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M19 9l-7 7-7-7"></path>
           </svg>
         </div>
-
-        <div id="regionDropdown" class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10">
-        </div>
-
-        <div id="subRegionDropdown" class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10">
-        </div>
-
+        <div id="regionDropdown" class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10"></div>
+        <div id="subRegionDropdown" class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10"></div>
       </div>
       <div>
         <label class="block text-gray-700">생년월일</label>
-        <p id="profileBirth" type="text" class="w-full border border-gray-300 rounded px-4 py-2"></p>
+        <p id="profileBirth" type="text"
+           class="w-full border border-gray-300 rounded px-4 py-2"></p>
       </div>
       <div>
         <label class="block text-gray-700">취미</label>
@@ -88,15 +98,207 @@
         <label class="block text-gray-700">본인 소개</label>
         <textarea id="profileDescription" class="w-full border border-gray-300 rounded px-4 py-2">헬로우에서 좋은 모임을 갖고 싶은 사람입니다.</textarea>
       </div>
+
+      <div>
+        <label class="block text-gray-700">흡연 여부</label>
+        <select id="profileSmoking" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">음주 여부</label>
+        <select id="profileAlcohol" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">이상형</label>
+        <div id="selectedIdeals" class="flex flex-wrap gap-2 mb-2"></div>
+        <p id="idealLimitMessage" class="text-red-500 text-sm hidden">최대 3개의 이상형를 선택할 수 있습니다.</p>
+        <div id="profileIdealContainer" class="w-full border border-gray-300 rounded px-4 py-2 flex items-center justify-between bg-gray-100 text-gray-700 cursor-pointer hover:bg-gray-200">
+          <span id="profileIdealText">선택하세요</span>
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
+        <div id="idealDropdown" class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10"></div>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">관심사</label>
+        <div id="selectedInterests" class="flex flex-wrap gap-2 mb-2"></div>
+        <p id="interestLimitMessage" class="text-red-500 text-sm hidden">최대 3개의 관심사를 선택할 수 있습니다.</p>
+        <div id="profileInterestContainer" class="w-full border border-gray-300 rounded px-4 py-2 flex items-center justify-between bg-gray-100 text-gray-700 cursor-pointer hover:bg-gray-200">
+          <span id="profileInterestText">선택하세요</span>
+          <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
+        <div id="interestDropdown" class="hidden absolute mt-2 w-48 border border-gray-300 bg-white shadow-lg rounded z-10"></div>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">교육</label>
+        <select id="profileEducation" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">직업</label>
+        <select id="profileJobs" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">성격</label>
+        <select id="profilePersonality" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">종교</label>
+        <select id="profileReligion" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">장점</label>
+        <select id="profilePros" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
+      <div>
+        <label class="block text-gray-700">찾는 친구</label>
+        <select id="profileRelationship" class="w-full border border-gray-300 rounded px-4 py-2"></select>
+      </div>
+
     </div>
     <button class="bg-black text-white px-4 py-2 rounded" id="updateButton">수정</button>
   </div>
 </main>
 </body>
 
-<script>
+<script type="module">
+  import { regionData, interests, ideals, alcoholPreferences, educationLevels, jobTypes, personalities,
+    pros, relationships, religions, smokings} from "/js/predefinedData.js";
   const accessToken = localStorage.getItem('Authorization');
-  document.addEventListener('DOMContentLoaded', function() {
+  const profileInterestContainer = document.getElementById('profileInterestContainer');
+  const interestDropdown = document.getElementById('interestDropdown');
+  const profileInterestText = document.getElementById('profileInterestText');
+  const selectedInterests = document.getElementById('selectedInterests');
+  let selectedInterestValues = new Set();
+  const profileIdealContainer = document.getElementById('profileIdealContainer');
+  const idealDropdown = document.getElementById('idealDropdown');
+  const profileIdealText = document.getElementById('profileIdealText');
+  const selectedIdeals = document.getElementById('selectedIdeals');
+  let selectedIdealValues = new Set();
+
+  document.addEventListener('DOMContentLoaded', function () {
+    function populateSelectElement(elementId, dataObject, selectedValue) {
+      const selectElement = document.getElementById(elementId);
+      selectElement.innerHTML = '';
+      Object.keys(dataObject).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = dataObject[key];
+        if (selectedValue === key) {
+          option.selected = true;
+        }
+        selectElement.appendChild(option);
+      });
+    }
+
+    function updateSelectedInterests() {
+      selectedInterests.innerHTML = '';
+      selectedInterestValues.forEach(value => {
+        const span = document.createElement('span');
+        span.className = 'bg-gray-200 px-2 py-1 rounded text-gray-700 flex items-center gap-1';
+        span.textContent = interests[value];
+        const removeButton = document.createElement('button');
+        removeButton.textContent = '×';
+        removeButton.className = 'text-red-500';
+        removeButton.addEventListener('click', function () {
+          selectedInterestValues.delete(value);
+          updateSelectedInterests();
+          Array.from(interestDropdown.children).forEach(child => {
+            if (child.dataset.value === value) {
+              child.classList.remove('bg-gray-200');
+            }
+          });
+        });
+        span.appendChild(removeButton);
+        selectedInterests.appendChild(span);
+      });
+      profileInterestText.textContent = selectedInterestValues.size ? '선택됨' : '선택하세요';
+      document.getElementById('interestLimitMessage').classList.toggle('hidden', selectedInterestValues.size <= 3);
+    }
+
+    function initializeInterestDropdown() {
+      Object.keys(interests).forEach(key => {
+        const div = document.createElement('div');
+        div.className = 'p-2 cursor-pointer hover:bg-gray-100';
+        div.textContent = interests[key];
+        div.dataset.value = key;
+        div.addEventListener('click', function () {
+          const value = this.dataset.value;
+          if (selectedInterestValues.has(value)) {
+            selectedInterestValues.delete(value);
+            this.classList.remove('bg-gray-200');
+          } else if (selectedInterestValues.size < 3) {
+            selectedInterestValues.add(value);
+            this.classList.add('bg-gray-200');
+          } else {
+            document.getElementById('interestLimitMessage').classList.remove('hidden');
+            return;
+          }
+          updateSelectedInterests();
+        });
+        interestDropdown.appendChild(div);
+      });
+    }
+
+    function updateSelectedIdeals() {
+      selectedIdeals.innerHTML = '';
+      selectedIdealValues.forEach(value => {
+        const span = document.createElement('span');
+        span.className = 'bg-gray-200 px-2 py-1 rounded text-gray-700 flex items-center gap-1';
+        span.textContent = ideals[value];
+        const removeButton = document.createElement('button');
+        removeButton.textContent = '×';
+        removeButton.className = 'text-red-500';
+        removeButton.addEventListener('click', function () {
+          selectedIdealValues.delete(value);
+          updateSelectedIdeals();
+          Array.from(interestDropdown.children).forEach(child => {
+            if (child.dataset.value === value) {
+              child.classList.remove('bg-gray-200');
+            }
+          });
+        });
+        span.appendChild(removeButton);
+        selectedIdeals.appendChild(span);
+      });
+      profileIdealText.textContent = selectedIdealValues.size ? '선택됨' : '선택하세요';
+      document.getElementById('idealLimitMessage').classList.toggle('hidden', selectedIdealValues.size <= 3);
+    }
+
+    function initializeIdealDropdown() {
+      Object.keys(ideals).forEach(key => {
+        const div = document.createElement('div');
+        div.className = 'p-2 cursor-pointer hover:bg-gray-100';
+        div.textContent = ideals[key];
+        div.dataset.value = key;
+        div.addEventListener('click', function () {
+          const value = this.dataset.value;
+          if (selectedIdealValues.has(value)) {
+            selectedIdealValues.delete(value);
+            this.classList.remove('bg-gray-200');
+          } else if (selectedIdealValues.size < 3) {
+            selectedIdealValues.add(value);
+            this.classList.add('bg-gray-200');
+          } else {
+            document.getElementById('idealLimitMessage').classList.remove('hidden');
+            return;
+          }
+          updateSelectedIdeals();
+        });
+        idealDropdown.appendChild(div);
+      });
+    }
+
     fetch('/profiles/', {
       method: 'GET',
       headers: {
@@ -108,14 +310,38 @@
     .then(responseData => {
       if (responseData.statusCode === 200) {
         const data = responseData.data;
-        document.getElementById('profilePicture').src = data.photo;
+        document.getElementById('profilePicture').src = data.image;
         document.getElementById('profileName').textContent = data.name;
-        document.getElementById('profileRegion').textContent = data.position;
-        document.getElementById('profileLocation').textContent  = data.position;
+        document.getElementById('profileRegionText').textContent = data.position;
+        document.getElementById('profileLocation').textContent = data.position;
         document.getElementById('profileBirth').textContent = data.birth;
         document.getElementById('profileHobby').value = data.hobby;
         document.getElementById('profileMbti').value = data.mbti;
         document.getElementById('profileDescription').textContent = data.content;
+
+        populateSelectElement('profileSmoking', smokings, data.smoking);
+        populateSelectElement('profileAlcohol', alcoholPreferences, data.alcohol);
+        populateSelectElement('profileJobs', jobTypes, data.jobs);
+        populateSelectElement('profileEducation', educationLevels, data.education);
+        populateSelectElement('profilePersonality', personalities, data.personality);
+        populateSelectElement('profileReligion', religions, data.religion);
+        populateSelectElement('profilePros', pros, data.pros);
+        populateSelectElement('profileRelationship', relationships, data.relationship);
+
+        if (data.interest) {
+          data.interest.split(', ').forEach(value => {
+            selectedInterestValues.add(value);
+          });
+          updateSelectedInterests();
+        }
+
+        if (data.ideal) {
+          data.ideal.split(', ').forEach(value => {
+            selectedIdealValues.add(value);
+          });
+          updateSelectedIdeals();
+        }
+
       } else {
         console.error('Error:', responseData.message);
       }
@@ -124,70 +350,74 @@
       console.error('Error fetching profile data:', error);
     });
 
-      document.getElementById('updateButton').addEventListener('click', function() {
-        const updatedProfile = {
-          photo: document.getElementById('profilePicture').src,
-          username: document.getElementById('profileName').textContent,
-          position: document.getElementById('profileRegion').textContent.trim(),
-          birth: document.getElementById('profileBirth').textContent,
-          hobby: document.getElementById('profileHobby').value,
-          mbti: document.getElementById('profileMbti').value,
-          content: document.getElementById('profileDescription').value
-        };
+    const profilePictureInput = document.getElementById('profilePictureInput');
+    let selectedImageFile = null;
 
-        fetch(`/profiles/0`, {
-          method: 'PATCH',
-          headers: {
-            'Authorization': accessToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(updatedProfile)
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.statusCode === 200) {
-            alert('프로필이 성공적으로 수정되었습니다.');
-            location.reload();
-          } else {
-            console.error('Error:', data.message);
-          }
-        })
-        .catch(error => {
-          console.error('Error updating profile:', error);
-        });
+    profilePictureInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file) {
+        selectedImageFile = file;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          document.getElementById('profilePicture').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('updateButton').addEventListener('click', function () {
+      const formData = new FormData();
+
+      if (selectedImageFile) {
+        formData.append('image', selectedImageFile);
+      }
+
+      formData.append('username', document.getElementById('profileName').textContent.trim());
+      formData.append('position', document.getElementById('profileRegion').textContent.trim());
+      formData.append('birth', document.getElementById('profileBirth').textContent.trim());
+      formData.append('hobby', document.getElementById('profileHobby').value.trim());
+      formData.append('mbti', document.getElementById('profileMbti').value.trim());
+      formData.append('content', document.getElementById('profileDescription').value.trim());
+      formData.append('smoking', document.getElementById('profileSmoking').value.trim());
+      formData.append('alcohol', document.getElementById('profileAlcohol').value.trim());
+      formData.append('jobs', document.getElementById('profileJobs').value.trim());
+      formData.append('interest', Array.from(selectedInterestValues).join(', '));
+      formData.append('education', document.getElementById('profileEducation').value.trim());
+      formData.append('ideal', Array.from(selectedIdealValues).join(', '));
+      formData.append('personality', document.getElementById('profilePersonality').value.trim());
+      formData.append('religion', document.getElementById('profileReligion').value.trim());
+      formData.append('pros', document.getElementById('profilePros').value.trim());
+      formData.append('relationship', document.getElementById('profileRelationship').value.trim());
+
+      fetch(`/profiles/0`, {
+        method: 'PATCH',
+        headers: { 'Authorization': accessToken },
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.statusCode === 200) {
+          alert('프로필이 성공적으로 수정되었습니다.');
+          location.reload();
+        } else {
+          console.error('Error:', data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error updating profile:', error);
       });
     });
 
-  document.addEventListener('DOMContentLoaded', function() {
     const profileRegion = document.getElementById('profileRegion');
     const regionDropdown = document.getElementById('regionDropdown');
     const subRegionDropdown = document.getElementById('subRegionDropdown');
     const profileRegionText = document.getElementById('profileRegionText');
-    const regionData = {
-      "서울": ["종로구", "중구", "용산구", "성동구", "광진구", "동대문구", "중랑구", "성북구", "강북구", "도봉구", "노원구", "은평구", "서대문구", "마포구", "양천구", "강서구", "구로구", "금천구", "영등포구", "동작구", "관악구", "서초구", "강남구", "송파구", "강동구"],
-      "부산": ["중구", "서구", "동구", "영도구", "부산진구", "동래구", "남구", "북구", "해운대구", "사하구", "금정구", "강서구", "연제구", "수영구", "사상구", "기장군"],
-      "대구": ["중구", "동구", "서구", "남구", "북구", "수성구", "달서구", "달성군"],
-      "인천": ["중구", "동구", "미추홀구", "연수구", "남동구", "부평구", "계양구", "서구", "강화군", "옹진군"],
-      "광주": ["동구", "서구", "남구", "북구", "광산구"],
-      "대전": ["동구", "중구", "서구", "유성구", "대덕구"],
-      "울산": ["중구", "남구", "동구", "북구", "울주군"],
-      "세종": ["세종시"],
-      "경기": ["수원시 장안구", "수원시 권선구", "수원시 팔달구", "수원시 영통구", "성남시 수정구", "성남시 중원구", "성남시 분당구", "안양시 만안구", "안양시 동안구", "안산시 상록구", "안산시 단원구", "고양시 덕양구", "고양시 일산동구", "고양시 일산서구", "용인시 처인구", "용인시 기흥구", "용인시 수지구"],
-      "강원": ["춘천시", "원주시", "강릉시", "동해시", "태백시", "속초시", "삼척시", "홍천군", "횡성군", "영월군", "평창군", "정선군", "철원군", "화천군", "양구군", "인제군", "고성군", "양양군"],
-      "충북": ["청주시 상당구", "청주시 서원구", "청주시 흥덕구", "청주시 청원구", "충주시", "제천시", "보은군", "옥천군", "영동군", "진천군", "괴산군", "음성군", "단양군", "증평군"],
-      "충남": ["천안시 동남구", "천안시 서북구", "공주시", "보령시", "아산시", "서산시", "논산시", "계룡시", "당진시", "금산군", "부여군", "서천군", "청양군", "홍성군", "예산군", "태안군"],
-      "전북": ["전주시 완산구", "전주시 덕진구", "군산시", "익산시", "정읍시", "남원시", "김제시", "완주군", "진안군", "무주군", "장수군", "임실군", "순창군", "고창군", "부안군"],
-      "전남": ["목포시", "여수시", "순천시", "나주시", "광양시", "담양군", "곡성군", "구례군", "고흥군", "보성군", "화순군", "장흥군", "강진군", "해남군", "영암군", "무안군", "함평군", "영광군", "장성군", "완도군", "진도군", "신안군"],
-      "경북": ["포항시 남구", "포항시 북구", "경주시", "김천시", "안동시", "구미시", "영주시", "영천시", "상주시", "문경시", "경산시", "군위군", "의성군", "청송군", "영양군", "영덕군", "청도군", "고령군", "성주군", "칠곡군", "예천군", "봉화군", "울진군", "울릉군"],
-      "경남": ["창원시 의창구", "창원시 성산구", "창원시 마산합포구", "창원시 마산회원구", "창원시 진해구", "진주시", "통영시", "사천시", "김해시", "밀양시", "거제시", "양산시", "의령군", "함안군", "창녕군", "고성군", "남해군", "하동군", "산청군", "함양군", "거창군", "합천군"],
-      "제주": ["제주시", "서귀포시"]
-    };
 
     Object.keys(regionData).forEach(region => {
       const div = document.createElement('div');
       div.className = 'p-2 cursor-pointer hover:bg-gray-100';
       div.textContent = region;
-      div.addEventListener('click', function() {
+      div.addEventListener('click', function () {
         profileRegion.textContent = this.textContent;
         profileRegionText.textContent = this.textContent;
         updateSubRegionDropdown(region);
@@ -204,9 +434,10 @@
         const div = document.createElement('div');
         div.className = 'p-2 cursor-pointer hover:bg-gray-100';
         div.textContent = subRegion;
-        div.addEventListener('click', function() {
+        div.addEventListener('click', function () {
           const existingText = profileRegion.textContent;
-          const newText = existingText.includes(', ') ? `${existingText}, ${this.textContent}` : `${existingText} ${this.textContent}`;
+          const newText = existingText.includes(', ') ? `${existingText}, ${this.textContent}`
+              : `${existingText} ${this.textContent}`;
           profileRegion.textContent = newText;
           profileRegionText.textContent = newText;
           subRegionDropdown.classList.add('hidden');
@@ -215,14 +446,42 @@
       });
     }
 
-    profileRegion.addEventListener('click', function() {
+    profileRegion.addEventListener('click', function () {
       regionDropdown.classList.toggle('hidden');
     });
 
-    document.addEventListener('click', function(event) {
-      if (!event.target.closest('#profileRegion') && !event.target.closest('#regionDropdown') && !event.target.closest('#subRegionDropdown')) {
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('#profileRegion') && !event.target.closest('#regionDropdown')
+          && !event.target.closest('#subRegionDropdown')) {
         regionDropdown.classList.add('hidden');
         subRegionDropdown.classList.add('hidden');
+      }
+    });
+
+    document.getElementById('editPictureButton').addEventListener('click', function () {
+      document.getElementById('profilePictureInput').click();
+    });
+
+    initializeInterestDropdown();
+    initializeIdealDropdown();
+
+    profileInterestContainer.addEventListener('click', function () {
+      interestDropdown.classList.toggle('hidden');
+    });
+
+    profileIdealContainer.addEventListener('click', function () {
+      idealDropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('#profileInterestContainer') && !event.target.closest('#interestDropdown')) {
+        interestDropdown.classList.add('hidden');
+      }
+    });
+
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('#profileIdealContainer') && !event.target.closest('#idealDropdown')) {
+        idealDropdown.classList.add('hidden');
       }
     });
   });

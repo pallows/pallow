@@ -18,9 +18,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -39,10 +41,10 @@ public class User extends TimeStamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name="user_id")
     private Long id;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private Profile profile;
 
     @Column(unique = true)
@@ -59,9 +61,6 @@ public class User extends TimeStamp {
 
     @Column
     private String name;
-
-    @Column(name = "is_anonymous", nullable = false)
-    private Boolean Anonymous = false;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -81,8 +80,12 @@ public class User extends TimeStamp {
     @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserAndChatRoom> userAndChatRooms = new ArrayList<>();
+    @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAndChatRoom> userAndChatRoomsAsUser1 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAndChatRoom> userAndChatRoomsAsUser2 = new ArrayList<>();
+
 
     public User(Long id, Profile profile, String username, String password, String email,
             String nickname, Role userRole, String name, List<Meets> meets, Gender gender) {
@@ -96,7 +99,6 @@ public class User extends TimeStamp {
         this.meets = meets;
         this.name = name;
         this.gender = gender;
-        this.userAndChatRooms = new ArrayList<>();
     }
 
     private User(SignupRequestDto dto, String encryptedPassword) {
@@ -115,7 +117,8 @@ public class User extends TimeStamp {
         this.password = password;
     }
 
-    public static User createdUser(String username, String nickname, String email, String name,Gender gender,
+    public static User createdUser(String username, String nickname, String email, String name,
+            Gender gender,
             String password, Role role) {
         User user = new User();
         user.username = username;
@@ -128,4 +131,18 @@ public class User extends TimeStamp {
         user.status = CommonStatus.ACTIVE;
         return user;
     }
+    public void addUserAndChatRoom(UserAndChatRoom userAndChatRoom) {
+        if (this.equals(userAndChatRoom.getUser1())) {
+            userAndChatRoomsAsUser1.add(userAndChatRoom);
+        } else if (this.equals(userAndChatRoom.getUser2())) {
+            userAndChatRoomsAsUser2.add(userAndChatRoom);
+        }
+    }
+
+    public List<UserAndChatRoom> getAllUserAndChatRooms() {
+        List<UserAndChatRoom> allRooms = new ArrayList<>(userAndChatRoomsAsUser1);
+        allRooms.addAll(userAndChatRoomsAsUser2);
+        return allRooms;
+    }
+
 }

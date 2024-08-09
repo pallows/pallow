@@ -7,7 +7,9 @@ import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,7 +19,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,7 +38,7 @@ public class UserBoardCommentController {
                 new CommonResponseDto(Message.COMMENT_CREATE_SUCCESS, responseDto));
     }
 
-    @GetMapping("/users/{userId}/userboards/{userBoardId}/comments")
+    @GetMapping("/users/{userId}/userboards/{userBoardId}/comments")// -> board 쓸 유저 프로필까지 가져오기
     public ResponseEntity<CommonResponseDto> getAllComment(
             @PathVariable long userBoardId) {
         List<UserBoardCommentResponseDto> responseDtos = userBoardCommentService.getComments(
@@ -67,13 +68,14 @@ public class UserBoardCommentController {
 
     /**
      * 좋아요 토글
+     *
      * @param commentId
      * @param userDetails
      * @return
      */
     @PostMapping("/userboardscomment/{commentId}/like")
     public ResponseEntity<CommonResponseDto> likeReview(@PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         userBoardCommentService.toggleLike(commentId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_TOGGLE_SUCCESS));
     }

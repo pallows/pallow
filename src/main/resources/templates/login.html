@@ -55,7 +55,7 @@
     <script>
         $(document).ready(function() {
             $('#loginForm').on('submit', function(event) {
-                event.preventDefault(); // Stop the form from submitting through the browser
+                event.preventDefault();
                 login();
             });
         });
@@ -69,7 +69,7 @@
                 password = password.trim();
             } else {
                 alert('Username or password field is empty or not found.');
-                return; // Exit the function if validation fails
+                return;
             }
 
             $.ajax({
@@ -94,37 +94,6 @@
             });
         }
     </script>
-<!--    <script type="module">-->
-<!--        // document.getElementById('loginForm').addEventListener('submit', function(event) {-->
-<!--        //     event.preventDefault();-->
-<!--        //-->
-<!--        //     const username = document.getElementById('username').value;-->
-<!--        //     const password = document.getElementById('password').value;-->
-<!--        //-->
-<!--        //     fetch('/users/login', {-->
-<!--        //         method: 'POST',-->
-<!--        //         headers: {-->
-<!--        //             'Content-Type': 'application/json'-->
-<!--        //         },-->
-<!--        //         body: JSON.stringify({ username, password })-->
-<!--        //     })-->
-<!--        //     .then(response => response.json())-->
-<!--        //     .then(data => {-->
-<!--        //         if (data.accessToken) {-->
-<!--        //             localStorage.setItem('accessToken', data.accessToken);-->
-<!--        //             localStorage.setItem('username', username);-->
-<!--        //             window.location.href = '/main';-->
-<!--        //         } else {-->
-<!--        //             document.getElementById('error').style.display = 'block';-->
-<!--        //         }-->
-<!--        //     })-->
-<!--        //     .catch(error => {-->
-<!--        //         console.error('Error:', error);-->
-<!--        //         document.getElementById('error').style.display = 'block';-->
-<!--        //     });-->
-<!--        // });-->
-<!--    </script>-->
-
 </div>
 
 </body>

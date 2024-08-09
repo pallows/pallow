@@ -33,9 +33,9 @@ public class ChatMessage extends TimeStamp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
-    @Column(nullable = false)
-    private String sender;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id", nullable = false)
+    private User sender;
 
     @Setter
     @Column(nullable = false)
@@ -46,8 +46,8 @@ public class ChatMessage extends TimeStamp {
      */
     @Setter
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     @Builder.Default
+    @Column(nullable = false)
     private MessageType type = MessageType.CHAT;
 
     /**

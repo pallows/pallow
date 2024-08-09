@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -76,8 +74,8 @@ public class MeetsController {
      */
     @PatchMapping("/{meets_id}")
     public ResponseEntity<CommonResponseDto> updateMeets(@PathVariable Long meets_id,
-            @ModelAttribute @Valid MeetsRequestDto requestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                         @ModelAttribute @Valid MeetsRequestDto requestDto,
+                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_UPDATE_SUCCESS,
                         meetsService.update(meets_id, requestDto, userDetails.getUser()))
@@ -92,7 +90,7 @@ public class MeetsController {
      */
     @DeleteMapping("/{meets_id}")
     public ResponseEntity<CommonResponseDto> deleteMeets(@PathVariable Long meets_id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         meetsService.delete(meets_id, userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_DELETE_SUCCESS)
@@ -121,8 +119,8 @@ public class MeetsController {
      */
     @GetMapping("/{meets_id}/withdraw/{user_id}")
     public ResponseEntity<CommonResponseDto> withdrawMember(@PathVariable Long meets_id,
-            @PathVariable Long user_id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                            @PathVariable Long user_id,
+                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         meetsService.withdrawMember(meets_id, user_id, userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_WITHDRAW_MEMBER_SUCCESS)
@@ -137,7 +135,7 @@ public class MeetsController {
      */
     @PostMapping("{meets_id}/like")
     public ResponseEntity<CommonResponseDto> likeReview(@PathVariable Long meets_id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
         meetsService.toggleLike(meets_id, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_TOGGLE_SUCCESS));
     }

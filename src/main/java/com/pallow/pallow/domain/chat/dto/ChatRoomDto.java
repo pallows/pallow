@@ -25,4 +25,11 @@ public class ChatRoomDto {
      */
     private String creatorNickname;
 
+    /**
+     * 상대방
+     */
+    private String otherUserNickname;
+
+
+
 }

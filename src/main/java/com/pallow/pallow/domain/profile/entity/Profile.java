@@ -3,8 +3,6 @@ package com.pallow.pallow.domain.profile.entity;
 import com.pallow.pallow.domain.profile.dto.ProfileRequestDto;
 import com.pallow.pallow.domain.profile.enums.Alcohol;
 import com.pallow.pallow.domain.profile.enums.Education;
-import com.pallow.pallow.domain.profile.enums.IDEAL;
-import com.pallow.pallow.domain.profile.enums.Interest;
 import com.pallow.pallow.domain.profile.enums.Jobs;
 import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.enums.Personality;
@@ -34,7 +32,6 @@ public class Profile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true)
     private Long id;
 
     @Column
@@ -48,10 +45,6 @@ public class Profile {
 
     @Column
     private String position;
-
-    // 인트로 받아와서 스트링으로 변환해야함
-    @Column
-    private String district;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -69,8 +62,7 @@ public class Profile {
     private Education education;
 
     @Column
-    @Enumerated(EnumType.STRING)
-    private IDEAL ideal;
+    private String ideal;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -99,15 +91,16 @@ public class Profile {
     @Column
     private String hobby;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "userId", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
+
 
     @Builder
     public Profile(String content, String birth, String position, Mbti mbti, User createdBy,
-            String interest, String image, String hobby, Alcohol alcohol, Education education,
-            IDEAL ideal, Jobs jobs, Personality personality, Pros pros,
-            Relationship relationship, Religion religion, Smoking smoking) {
+                   String interest, String image, String hobby, Alcohol alcohol, Education education,
+                   String ideal, Jobs jobs, Personality personality, Pros pros,
+                   Relationship relationship, Religion religion, Smoking smoking) {
         this.content = content;
         this.birth = birth;
         this.mbti = mbti;
@@ -133,5 +126,16 @@ public class Profile {
         this.mbti = requestDto.getMbti();
         this.hobby = requestDto.getHobby();
         this.image = imageUrl;
+        this.smoking = requestDto.getSmoking();
+        this.education = requestDto.getEducation();
+        this.ideal = requestDto.getIdeal();
+        this.jobs = requestDto.getJobs();
+        this.personality = requestDto.getPersonality();
+        this.relationship = requestDto.getRelationship();
+        this.religion = requestDto.getReligion();
+        this.pros = requestDto.getPros();
+        this.interest = requestDto.getInterest();
+        this.alcohol = requestDto.getAlcohol();
     }
+
 }

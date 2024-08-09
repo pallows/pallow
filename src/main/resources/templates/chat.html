@@ -8,6 +8,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
   <style>
+    #chatMessages {
+      display: flex;
+      flex-direction: column;
+    }
     .message-bubble {
       max-width: 70%;
       padding: 10px;
@@ -17,10 +21,12 @@
     .sender-message {
       background-color: #FFF9C4;
       align-self: flex-start;
+      margin-right: auto;
     }
     .my-message {
       background-color: #E3F2FD;
       align-self: flex-end;
+      margin-left: auto;
     }
     .date-divider {
       text-align: center;
@@ -29,12 +35,14 @@
     }
   </style>
 </head>
+<link rel="icon" href="data:;base64,iVBORw0KGgo=">
 <body class="bg-white">
 <div class="container mx-auto p-4 flex h-screen">
   <div class="w-1/3 bg-white border-r border-gray-200 flex flex-col">
     <div class="p-4 border-b border-gray-200">
       <h2 class="text-xl font-bold">나의 채팅방</h2>
     </div>
+    <div id="connectionStatus"></div>
     <ul id="chatRoomList" class="flex-grow overflow-y-auto p-4 space-y-2">
       <!-- 채팅방 목록이 여기에 동적으로 추가됩니다 -->
     </ul>
@@ -63,51 +71,132 @@
     </div>
   </div>
 </div>
+</body>
 
 <script>
+
+  document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+  document.getElementById('leaveChatRoomBtn').addEventListener('click', leaveRoom);
+
+
+
   let stompClient = null;
   let currentChatRoomId = null;
+  let currentUser = null;
+  let currentRoomParticipants = [];
+  let isConnected = false;
   const accessToken = localStorage.getItem('Authorization');
   console.log("엑셋슷톡큰", accessToken)
 
   if (!accessToken) {
     window.location.href = '/login';
   }
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM fully loaded and parsed");
+    loadUserInfo()
+    .then(() => {
+      connect();
+      setInterval(checkConnection, 60000);
+    })
+    .catch(error => {
+      console.error('Failed to load user info:', error);
+      // 사용자에게 오류 메시지를 표시하거나 로그인 페이지로 리다이렉트
+    });
+  });
+
+  function loadUserInfo() {
+    return fetch('/users/me', {
+      headers: {
+        'Authorization': accessToken
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.data && data.data.nickname) {
+        currentUser = data.data;
+        console.log('Current user loaded:', currentUser);
+      } else {
+        console.error('No user data received or unexpected data format');
+      }
+    })
+    .catch(error => {
+      console.error('Error loading user info:', error);
+    });
+  }
 
   function connect() {
-    const socket = new SockJS('/ws');
+    if (isConnected) return;
+    console.log("Attempting to connect to WebSocket");
+    const socket = new SockJS('http://localhost:8080/ws');
     stompClient = Stomp.over(socket);
-    stompClient.connect({'Authorization': accessToken}, function (frame) {
-      console.log('Connected: ' + frame);
+    stompClient.connect({'Authorization': accessToken}, onConnected, onError);
+  }
+
+  function onConnected(frame) {
+    console.log('Connected: ' + frame);
+    isConnected = true;
+
+    // 초기 사용자 정보 로드
+    loadUserInfo().then(() => {
+      // WebSocket을 통한 실시간 사용자 정보 업데이트 구독
+      stompClient.subscribe('/user/queue/info', function(message) {
+        try {
+          const userInfo = JSON.parse(message.body);
+          if (userInfo && userInfo.nickname) {
+            currentUser = userInfo;
+            console.log('Updated current user info:', currentUser);
+          }
+        } catch (error) {
+          console.error('Error parsing user info:', error);
+        }
+      });
+
+      stompClient.send("/app/chat.getUserInfo", {}, {});
+      stompClient.send("/app/chat.connect");
+      console.log("Sent chat.connect message");
       subscribeToNotifications();
       loadChatRooms();
-    }, onError);
+      updateConnectionStatus(true);
+    }).catch(error => {
+      console.error('Failed to load initial user info:', error);
+      // 에러 처리 로직 (예: 재연결 시도 또는 사용자에게 알림)
+    });
   }
 
   function onError(error) {
-    console.error('WebSocket Error:', error);
+    console.error('STOMP error:', error);
+    isConnected = false;
+    updateConnectionStatus(false);
+    setTimeout(connect, 5000); // 5초 후 재연결 시도
   }
 
-  function subscribeToNotifications() {
-    if (stompClient && stompClient.connected) {
-      stompClient.subscribe('/user/queue/notifications', onNotificationReceived);
-    } else {
-      console.error('STOMP client not connected');
+  function updateConnectionStatus(isConnected) {
+    // 연결 상태를 UI에 표시하는 로직
+    const statusElement = document.getElementById('connectionStatus');
+    if (statusElement) {
+      statusElement.textContent = isConnected ? '연결됨' : '연결 끊김';
+      statusElement.style.color = isConnected ? 'green' : 'red';
     }
   }
 
-  function onNotificationReceived(payload) {
-    const notification = JSON.parse(payload.body);
-    console.log('Received notification:', notification);
-    // 여기에서 알림을 처리합니다. 예를 들어:
-    if (notification.type === 'INVITATION') {
-      alert(notification.content);
+
+
+  // 주기적으로 연결 상태를 확인하는 함수
+  function checkConnection() {
+    if (!stompClient || !stompClient.connected) {
+      console.log("Connection lost. Attempting to reconnect...");
+      connect();
     }
   }
 
-    function isConnected() {
-      return stompClient && stompClient.connected;
-    }
+  // 문서 로드 완료 시 실행
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM fully loaded and parsed");
+    connect();
+    setInterval(checkConnection, 60000); // 60초마다 연결 상태 확인
+  });
+
+
 
   function loadChatRooms() {
     fetch('/api/chat/rooms', {
@@ -115,7 +204,12 @@
         'Authorization': accessToken
       }
     })
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
     .then(data => {
       const chatRoomList = document.getElementById('chatRoomList');
       chatRoomList.innerHTML = '';
@@ -126,188 +220,237 @@
         li.onclick = () => openChatRoom(room.id, room.name);
         chatRoomList.appendChild(li);
       });
-    });
-  }
-
-  function openChatRoom(roomId, roomName) {
-    currentChatRoomId = roomId;
-    document.getElementById('currentChatRoomName').textContent = roomName;
-
-    if (stompClient.subscriptions) {
-      Object.keys(stompClient.subscriptions).forEach(sub => stompClient.unsubscribe(sub));
-    }
-
-    stompClient.subscribe(`/topic/chat/${roomId}`, onMessageReceived);
-
-    loadChatMessages(roomId);
-  }
-
-  function loadChatMessages(roomId) {
-    fetch(`/api/chat/rooms/${roomId}`, {
-      headers: {
-        'Authorization': accessToken
-      }
     })
-    .then(response => response.json())
-    .then(data => {
-      const chatMessages = document.getElementById('chatMessages');
-      chatMessages.innerHTML = '';
-      data.data.messages.forEach(message => {
-        appendMessage(message);
-      });
+    .catch(error => {
+      console.error('Error loading chat rooms:', error);
+      alert('채팅방 목록을 불러오는 데 실패했습니다.');
     });
   }
 
-  function sendMessage() {
-    const messageInput = document.getElementById('messageInput');
-    const message = messageInput.value.trim();
-    if (message && currentChatRoomId) {
-      const chatMessage = {
-        chatRoomId: currentChatRoomId,
-        content: message
-      };
-      stompClient.send("/app/chat.sendMessage", {'Authorization': accessToken}, JSON.stringify(chatMessage));
-      messageInput.value = '';
-    }
+  let currentSubscription = null;
+
+  function onParticipantsUpdated(payload) {
+    const participants = JSON.parse(payload.body);
+    console.log('Room participants updated:', participants);
   }
 
-  function onMessageReceived(payload) {
-    const message = JSON.parse(payload.body);
-    appendMessage(message);
-  }
+    function openChatRoom(roomId, roomName) {
+      currentChatRoomId = roomId;
+      document.getElementById('currentChatRoomName').textContent = roomName;
 
-  function appendMessage(message) {
-    const chatMessages = document.getElementById('chatMessages');
-    const messageElement = document.createElement('div');
-    messageElement.className = 'mb-2';
-    messageElement.innerHTML = `
-                <strong>${message.sender}:</strong> ${message.content}
-                <small class="text-gray-500">${message.formattedTime}</small>
-            `;
-    chatMessages.appendChild(messageElement);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  function createChatRoom() {
-    console.log("asdfasdf");
-    const roomName = prompt("새 채팅방 이름을 입력하세요:");
-    if (roomName) {
-      const invitedUserNickname = prompt("초대할 유저의 닉네임을 입력하세요:");
-      if (invitedUserNickname) {
-        fetch('/api/chat/rooms', {
-          method: 'POST',
-          headers: {
-            'Authorization': accessToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: roomName,
-            invitedUserNickname: invitedUserNickname
-          })
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.error) {
-            alert(data.error);
-          } else {
-            alert(`채팅방이 생성되었고, ${invitedUserNickname}님에게 초대 메시지를 보냈습니다.`);
-            loadChatRooms();
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert('채팅방 생성 중 오류가 발생했습니다.');
-        });
-      } else {
-        alert('초대할 유저의 닉네임을 입력해야 합니다.');
+      if (currentSubscription) {
+        currentSubscription.unsubscribe();
       }
-    }
-  }
+      currentSubscription = stompClient.subscribe(`/topic/chat/${roomId}`, onMessageReceived);
 
-  function joinRoom(roomId, isAnonymous = false) {
-    if (stompClient) {
-      let joinMessage = {
-        roomId: roomId,
-        isAnonymous: isAnonymous,
-        type: 'JOIN'
-      };
-      stompClient.send("/app/chat.joinRoom", {}, JSON.stringify(joinMessage));
-    }
-  }
-
-  function appendMessage(message) {
-    const chatMessages = document.getElementById('chatMessages');
-    const messageElement = document.createElement('div');
-
-    if (message.type === 'JOIN') {
-      messageElement.className = 'text-center text-gray-500 my-2';
-      messageElement.textContent = `${message.sender}님이 입장하셨습니다.`;
-    } else if (message.type === 'LEAVE') {
-      messageElement.className = 'text-center text-gray-500 my-2';
-      messageElement.textContent = `${message.sender}님이 퇴장하셨습니다.`;
-    } else {
-      const isMyMessage = message.sender === 'Me'; // 실제 구현에서는 현재 사용자와 비교해야 합니다
-      messageElement.className = `message-bubble ${isMyMessage ? 'my-message' : 'sender-message'}`;
-      messageElement.innerHTML = `
-            <div class="font-bold">${message.sender}</div>
-            <div>${message.content}</div>
-            <div class="text-xs text-gray-500 text-right">${message.formattedTime}</div>
-        `;
+      loadChatMessages(roomId);
+      stompClient.subscribe(`/topic/chat/${roomId}/participants`, onParticipantsUpdated);
+      stompClient.send("/app/chat.getRoomParticipants", {}, JSON.stringify({roomId: roomId}));
     }
 
-    chatMessages.appendChild(messageElement);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-  stompClient.subscribe('/user/queue/notifications', onNotificationReceived);
-
-  function onNotificationReceived(payload) {
-    const notification = JSON.parse(payload.body);
-    if (notification.type === 'INVITATION') {
-      // 초대 알림을 표시하는 로직
-      showInvitationNotification(notification);
-    }
-  }
-
-  function showInvitationNotification(notification) {
-    // 예: 알림 창을 띄우거나 화면에 표시
-    alert(notification.content);
-    // 또는 더 세련된 UI로 표시할 수 있습니다.
-  }
-
-  function leaveRoom() {
-    if (stompClient && currentChatRoomId) {
-      let leaveMessage = {
-        roomId: currentChatRoomId,
-        type: 'LEAVE'
-      };
-      stompClient.send("/app/chat.leaveRoom", {}, JSON.stringify(leaveMessage));
-
-      // 채팅방 삭제 요청
-      fetch(`/api/chat/rooms/${currentChatRoomId}`, {
-        method: 'DELETE',
+    function loadChatMessages(roomId) {
+      fetch(`/api/chat/rooms/${roomId}`, {
         headers: {
           'Authorization': accessToken
         }
       })
       .then(response => {
-        if (response.ok) {
-          currentChatRoomId = null;
-          document.getElementById('currentChatRoomName').textContent = "채팅방을 선택해주세요";
-          document.getElementById('chatMessages').innerHTML = '';
-          loadChatRooms(); // 채팅방 목록 새로고침
+        if (!response.ok) {
+          throw new Error('Failed to load chat messages');
+        }
+        console.log("{}", response);
+        return response.json();
+      })
+      .then(data => {
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.innerHTML = '';
+        if (data.data && Array.isArray(data.data.messages)) {
+          data.data.messages.forEach(message => {
+            appendMessage(message);
+          });
         } else {
-          alert('채팅방 나가기 실패');
+          console.error('Unexpected data format:', data);
+        }
+      })
+      .catch(error => {
+        console.error('Error loading chat messages:', error);
+        alert('채팅 메시지를 불러오는 데 실패했습니다.');
+      });
+    }
+
+  function sendMessage() {
+    const messageInput = document.getElementById('messageInput');
+    const message = messageInput.value.trim();
+    if (message && currentChatRoomId) {
+      console.log('Current user before sending message:', currentUser);
+      const chatMessage = {
+        chatRoomId: currentChatRoomId,
+        content: message
+      };
+      fetch('/api/chat/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': accessToken
+        },
+        body: JSON.stringify(chatMessage)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.error('Error sending message:', data.error);
+        } else {
+          console.log('Message sent successfully:', data.data);
         }
       })
       .catch(error => {
         console.error('Error:', error);
-        alert('채팅방 나가기 중 오류가 발생했습니다.');
       });
+      messageInput.value = '';
     }
   }
 
+    function onMessageReceived(payload) {
+      const message = JSON.parse(payload.body);
+      console.log(`Received message in room ${currentChatRoomId}: `, message);
+      appendMessage(message);
+    }
 
-  connect();
+    function subscribeToNotifications() {
+      console.log("Attempting to subscribe to notifications");
+      if (stompClient && stompClient.connected) {
+        stompClient.subscribe('/user/queue/notifications', onNotificationReceived,
+            {'Authorization': accessToken});
+        console.log("Successfully subscribed to notifications");
+      } else {
+        console.error('STOMP client not connected. Unable to subscribe to notifications');
+        // 연결이 완료되면 다시 시도
+        setTimeout(subscribeToNotifications, 1000);
+      }
+    }
+
+    function createChatRoom() {
+      console.log("createChatRoom을 실행했습니다.");
+      const roomName = prompt("새 채팅방 이름을 입력하세요:");
+      if (roomName) {
+        const otherUserNickname = prompt("대화할 상대방의 닉네임을 입력하세요:");
+        if (otherUserNickname) {
+          fetch('/api/chat/rooms', {
+            method: 'POST',
+            headers: {
+              'Authorization': accessToken,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              name: roomName,
+              otherUserNickname: otherUserNickname
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              alert(data.error);
+            } else {
+              alert(`${otherUserNickname}님과의 채팅방이 생성되었습니다.`);
+              loadChatRooms();
+              // 새로 생성된 채팅방으로 바로 입장
+              openChatRoom(data.data.id, data.data.name);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('채팅방 생성 중 오류가 발생했습니다.');
+          });
+        } else {
+          alert('대화할 상대방의 닉네임을 입력해야 합니다.');
+        }
+      }
+    }
+
+    function joinRoom(roomId) {
+      if (stompClient) {
+        let joinMessage = {
+          roomId: roomId,
+          type: 'JOIN'
+        };
+        stompClient.send("/app/chat.joinRoom", {}, JSON.stringify(joinMessage));
+      }
+    }
+
+    function onNotificationReceived(payload) {
+      console.log('Received notification payload:', payload);
+      const notification = JSON.parse(payload.body);
+      console.log('Parsed notification:', notification);
+      // 초대 관련 로직 제거
+    }
+
+    function appendMessage(message) {
+      const chatMessages = document.getElementById('chatMessages');
+      const messageElement = document.createElement('div');
+
+      if (message.type === 'JOIN' || message.type === 'LEAVE') {
+        messageElement.className = 'text-center text-gray-500 my-2';
+        messageElement.textContent = `${message.sender}님이 ${message.type === 'JOIN' ? '입장'
+            : '퇴장'}하셨습니다.`;
+      }else {
+        const isMyMessage = currentUser && message.sender === currentUser.nickname;
+        console.log('Is my message:', isMyMessage, 'Sender:', message.sender, 'Current user:', currentUser?.nickname);
+
+        messageElement.className = `message-bubble ${isMyMessage ? 'my-message'
+            : 'sender-message'}`;
+
+        // 추가 스타일 적용
+        if (isMyMessage) {
+          messageElement.style.alignSelf = 'flex-end';
+          messageElement.style.backgroundColor = '#E3F2FD';
+        } else {
+          messageElement.style.alignSelf = 'flex-start';
+          messageElement.style.backgroundColor = '#FFF9C4';
+        }
+
+        messageElement.innerHTML = `
+            <div class="font-bold">${message.sender}</div>
+            <div>${message.content}</div>
+            <div class="text-xs text-gray-500 text-right">${message.formattedTime || new Date().toLocaleTimeString()}</div>
+        `;
+      }
+
+      chatMessages.appendChild(messageElement);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function leaveRoom() {
+      if (stompClient && currentChatRoomId) {
+        let leaveMessage = {
+          roomId: currentChatRoomId,
+          type: 'LEAVE'
+        };
+        stompClient.send("/app/chat.leaveRoom", {}, JSON.stringify(leaveMessage));
+
+        // 채팅방 삭제 요청
+        fetch(`/api/chat/rooms/${currentChatRoomId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': accessToken
+          }
+        })
+        .then(response => {
+          if (response.ok) {
+            currentChatRoomId = null;
+            document.getElementById('currentChatRoomName').textContent = "채팅방을 선택해주세요";
+            document.getElementById('chatMessages').innerHTML = '';
+            loadChatRooms(); // 채팅방 목록 새로고침
+          } else {
+            alert('채팅방 나가기 실패');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('채팅방 나가기 중 오류가 발생했습니다.');
+        });
+      }
+    }
+
+
 </script>
-</body>
 </html>

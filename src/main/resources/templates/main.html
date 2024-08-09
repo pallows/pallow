@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
         }
 
         .carousel {
@@ -64,23 +64,21 @@
         }
     </style>
     <link rel="icon"
-          href="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96"
-          type="image/x-icon">
+          href="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" type="image/x-icon">
 </head>
 <body class="bg-gray-100 text-black">
-<header class="flex justify-between items-center p-4 bg-white shadow">
-    <div class="flex items-center">
+<header class="bg-white shadow">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
         <a href="/public/main">
-            <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
+            <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70"
+                 height="70" alt="Logo" class="mr-4">
         </a>
-        <nav>
-            <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
-            <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
+        <nav class="space-x-4">
+            <a href="/public/userboardCollection" class="text-gray-700">오늘의 동친</a>
+            <a href="/public/meetsCollection" class="text-gray-700">내 주변 모임</a>
+            <a href="/public/MyPage" class="text-gray-700">My Page</a>
         </nav>
-    </div>
-    <div class="flex items-center">
-        <button id="profileBtn" class="mr-4">내 프로필</button>
-        <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
+        <button class="bg-black text-white px-4 py-2 rounded" id="logoutButton">로그아웃</button>
     </div>
 </header>
 
@@ -114,7 +112,7 @@
     <section class="mb-20">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">내 주변 모임</h2>
-            <a href="meetsCollection.html" class="text-blue-500">더보기</a>
+            <a href="public/meetsCollection" class="text-blue-500">더보기</a>
         </div>
         <div class="relative">
             <div class="carousel" id="carousel3"></div>
@@ -141,7 +139,9 @@
         </svg>
         <span class="text-xs mt-1">Chat</span>
     </button>
-    <button id="goToIndexBtn">test Button</button>
+    <button id="goToIndexBtn">*test Button*</button>
+    <button id="boardTestBtn">*Board Test Button*</button>
+    <input TYPE="hidden" data-testParameter-id="1">
 </footer>
 <script type="module">
     document.addEventListener('DOMContentLoaded', function () {
@@ -160,13 +160,33 @@
             return fetch(url, options);
         }
 
+        document.getElementById('boardTestBtn').addEventListener('click', async () => {
+            const response = await fetchWithAuth('/userboard.html');
+            if (response.ok) {
+                window.location.href = '/userboard.html';
+            } else {
+                console.error('Failed to load userboard.html');
+            }
+        });
         document.getElementById('goToIndexBtn').addEventListener('click', async () => {
             try {
-                const response = await fetchWithAuth('/chat.html');
+                //   const response = await fetchWithAuth('/chat.html');
                 const response = await fetchWithAuth('/meets.html');
                 if (response.ok) {
+                    // TODO meets의 id 값을 넘겨줘야 합니다.
+                    window.open(`/meets.html`, "meetsWindow", "width=800,height=600,top=100,left=100");
+                } else {
+                    console.error('Failed to load chat.html');
+                }
+            } catch (error) {
+                console.error('Error loading chat.html:', error);
+            }
+        });
+        document.getElementById('chatBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetchWithAuth('/chat.html');
+                if (response.ok) {
                     window.location.href = '/chat.html'; // This will redirect the user to index.html
-                    window.location.href = '/meets.html'; // This will redirect the user to index.html
                 } else {
                     console.error('Failed to load chat.html');
                 }
@@ -235,13 +255,15 @@
         createCarousel('carousel2', 'dots2', 9);
         createCarousel('carousel3', 'dots3', 9);
 
+
         document.getElementById('profileBtn').addEventListener('click', () => {
             window.location.href = 'userboard.html';
-        });
+        }); // TODO
 
         document.getElementById('logoutBtn').addEventListener('click', () => {
             logout();
         });
+
         //
         // document.getElementById('loginSignupBtn').addEventListener('click', () => {
         //     // Check if user is logged in
@@ -253,9 +275,7 @@
         //     }
         // });
 
-        document.getElementById('chatBtn').addEventListener('click', () => {
-            window.location.href = '/chat';
-        });
+
     });
 </script>
 

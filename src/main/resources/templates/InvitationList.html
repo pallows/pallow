@@ -32,6 +32,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         //   const urlParams = new URLSearchParams(window.location.search);
         //    const meetId = urlParams.get('meetId'); // URL 에 해당 그룹에 대한 아이디 가져옴
+        const accessToken = localStorage.getItem("Authorization")
         const meetId = 1;
         fetch(`/groups/${meetId}/invitation`, {
             method: 'GET',
@@ -42,7 +43,7 @@
         })
             .then(response => response.json())
             .then(responseData => {
-                console.log('Response Data:', responseData);
+
                 if (responseData.message === "신청 목록을 불러왔습니다.") {
 
                     const invitationList = document.getElementById('invitationList');
@@ -65,7 +66,7 @@
                                     entryDiv.className = 'flex items-center bg-gray-200 p-4 rounded-lg shadow';
 
                                     const img = document.createElement('img');
-                                    img.src = profile.photo;
+                                    img.src = profile.image;
                                     img.alt = 'Profile';
                                     img.className = 'w-12 h-12 rounded-full mr-4';
 
@@ -89,7 +90,7 @@
                                     acceptButton.className = 'bg-black text-white px-4 py-2 rounded';
                                     acceptButton.textContent = '승인';
                                     acceptButton.addEventListener('click', function () {
-                                        fetch(`/groups/${meetId}/invitedboard/${item.userId}/accept`, {
+                                        fetch(`/groups/${meetId}/invitation/${item.userId}/accept`, {
                                             method: 'POST',
                                             headers: {
                                                 'Authorization': accessToken,
@@ -114,7 +115,7 @@
                                     rejectButton.className = 'bg-black text-white px-4 py-2 rounded';
                                     rejectButton.textContent = '거절';
                                     rejectButton.addEventListener('click', function () {
-                                        fetch(`/groups/${meetId}/invitedboard/${item.userId}/decline`, {
+                                        fetch(`/groups/${meetId}/invitation/${item.userId}/decline`, {
                                             method: 'POST',
                                             headers: {
                                                 'Authorization': accessToken,

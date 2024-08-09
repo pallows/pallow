@@ -12,9 +12,11 @@ import com.pallow.pallow.global.enums.Gender;
 import com.pallow.pallow.global.enums.Role;
 import com.pallow.pallow.global.exception.CustomException;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -92,5 +94,9 @@ public class UserService {
         return new UserResponseDto(user);
     }
 
+    public UserResponseDto findById(Long userId) {
+        User user = findUserById(userId);
+        return new UserResponseDto(user);
+    }
 
 }

@@ -6,7 +6,9 @@ import com.pallow.pallow.domain.invitedboard.service.InvitedBoardService;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,7 +39,7 @@ public class InvitedBoardController {
     public ResponseEntity<CommonResponseDto> acceptApply(
             @PathVariable("groupId") long groupId,
             @PathVariable("userId") long userId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails) { // 현재 접속한 유저
         invitedBoardService.acceptApply(groupId, userId, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.ACCEPT_APPLY_SUCCESS));
     }

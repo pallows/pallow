@@ -104,8 +104,7 @@
       <label class="block text-gray-700">사진 선택</label>
       <div class="flex items-center">
         <div class="profile-pic mr-4" id="profilePic">
-          <img src="https://github.com/user-attachments/assets/bce3db08-6dfc-4ccb-b3dd-38d75a465955"
-               alt="Default Profile Image">
+          <img src="https://github.com/user-attachments/assets/bce3db08-6dfc-4ccb-b3dd-38d75a465955" alt="Default Profile Image">
         </div>
         <input type="file" id="photoInput" name="image"
                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
@@ -119,6 +118,65 @@
       <input type="hidden" id="selectedInterests" name="interest">
     </div>
 
+    <div class="mb-4">
+      <label class="block text-gray-700">이상형</label>
+      <div id="idealButtons" class="flex flex-wrap">
+      </div>
+      <input type="hidden" id="selectedIdeals" name="ideal">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">음주 여부</label>
+      <div id="alcoholButtons" class="flex flex-wrap">
+      </div>
+      <input type="hidden" id="selectedAlcohol" name="alcohol">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">학력</label>
+      <div id="educationButtons" class="flex flex-wrap">
+      </div>
+      <input type="hidden" id="selectedEducation" name="education">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">직업</label>
+      <div id="jobButtons" class="flex flex-wrap">
+      </div>
+      <input type="hidden" id="selectedJob" name="jobs">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">성격</label>
+      <div id="personalityButtons" class="flex flex-wrap"></div>
+      <input type="hidden" id="selectedPersonality" name="personality">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">장점</label>
+      <div id="prosButtons" class="flex flex-wrap"></div>
+      <input type="hidden" id="selectedPros" name="pros">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">관계</label>
+      <div id="relationshipButtons" class="flex flex-wrap"></div>
+      <input type="hidden" id="selectedRelationship" name="relationship">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">종교</label>
+      <div id="religionButtons" class="flex flex-wrap"></div>
+      <input type="hidden" id="selectedReligion" name="religion">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">흡연 여부</label>
+      <div id="smokingButtons" class="flex flex-wrap"></div>
+      <input type="hidden" id="selectedSmoking" name="smoking">
+    </div>
+
+
     <button type="submit"
             class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
       추가 정보 입력 완료!
@@ -127,10 +185,62 @@
 </div>
 
 <script type="module">
-  import { regionData, interests } from "/js/predefinedData.js";
+  import { regionData, interests, ideals, alcoholPreferences, educationLevels, jobTypes, personalities,
+    pros, relationships, religions, smokings} from "/js/predefinedData.js";
 
-  const interestButtonsDiv = document.getElementById('interestButtons');
-  const selectedInterestsInput = document.getElementById('selectedInterests');
+  const buttonGroups = [
+    { divId: 'interestButtons', inputId: 'selectedInterests', data: interests, multiple: true },
+    { divId: 'idealButtons', inputId: 'selectedIdeals', data: ideals, multiple: true },
+    { divId: 'alcoholButtons', inputId: 'selectedAlcohol', data: alcoholPreferences, multiple: false },
+    { divId: 'educationButtons', inputId: 'selectedEducation', data: educationLevels, multiple: false },
+    { divId: 'jobButtons', inputId: 'selectedJob', data: jobTypes, multiple: false },
+    { divId: 'personalityButtons', inputId: 'selectedPersonality', data: personalities, multiple: false },
+    { divId: 'prosButtons', inputId: 'selectedPros', data: pros, multiple: false },
+    { divId: 'relationshipButtons', inputId: 'selectedRelationship', data: relationships, multiple: false },
+    { divId: 'religionButtons', inputId: 'selectedReligion', data: religions, multiple: false },
+    { divId: 'smokingButtons', inputId: 'selectedSmoking', data: smokings, multiple: false }
+  ];
+
+  buttonGroups.forEach(group => createButtons(group));
+
+  function createButtons({ divId, inputId, data, multiple }) {
+    const buttonsDiv = document.getElementById(divId);
+    const hiddenInput = document.getElementById(inputId);
+
+    for (const key in data) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = data[key];
+      button.className = 'm-2 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500';
+      button.dataset.value = key;
+      button.addEventListener('click', function () {
+        if (!multiple) {
+          document.querySelectorAll(`#${divId} button.bg-indigo-600`).forEach(btn => {
+            btn.classList.remove('bg-indigo-600', 'text-white');
+            btn.classList.add('bg-gray-200');
+          });
+        } else {
+          const selectedButtons = document.querySelectorAll(`#${divId} button.bg-indigo-600`);
+          if (selectedButtons.length >= 3 && !button.classList.contains('bg-indigo-600')) {
+            alert('최대 3개까지 선택가능합니다');
+            return;
+          }
+        }
+        button.classList.toggle('bg-indigo-600');
+        button.classList.toggle('text-white');
+        updateSelected(hiddenInput, divId);
+      });
+      buttonsDiv.appendChild(button);
+    }
+  }
+
+  function updateSelected(hiddenInput, divId) {
+    const selected = [];
+    document.querySelectorAll(`#${divId} button.bg-indigo-600`).forEach(button => {
+      selected.push(button.dataset.value);
+    });
+    hiddenInput.value = selected.join(',');
+  }
 
   document.getElementById('photoInput').addEventListener('change', function (event) {
     const file = event.target.files[0];
@@ -246,28 +356,6 @@
       });
     }
   });
-
-  for (const interest in interests) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.textContent = interests[interest];
-    button.className = 'm-2 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500';
-    button.dataset.value = interest;
-    button.addEventListener('click', function () {
-      button.classList.toggle('bg-indigo-600');
-      button.classList.toggle('text-white');
-      updateSelectedInterests();
-    });
-    interestButtonsDiv.appendChild(button);
-  }
-
-  function updateSelectedInterests() {
-    const selected = [];
-    document.querySelectorAll('#interestButtons button.bg-indigo-600').forEach(button => {
-      selected.push(button.dataset.value);
-    });
-    selectedInterestsInput.value = selected.join(',');
-  }
 
   function updateLocationInput() {
     const region1 = document.getElementById('region1').value;

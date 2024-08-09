@@ -33,7 +33,7 @@ Authorization: {{Authorization}}
 Content-Type: application/json
 
 ### 리뷰 좋아요
-POST http://localhost:8080/review/2/like
+POST http://localhost:8080/review/1/like
 Authorization: {{Authorization}}
 Content-Type: application/json
 

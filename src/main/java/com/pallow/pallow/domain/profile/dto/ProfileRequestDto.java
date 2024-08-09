@@ -4,6 +4,7 @@ import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.domain.profile.enums.Alcohol;
 import com.pallow.pallow.domain.profile.enums.Education;
 import com.pallow.pallow.domain.profile.enums.IDEAL;
+import com.pallow.pallow.domain.profile.enums.Interest;
 import com.pallow.pallow.domain.profile.enums.Jobs;
 import com.pallow.pallow.domain.profile.enums.Mbti;
 import com.pallow.pallow.domain.profile.enums.Personality;
@@ -13,10 +14,9 @@ import com.pallow.pallow.domain.profile.enums.Religion;
 import com.pallow.pallow.domain.profile.enums.Smoking;
 import com.pallow.pallow.domain.user.entity.User;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.lang.reflect.Method;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
@@ -36,7 +36,7 @@ public class ProfileRequestDto {
     private String interest;
     private Alcohol alcohol;
     private Education education;
-    private IDEAL ideal;
+    private String ideal;
     private Jobs jobs;
     private Personality personality;
     private Relationship relationship;
@@ -48,7 +48,10 @@ public class ProfileRequestDto {
     private String username;
 
     public Profile toEntity(User foundUser, String imageUrl) {
-        return Profile.builder().birth(birth).content(content).position(position).mbti(mbti)
-                .image(imageUrl).createdBy(foundUser).interest(interest).build();
+        return Profile.builder()
+                .birth(birth).hobby(hobby).content(content).position(position).mbti(mbti)
+                .image(imageUrl).createdBy(foundUser).interest(interest).ideal(ideal)
+                .alcohol(alcohol).education(education).jobs(jobs).personality(personality)
+                .relationship(relationship).religion(religion).smoking(smoking).pros(pros).build();
     }
 }

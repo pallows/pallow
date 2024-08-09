@@ -31,7 +31,7 @@ Content-Type: application/json
 }
 
 ### 프로필 조회
-GET http://localhost:8080/profiles/101
+GET http://localhost:8080/profiles/1
 Authorization: {{Authorization}}
 
 ### 회원 프로필 삭제 ( 회원탈퇴 시 )
