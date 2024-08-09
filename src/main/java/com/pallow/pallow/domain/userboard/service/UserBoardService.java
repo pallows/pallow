@@ -10,9 +10,11 @@ import com.pallow.pallow.domain.userboard.repository.UserBoardRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.s3.service.ImageService;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class UserBoardService {
     private final UserRepository userRepository;
 
     public UserBoardResponseDto createBoard(UserBoardRequestDto requestDto, User user,
-            long userId) {
+                                            long userId) {
         User createdBy = userRepository.findById(user.getId())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         if (isSameIdAndUser(userId, user)) {
@@ -61,7 +63,14 @@ public class UserBoardService {
 
     @Transactional
     public UserBoardResponseDto updateUserBoard(long userId, long userBoardId,
-            UserBoardRequestDto requestDto, User user) {
+                                                UserBoardRequestDto requestDto, User user) {
+        log.info("requestDto {} : ", requestDto.getContent());
+        log.info("requestDto {} : ", requestDto.getTitle());
+        log.info("requestDto {} : ", requestDto.getTitle());
+        log.info("userId {} : ", userId);
+        log.info("userBoardId {} : ", userBoardId);
+        log.info("user.getId() {} : ", user.getId());
+
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
         if (isSameIdAndUser(userId, user)) {
@@ -103,6 +112,7 @@ public class UserBoardService {
 
     /**
      * 좋아요 토글
+     *
      * @param userBoardId
      * @param user
      */

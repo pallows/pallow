@@ -70,7 +70,8 @@
 <header class="bg-white shadow">
     <div class="container mx-auto px-4 py-4 flex justify-between items-center">
         <a href="/public/main">
-            <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
+            <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70"
+                 height="70" alt="Logo" class="mr-4">
         </a>
         <nav class="space-x-4">
             <a href="/public/userboardCollection" class="text-gray-700">오늘의 동친</a>
@@ -138,7 +139,9 @@
         </svg>
         <span class="text-xs mt-1">Chat</span>
     </button>
-
+    <button id="goToIndexBtn">*test Button*</button>
+    <button id="boardTestBtn">*Board Test Button*</button>
+    <input TYPE="hidden" data-testParameter-id="1">
 </footer>
 <script type="module">
     document.addEventListener('DOMContentLoaded', function () {
@@ -157,6 +160,28 @@
             return fetch(url, options);
         }
 
+        document.getElementById('boardTestBtn').addEventListener('click', async () => {
+            const response = await fetchWithAuth('/userboard.html');
+            if (response.ok) {
+                window.location.href = '/userboard.html';
+            } else {
+                console.error('Failed to load userboard.html');
+            }
+        });
+        document.getElementById('goToIndexBtn').addEventListener('click', async () => {
+            try {
+                //   const response = await fetchWithAuth('/chat.html');
+                const response = await fetchWithAuth('/meets.html');
+                if (response.ok) {
+                    // TODO meets의 id 값을 넘겨줘야 합니다.
+                    window.open(`/meets.html`, "meetsWindow", "width=800,height=600,top=100,left=100");
+                } else {
+                    console.error('Failed to load chat.html');
+                }
+            } catch (error) {
+                console.error('Error loading chat.html:', error);
+            }
+        });
         document.getElementById('chatBtn').addEventListener('click', async () => {
             try {
                 const response = await fetchWithAuth('/chat.html');
@@ -230,6 +255,15 @@
         createCarousel('carousel2', 'dots2', 9);
         createCarousel('carousel3', 'dots3', 9);
 
+
+        document.getElementById('profileBtn').addEventListener('click', () => {
+            window.location.href = 'userboard.html';
+        }); // TODO
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            logout();
+        });
+
         //
         // document.getElementById('loginSignupBtn').addEventListener('click', () => {
         //     // Check if user is logged in
@@ -240,6 +274,7 @@
         //         window.location.href = 'login.html';
         //     }
         // });
+
 
     });
 </script>

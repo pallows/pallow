@@ -24,30 +24,40 @@
             <h1 class="text-2xl font-bold">조회수</h1>
             <p id="meets-date" class="text-gray-500">2024.07.20 작성됨</p>
         </div>
+        <div class="flex justify-between items-center mb-6">
+            <button id="likeButton" class="bg-blue-500 text-white px-4 py-2 rounded ml-4 ">Like <span
+                    id="likeCount">0</span></button>
+            <button id="deleteButton" class="bg-red-500 text-white px-4 py-2 rounded ml-4 ">삭제</button>
+        </div>
     </div>
     <div class="grid grid-cols-2 gap-4 mb-6">
         <div>
             <label class="block text-gray-700">참가인원</label>
-            <input id="member-count" type="text" class="w-full p-2 border border-gray-300 rounded">
+            <input id="member-count" type="text" class="w-full p-2 border border-gray-300 rounded" disabled>
         </div>
         <div>
             <label class="block text-gray-700">위치</label>
-            <input id="position" type="text" class="w-full p-2 border border-gray-300 rounded">
+            <input id="position" type="text" class="w-full p-2 border border-gray-300 rounded" disabled>
         </div>
         <div>
             <label class="block text-gray-700">제목</label>
-            <input id="title" type="text" class="w-full p-2 border border-gray-300 rounded">
+            <input id="title" type="text" class="w-full p-2 border border-gray-300 rounded" disabled>
+        </div>
+        <div>
+            <label class="block text-gray-700">모임장</label>
+            <input id="groupMaster" type="text" class="w-full p-2 border border-gray-300 rounded" disabled>
         </div>
     </div>
     <div class="mb-6">
         <label class="block text-gray-700">모임설명</label>
-        <textarea id="content" class="w-full p-2 border border-gray-300 rounded" rows="4">나의 챌린지 찍는 길 같이 가실 분</textarea>
+        <textarea id="content" class="w-full p-2 border border-gray-300 rounded" rows="4"
+                  disabled>나의 챌린지 찍는 길 같이 가실 분</textarea>
     </div>
     <div class="flex justify-between items-center mb-6">
         <button id="InvitationList" class="bg-red-500 text-white px-4 py-2 rounded">참가 신청자 목록</button>
         <div>
-            <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded">참가신청</button>
-            <button class="bg-gray-200 text-gray-700 px-4 py-2 rounded">닫기</button>
+            <button id="participant" class="bg-gray-200 text-gray-700 px-4 py-2 rounded">참가신청</button>
+            <button id="closeButton" class="bg-gray-200 text-gray-700 px-4 py-2 rounded">닫기</button>
         </div>
     </div>
     <div class="mb-6">
@@ -61,44 +71,69 @@
     <div id="reviews">
     </div>
 </div>
-
-
 <script>
+    const accessToken = localStorage.getItem('Authorization');
+    const likeButton = document.getElementById('likeButton');
+    const likeCountElement = document.getElementById('likeCount');
+
+    function fetchWithAuth(url, options = {}) {
+        options.headers = {
+            ...options.headers,
+            'Authorization': accessToken,
+            'Content-Type': 'application/json'
+        };
+        return fetch(url, options);
+    }
+
+    //TODO 받아온 MeetId를 넣어줘야합니다.
+    const meetId = 1; // TODO 숫자 1 대신에 받아온 MeetId가 들어가야 정상 작동 됩니다.
+
+
+    document.getElementById('closeButton').addEventListener('click', function () {
+        window.close(); // 팝업 창 닫기
+    });
     document.getElementById('InvitationList').addEventListener('click', async () => {
-        const meetId = 1; // TODO 받아온 meet id
+
         window.open(`http://localhost:8080/InvitationList.html?meetId=${meetId}`, '신청 목록', `width=800,height=600,top=${(screen.height - 600) / 2},left=${(screen.width - 800) / 2}`);
     });
 
+    document.getElementById('participant').addEventListener('click', async function () {
+        const userResponse = await fetchWithAuth(`/users/only`)
+        const currentUser = await userResponse.json();
+        // currentUser.data.id
+        const invitationResponse = await fetchWithAuth(`/groups/${meetId}/invitation`, {
+            method: "POST",
+            body: JSON.stringify({userId: currentUser.data.id})
+        })
+        if (invitationResponse.ok) {
+            alert('Invitation accepted successfully');
+        } else if (!invitationResponse.ok) {
+            alert("이미 신청중인 모임입니다.")
+        }
+    });
     document.addEventListener('DOMContentLoaded', function () {
-        const accessToken = localStorage.getItem('Authorization');
-        const meetId = 1; // TODO 받아온 meet id
+
+        // TODO 받아온 meet id
+
         if (!accessToken) {
             window.location.href = '/login';
             return;
         }
 
-        function fetchWithAuth(url, options = {}) {
-            options.headers = {
-                ...options.headers,
-                'Authorization': accessToken,
-                'Content-Type': 'application/json'
-            };
-            return fetch(url, options);
-        }
 
-        async function fetchMeetDetails() {
+        async function fetchMeetDetails() { // meet 하나 조회
             try {
-                const response = await fetchWithAuth(`/api/meets/${meetId}`, {
+                const response = await fetchWithAuth(`/api/meets/${meetId}`, { //컨트롤러,Dto 수정
                     method: 'GET'
                 });
                 if (!response.ok) {
+                    console.log("response: ", response)
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
                 const resData = data.data;
-                console.log("response data 데이터", resData);
                 displayMeetData(resData);
-                fetchReviews(); // Fetch all reviews for the meet
+                await fetchReviews(); // Fetch all reviews for the meet
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -112,6 +147,7 @@
             document.getElementById('position').value = resData.position || '위치 정보 없음';
             document.getElementById('title').value = resData.title;
             document.getElementById('content').value = resData.content;
+            document.getElementById('groupMaster').value = resData.groupCreator;
         }
 
         async function fetchReviews() {
@@ -120,10 +156,9 @@
                     method: 'GET'
                 });
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    throw new Error(`모임에 참여중인 유저가 아닙니다.`);
                 }
                 const data = await response.json();
-                console.log("리뷰데이터", data);
                 displayReviews(data);
             } catch (error) {
                 console.error('Error fetching reviews:', error);
@@ -170,7 +205,7 @@
             };
 
             try {
-                const response = await fetchWithAuth(`/api/meets/${meetId}/review`, {
+                const response = await fetchWithAuth(`/meets/${meetId}/review`, {
                     method: 'POST',
                     body: JSON.stringify(reviewData)
                 });
@@ -178,8 +213,9 @@
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                if (data.message === 'REVIEW_CREATE_SUCCESS') {
+                if (data.message === '리뷰를 생성하였습니다.') {
                     alert('리뷰가 성공적으로 추가되었습니다.');
+                    document.getElementById('review-content').value = '';
                     fetchReviews(); // Fetch the updated list of reviews
                 } else {
                     throw new Error('리뷰 작성에 실패했습니다.');
@@ -190,6 +226,60 @@
             }
         });
     });
+    document.getElementById('deleteButton').addEventListener('click', async function () {
+        const confirmDelete = confirm('정말로 이 모임을 삭제하시겠습니까?');
+        if (confirmDelete) {
+            const response = await fetchWithAuth(`/api/meets/${meetId}`, {
+                method: 'DELETE'
+            });
+
+            const data = await response.json();
+            if (data.message === '그룹을 삭제하였습니다.') {
+                alert('모임이 성공적으로 삭제되었습니다.');
+                window.close();
+            }
+        }
+    });
+
+    async function initializeLikeStatus() {
+        try {
+            const response = await fetchWithAuth(`/api/meets/${meetId}`);
+            if (response.ok) {
+                const data = await response.json();
+
+                console.log("likesCount:", data.data);
+
+                const {likesCount} = data.data;
+
+                // 좋아요 수를 업데이트
+                likeCountElement.innerText = likesCount;
+                // 좋아요 수와 버튼 색상 상태를 업데이트
+            }
+        } catch (error) {
+            console.error('Error fetching like status:', error);
+        }
+    }
+
+    likeButton.addEventListener('click', async function () {
+
+        const response = await fetchWithAuth(`/api/meets/${meetId}/like`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const updatedResponse = await fetchWithAuth(`/api/meets/${meetId}`);
+        if (updatedResponse.ok) {
+            const data = await updatedResponse.json();
+            const {likesCount} = data.data;
+            // 좋아요 수를 업데이트
+            likeCountElement.innerText = likesCount;
+        }
+    });
+
+    // 페이지 로드 시 좋아요 상태 초기화
+    initializeLikeStatus();
 </script>
 </body>
 </html>
