@@ -162,6 +162,11 @@ public class ProfileService {
         return results;
     }
 
+    /**
+     * TODO 배포 전 localhost -> flask 서버 퍼블릭 주소로 변경 필요
+     * @param requestDto
+     * @return
+     */
     private FlaskResponseDto sendRequestToFlask(FlaskRequestDto requestDto) {
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -170,7 +175,6 @@ public class ProfileService {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<FlaskResponseDto> responseEntity = restTemplate.postForEntity(
                     "http://localhost:8000/api/profile/recommend",
-                    // localhost 환경변수화 해야함
                     new HttpEntity<>(requestDto, headers),
                     FlaskResponseDto.class
             );
