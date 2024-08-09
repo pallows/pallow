@@ -47,6 +47,11 @@ public class CommonController {
         return "register_information";
     }
 
+    @GetMapping("/public/meets/{meetsId}")
+    public String meetsPage() {
+        return "meets";
+    }
+
     @GetMapping("/public/meetsCollection")
     public String meetsCollectionPage(Model model) {
         model.addAttribute("meets", meetsService.getAllMeets());
