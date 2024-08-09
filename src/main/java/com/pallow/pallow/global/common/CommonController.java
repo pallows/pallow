@@ -69,4 +69,9 @@ public class CommonController {
     public String userboard() {
         return "userboard";
     }
+
+    @GetMapping("/public/kakaoMap")
+    public String kakaoMap() {
+        return "kakaoMap";
+    }
 }
