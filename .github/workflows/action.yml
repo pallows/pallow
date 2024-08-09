@@ -2,7 +2,6 @@ on:
   push:
     branches:
       - main
-      - dev
 
 env:
   DOCKER_IMAGE_TAG_NAME: pal-world
@@ -10,24 +9,20 @@ env:
 
 jobs:
   build-and-docker-push:
-    runs-on: ubuntu-20.04 # 실행환경
+    runs-on: ubuntu-20.04
 
-    # 실행 스텝 지정
     steps:
       - uses: actions/checkout@v3
 
-      # java version 지정
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # Build
       - name: Build with Gradle
         run: ./gradlew clean build
 
@@ -47,20 +42,12 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./docker/Dockerfile
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
 
-#      - name: Set up AWS credentials
-#        uses: aws-actions/configure-aws-credentials@v1
-#        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-#          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-#          aws-region: ${{ env.AWS_REGION }}
-
-
   deploy-to-ec2:
-    needs: build-and-docker-push # 위의 build-and-docker-push 이 끝나고 실행
+    needs: build-and-docker-push
     runs-on: ubuntu-latest
 
     steps:
@@ -71,43 +58,54 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
+            # Print the environment variables for debugging
+            echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}"
+            echo "DOCKER_IMAGE_TAG_NAME=${{ env.DOCKER_IMAGE_TAG_NAME }}"
+            echo "CLIENT_ID=${{ secrets.CLIENT_ID }}"
+            echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}"
+            echo "DB_URL=${{ secrets.DB_URL }}"
+            echo "DB_USERNAME=${{ secrets.DB_USERNAME }}"
+            echo "ACCESS_TOKEN_TTL=${{ secrets.ACCESS_TOKEN_TTL }}"
+            echo "REFRESH_TOKEN_TTL=${{ secrets.REFRESH_TOKEN_TTL }}"
+            echo "JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}"
+            echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}"
+            echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}"
+            echo "REDIRECT_URI=${{ secrets.REDIRECT_URI }}"
+            echo "REDIS_HOST=${{ secrets.REDIS_HOST }}"
+            echo "REDIS_PORT=${{ secrets.REDIS_PORT }}"
+
+            # Check if the Docker container is running
             CONTAINER_ID=$(sudo docker ps -q --filter "publish=8080-8080")
-            
+
             if [ ! -z "$CONTAINER_ID" ]; then
+              echo "Stopping and removing existing container with ID $CONTAINER_ID"
               sudo docker stop $CONTAINER_ID
               sudo docker rm $CONTAINER_ID
+            else
+              echo "No container is running on port 8080"
             fi
-            # 여기서의 환경 변수도 여러분 상황에 맞게 작성하시면 됩니다!!!
+
+            # Pull the Docker image
+            echo "Pulling Docker image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest"
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
+
+            # Run the Docker container
+            echo "Running Docker container with image ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest"
             sudo docker run -it -d -p 8080:8080 \
-                -e CLIENT_ID=d21718e96e4084ceeeeb474c55d28d50 \
-                -e DB_PASSWORD=1q2w3e4r \
-                -e DB_URL=jdbc:mysql://localhost:3306/pallow \
-                -e DB_USERNAME=root \
-                -e ACCESS_TOKEN_TTL=6400000 \
-                -e REFRESH_TOKEN_TTL= 6400000 \
-                -e JWT_SECRET_KEY=GziP2tKme5j8oPnIcJxJmv7j+sSev3J1tBRExWgnSMeBBYtGq+RFXjsbA+4E8G5lBPOAriDxEr8B2B7W9T+F0w== \
-                -e MAIL_PASSWORD=festtsobwrueciig \
-                -e MAIL_USERNAME=seo78200@gmail.com \
-                -e REDIRECT_URI=http://localhost:8080/auth/oauth/callback \
-                -e REDIS_HOST=localhost \
-                -e REDIS_PORT=6379 \
+                -e CLIENT_ID=${{ secrets.CLIENT_ID }} \
+                -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+                -e DB_URL=jdbc:${{ secrets.DB_URL }} \
+                -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+                -e ACCESS_TOKEN_TTL=${{ secrets.ACCESS_TOKEN_TTL }} \
+                -e REFRESH_TOKEN_TTL=${{ secrets.REFRESH_TOKEN_TTL }} \
+                -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+                -e MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} \
+                -e MAIL_USERNAME=${{ secrets.MAIL_USERNAME }} \
+                -e REDIRECT_URI=${{ secrets.REDIRECT_URI }} \
+                -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
+                -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
-            
-            sudo docker run -it -d -p 8080:8080 \
-                -e CLIENT_ID=d21718e96e4084ceeeeb474c55d28d50 \
-                -e DB_PASSWORD=1q2w3e4r \
-                -e DB_URL=jdbc:mysql://localhost:3306/pallow \
-                -e DB_USERNAME=root \
-                -e ACCESS_TOKEN_TTL=6400000 \
-                -e REFRESH_TOKEN_TTL=6400000 \
-                -e JWT_SECRET_KEY=GziP2tKme5j8oPnIcJxJmv7j+sSev3J1tBRExWgnSMeBBYtGq+RFXjsbA+4E8G5lBPOAriDxEr8B2B7W9T+F0w== \
-                -e MAIL_PASSWORD=festtsobwrueciig \
-                -e MAIL_USERNAME=seo78200@gmail.com \
-                -e REDIRECT_URI=http://localhost:8080/auth/oauth/callback \
-                -e REDIS_HOST=localhost \
-                -e REDIS_PORT=6379 \
-            --name dqwerkahfmvkxl timevil/pal-world:latest /bin/bash
-        
-            
-            
+
+            # Check the logs for debugging
+            echo "Checking Docker container logs"
+            sudo docker logs $(sudo docker ps -q --filter "publish=8080-8080")
