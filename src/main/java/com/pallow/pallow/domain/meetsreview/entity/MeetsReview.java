@@ -36,7 +36,7 @@ public class MeetsReview extends TimeStamp implements Likeable {
     private int starRating;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "user_Id")
     private User user;
 
     @ManyToOne
@@ -54,7 +54,7 @@ public class MeetsReview extends TimeStamp implements Likeable {
 
     public void update(ReviewRequestDto requestDto) {
         this.content = requestDto.getContent();
-        this.starRating  = requestDto.getStarRating();
+        this.starRating = requestDto.getStarRating();
     }
 
     @Override
