@@ -11,13 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 public class UserBoardRequestDto {
 
-    @NotNull(message = "제목이 필요합니다.")
+    // @NotNull(message = "제목이 필요합니다.")
     private String title;
 
-    @NotNull(message = "설명이 필요합니다.")
+    // @NotNull(message = "설명이 필요합니다.")
     private String content;
 
-    @NotNull(message = "사진이 필요합니다.")
+    // @NotNull(message = "사진이 필요합니다.")
     private MultipartFile image;
 
     public UserBoard toEntity(User createdBy, String imageUrl) {
