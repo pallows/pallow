@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <script src="/js/auth.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pallow</title>
@@ -30,71 +29,28 @@
 <main class="container mx-auto px-4 py-8">
   <div class="flex justify-between items-center mb-8">
     <h1 class="text-2xl font-bold">모임 생성 하기</h1>
-    <button class="bg-black text-white px-4 py-2 rounded" id="openModalButton">모임 생성 하기</button>
+    <button class="bg-black text-white px-4 py-2 rounded" onclick="openCreateMeet()">모임 생성 하기</button>
   </div>
+
+  <!-- 모임 리스트 -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     <div th:each="meet : ${meets}" class="bg-white p-4 rounded shadow-md flex items-center space-x-4">
-      <img src="https://via.placeholder.com/100" alt="Profile Image" class="w-24 h-24 rounded-full">
+      <img th:src="${meet.image}" alt="Profile Image" class="w-24 h-24 rounded-full">
       <div>
         <h2 class="text-lg font-bold" th:text="${meet.title}">모임 제목</h2>
-        <p class="text-gray-600" th:text="${meet.content}">모임설명</p>
+        <p class="text-gray-600" th:text="${meet.content}">모임 설명</p>
         <div class="mt-4 space-x-2">
-          <button class="bg-black text-white px-4 py-2 rounded">상세 보기</button>
-          <button class="bg-black text-white px-4 py-2 rounded">모임 참가</button>
+          <a th:href="@{'/api/meets/' + ${meet.id}}" class="bg-black text-white px-4 py-2 rounded" onclick="openMeet()">상세 보기</a>
+          <a th:href="@{'/api/meets/' + ${meet.id} + '/join'}" class="bg-black text-white px-4 py-2 rounded">모임 참가</a>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="mt-8">
-    <div class="relative">
-      <input type="text" placeholder="제목 및 작성자 입력" class="w-full p-4 rounded shadow-md">
-      <button class="absolute right-4 top-1/2 transform -translate-y-1/2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H16M8 8H16M8 12H16M8 16H16M8 20H16" />
-        </svg>
-      </button>
-    </div>
-  </div>
-  <div class="mt-8 bg-white p-4 rounded shadow-md">
-    <p class="text-gray-600">유료결제만 해도 받는 엘리트 멤버십 혜택</p>
-    <p class="text-gray-600">결제만 했다면 멤버십 혜택과 함께 할 수 있어요.</p>
-    <div class="mt-4 space-x-2">
-      <a href="/payments" class="bg-blue-500 text-white px-4 py-2 rounded">결제 창</a>
-      <a href="/benefits" class="bg-gray-200 text-gray-700 px-4 py-2 rounded">혜택 자세히 보기</a>
-    </div>
+  <div id="meetsList" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- 모임 목록이 여기에 동적으로 추가됩니다 -->
   </div>
 </main>
-
-<!-- Modal -->
-<div id="modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-  <div class="bg-white p-8 rounded shadow-md w-full max-w-lg">
-    <h2 class="text-xl font-bold mb-4">모임 생성하기</h2>
-    <form id="createMeetForm">
-      <div class="mb-4">
-        <label for="title" class="block text-gray-700">모임 제목</label>
-        <input type="text" id="title" name="title" class="w-full p-2 border rounded">
-      </div>
-      <div class="mb-4">
-        <label for="content" class="block text-gray-700">모임 내용</label>
-        <textarea id="content" name="content" class="w-full p-2 border rounded"></textarea>
-      </div>
-      <div class="mb-4">
-        <label for="maxMembers" class="block text-gray-700">최대인원수</label>
-        <input type="number" id="maxMembers" name="maxMembers" class="w-full p-2 border rounded">
-      </div>
-      <div class="mb-4">
-        <label for="image" class="block text-gray-700">이미지</label>
-        <input type="file" id="image" name="image" class="w-full p-2 border rounded">
-      </div>
-      <div class="flex justify-end space-x-2">
-        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded" id="closeModalButton">취소</button>
-        <button type="submit" class="bg-black text-white px-4 py-2 rounded">생성하기</button>
-      </div>
-    </form>
-  </div>
-</div>
-
 <footer class="bg-white shadow-md mt-8">
   <div class="container mx-auto px-4 py-4 flex justify-end">
     <button class="bg-black text-white p-4 rounded-full">
@@ -104,25 +60,18 @@
     </button>
   </div>
 </footer>
+
 <script>
-  const openModalButton = document.getElementById('openModalButton');
-  const closeModalButton = document.getElementById('closeModalButton');
-  const modal = document.getElementById('modal');
+  async function openCreateMeet() {
+    window.location.href = '/public/meetsCollection'; // 모임 생성하기로 이동
+  }
 
-  openModalButton.addEventListener('click', () => {
-    modal.classList.remove('hidden');
-  });
+  async function openMeet() {
+    window.location.href = '/public/meets'; // 모임 생성하기로 이동
+  }
 
-  closeModalButton.addEventListener('click', () => {
-    modal.classList.add('hidden');
-  });
 
-  document.getElementById('createMeetForm').addEventListener('submit', (event) => {
-    event.preventDefault();
-    // Handle form submission
-    // For now, we will just close the modal
-    modal.classList.add('hidden');
-  });
+
 </script>
 </body>
 </html>

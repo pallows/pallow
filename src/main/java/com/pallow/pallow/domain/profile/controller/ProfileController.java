@@ -65,6 +65,13 @@ public class ProfileController {
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
     }
 
+    /**
+     * 프로필 생성
+     * @param requestDto  생성 데이터
+     * @param username 유저 데이터
+     * @param defaultImage 기본 이미지
+     * @return 생성 성공 메시지 + 생성된 프로필 데이터
+     */
     @PostMapping
     public ResponseEntity<CommonResponseDto> createProfile(
             @ModelAttribute("ProfileRequestDto") @Valid ProfileRequestDto requestDto,
@@ -140,7 +147,7 @@ public class ProfileController {
      * @param userId      수정하려는 유저 데이터
      * @return 수정 성공 메시지 + 수정된 프로필 데이터
      */
-    @PatchMapping
+    @PatchMapping("/{userId}")
     public ResponseEntity<CommonResponseDto> updateProfile(
             @ModelAttribute @Valid ProfileRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -152,7 +159,7 @@ public class ProfileController {
                 new CommonResponseDto(Message.PROFILE_UPDATE_SUCCESS, responseDto));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{userId}")
     public ResponseEntity<CommonResponseDto> deleteProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable Long userId) {

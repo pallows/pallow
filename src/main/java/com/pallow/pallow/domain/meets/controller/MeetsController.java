@@ -34,11 +34,11 @@ public class MeetsController {
 
     /**
      * 모임 생성
-     * @param requestDto  생성 데이터 [title, content]
+     * @param requestDto  생성 데이터 [title, content, image, position, maxMemberCount]
      * @param userDetails 유저 데이터
      * @return 생성 성공 메시지 + 생성된 리뷰 데이터
      */
-    @PostMapping("/{user_id}")
+    @PostMapping
     public ResponseEntity<CommonResponseDto> createMeets(@ModelAttribute @Valid MeetsRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
