@@ -146,7 +146,8 @@
     }
 
     //BOARD 를 생성하면 BOARD 컬렉션에 BOARD 가 올라가고 거기서 클릭을햇을때, 해당하는 BOARD 로 이동하게된다. 이동할때 해당하는 BOARD 의 ID를 넘겨줘야 한다.
-    const userBoardId = 1;   //TODO 숫자 1 대신에 받아온 BoardId 들어가야 정상 작동 됩니다.
+    const urlParams = new URLSearchParams(window.location.search);
+    const userBoardId = urlParams.get('id');  //TODO 숫자 1 대신에 받아온 BoardId 들어가야 정상 작동 됩니다.
     let userId;
     let isAuthor;
 

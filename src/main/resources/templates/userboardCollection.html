@@ -1,153 +1,220 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
-  <script src="/js/auth.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>오늘의 동친</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      body {font-family: 'Noto Sans KR', sans-serif;}
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
     }
-    .card-overlay {
-      opacity: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-    .card:hover .card-overlay {
-      opacity: 1;
-    }
-    .card:hover {
-      transform: scale(1.03);
-      transition: transform 0.3s ease;
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
     }
   </style>
-  <link rel="icon" th:href="@{https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png}" type="image/x-icon">
 </head>
 <body class="bg-gray-100">
-<header class="flex justify-between items-center p-4 bg-white shadow">
-  <div class="flex items-center">
-    <a href="/public/main">
-      <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
-    </a>
-    <nav>
-      <a th:href="@{/public/main}" class="mr-4">홈</a>
-      <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
-      <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
-      <a href="/public/MyPage" class="mr-4">MyPage</a>
-    </nav>
-  </div>
-  <div class="flex items-center">
+<div class="flex items-center">
+  <a href="/public/main">
+    <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
+  </a>
+  <nav>
+    <a th:href="@{/public/main}" class="mr-4">홈</a>
+    <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
+    <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
+    <a href="/public/MyPage" class="mr-4">MyPage</a>
     <button id="profileBtn" class="mr-4">내 프로필</button>
     <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
+  </nav>
+</div>
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-8">오늘의 동친</h1>
+  <div>
+    <button id="createBoardBtn" class="bg-blue-500 text-white px-4 py-2 rounded mb-4">
+      게시판 만들기
+    </button>
   </div>
-</header>
-<main class="container mx-auto px-4 py-8 max-w-6xl">
-  <div class="text-center mb-8">
-    <h1 class="text-3xl font-bold">오늘의 동친</h1>
+
+  <div id="boardGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- 게시판들이 여기에 동적으로 추가됩니다 -->
   </div>
-  <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    <div th:each="profile : ${profiles}" class="card relative bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300">
-      <img th:src="${profile.image}" alt="Profile Photo" class="w-full h-64 object-cover">
-      <div class="card-overlay absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-end p-4 text-white">
-        <h2 th:text="${profile.name}" class="text-xl font-semibold"></h2>
-        <p th:text="${profile.content}" class="text-sm mt-2"></p>
+</div>
+
+<!-- 게시판 생성 모달 -->
+<div id="createBoardModal" class="modal">
+  <div class="modal-content">
+    <h2 class="text-2xl font-bold mb-4">새 게시판 만들기</h2>
+    <form id="createBoardForm">
+      <div class="mb-4">
+        <label for="title" class="block mb-2">제목</label>
+        <input type="text" id="title" name="title" required class="w-full px-3 py-2 border rounded">
       </div>
-      <a th:href="@{/public/userboard(profileId=${profile.id})}" class="absolute inset-0"></a>
-    </div>
+      <div class="mb-4">
+        <label for="content" class="block mb-2">내용</label>
+        <textarea id="content" name="content" required class="w-full px-3 py-2 border rounded"></textarea>
+      </div>
+      <div class="mb-4">
+        <label for="image" class="block mb-2">이미지</label>
+        <input type="file" id="image" name="image" required class="w-full px-3 py-2 border rounded">
+      </div>
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">만들기</button>
+      <button type="button" id="closeModal" class="bg-gray-300 px-4 py-2 rounded ml-2">취소</button>
+    </form>
   </div>
+</div>
 
-  <div id="paginationContainer" class="mt-8 flex justify-center">
-    <nav aria-label="Page navigation" th:if="${profiles.totalPages > 1}">
-      <ul class="inline-flex items-center -space-x-px">
-        <li th:if="${profiles.hasPrevious()}">
-          <a th:href="@{/public/userboardCollection(page=${profiles.number - 1})}" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">
-            Previous
-          </a>
-        </li>
-        <li th:each="pageNumber : ${#numbers.sequence(0, profiles.totalPages - 1)}">
-          <a th:href="@{/public/userboardCollection(page=${pageNumber})}"
-             th:text="${pageNumber + 1}"
-             th:class="${pageNumber == profiles.number} ? 'z-10 px-3 py-2 leading-tight text-blue-600 border border-blue-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700' : 'px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700'">
-          </a>
-        </li>
-        <li th:if="${profiles.hasNext()}">
-          <a th:href="@{/public/userboardCollection(page=${profiles.number + 1})}" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">
-            Next
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-</main>
+<script>
+  const token = localStorage.getItem("Authorization")
+  let userPosition = '';
+  let userId;
 
-<script type="module">
-  document.addEventListener('DOMContentLoaded', function() {
-    const accessToken = localStorage.getItem('Authorization');
-    if (!accessToken) {
-      window.location.href = '/login';
-      return;
-    }
+  function fetchWithAuth(url, options = {}) {
+    console.log('Fetching URL:', url);
+    const token = localStorage.getItem("Authorization");
+    console.log('Using token:', token);
+    options.headers = {
+      ...options.headers,
+      'Authorization': `${token}`,
+      'Content-Type': 'application/json'
+    };
+    return fetch(url, options);
+  }
 
-    function fetchWithAuth(url, options = {}) {
-      options.headers = {
-        ...options.headers,
-        'Authorization': accessToken,
-        'Content-Type': 'application/json'
-      };
-      return fetch(url, options);
-    }
-
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-      localStorage.removeItem('Authorization');
-      window.location.href = '/login';
-    });
-
-    // Add event listeners to pagination links
-    document.querySelectorAll('#paginationContainer a').forEach(link => {
-      link.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const url = new URL(e.target.href);
-        const page = url.searchParams.get('page');
-        await loadUserBoards(page ? parseInt(page, 10) : 0);
-      });
-    });
-
-    async function loadUserBoards(page = 0) {
-      try {
-        const response = await fetchWithAuth(`/public/userboardCollection?page=${page}`);
-        const html = await response.text();
-
-        // Parse the HTML and update the relevant parts of the page
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-
-        const userBoardsContainer = doc.getElementById('userBoardsContainer');
-        if (userBoardsContainer) {
-          document.getElementById('userBoardsContainer').innerHTML = userBoardsContainer.innerHTML;
-        }
-
-        const paginationContainer = doc.getElementById('paginationContainer');
-        if (paginationContainer) {
-          document.getElementById('paginationContainer').innerHTML = paginationContainer.innerHTML;
-        }
-
-        // Reattach event listeners to the new pagination links
-        document.querySelectorAll('#paginationContainer a').forEach(link => {
-          link.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const url = new URL(e.target.href);
-            const newPage = url.searchParams.get('page');
-            await loadUserBoards(newPage ? parseInt(newPage, 10) : 0);
-          });
-        });
-
-      } catch (error) {
-        console.error('Error loading user boards:', error);
+  async function getCurrentUserId() {
+    try {
+      const response = await fetchWithAuth('/users/only');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      const data = await response.json();
+      console.log('User data:', data);
+      if (data.data && data.data.id) {
+        userId = data.data.id;
+      } else {
+        throw new Error('User ID not found in the response');
+      }
+    } catch (error) {
+      console.error('사용자 ID를 가져오는 중 오류 발생:', error);
+      throw error;
+    }
+  }
+
+  async function getUserPosition() {
+    try {
+      const response = await fetchWithAuth(`/profiles/${userId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('Profile data:', data);
+      if (data.data && data.data.position) {
+        userPosition = data.data.position;
+        console.log('Set userPosition:', userPosition);
+      } else {
+        console.error('Position data not found in the response');
+      }
+    } catch (error) {
+      console.error('사용자 위치 정보를 가져오는 중 오류 발생:', error);
+    }
+  }
+
+  async function loadBoards() {
+    try {
+      const response = await fetchWithAuth(`/users/${userId}/userboards`);
+      const data = await response.json();
+      const filteredBoards = data.data.filter(board => board.userBoardPosition === userPosition);
+      displayBoards(filteredBoards);
+    } catch (error) {
+      console.error('게시판을 불러오는 중 오류 발생:', error);
+    }
+  }
+
+  function displayBoards(boards) {
+    const boardGrid = document.getElementById('boardGrid');
+    boardGrid.innerHTML = '';
+    boards.forEach(board => {
+      const boardElement = document.createElement('div');
+      boardElement.className = 'bg-white p-4 rounded shadow';
+      boardElement.innerHTML = `
+        <img src="${board.image}" alt="${board.title}" class="w-full h-48 object-cover mb-4">
+        <h2 class="text-xl font-bold mb-2">${board.title}</h2>
+        <p class="text-gray-600 mb-2">${board.userNickName}</p>
+        <p class="text-sm text-gray-500">${new Date(board.createdAt).toLocaleDateString()}</p>
+      `;
+      boardElement.addEventListener('click', () => {
+        window.location.href = `/public/userboard?id=${board.id}`;
+      });
+      boardGrid.appendChild(boardElement);
+    });
+  }
+
+  document.getElementById('createBoardBtn').addEventListener('click', () => {
+    document.getElementById('createBoardModal').style.display = 'block';
+  });
+
+  document.getElementById('closeModal').addEventListener('click', () => {
+    document.getElementById('createBoardModal').style.display = 'none';
+  });
+
+  async function createBoard(formData) {
+    const token = localStorage.getItem("Authorization");
+    try {
+      const response = await fetch(`/users/${userId}/userboards`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `${token}`
+        },
+        body: formData
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('게시판 생성 중 오류 발생:', error);
+      throw error;
+    }
+  }
+
+  document.getElementById('createBoardForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    try {
+      const data = await createBoard(formData);
+      if (data.statusCode === 200) {
+        alert('게시판이 생성되었습니다.');
+        document.getElementById('createBoardModal').style.display = 'none';
+        loadBoards();
+      } else {
+        alert('게시판 생성에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('게시판 생성 중 오류 발생:', error);
     }
   });
+
+  async function init() {
+    try {
+      await getCurrentUserId();
+      await getUserPosition();
+      await loadBoards();
+    } catch (error) {
+      console.error('초기화 중 오류 발생:', error);
+    }
+  }
+
+  init();
 </script>
 </body>
 </html>
