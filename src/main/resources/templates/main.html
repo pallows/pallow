@@ -205,12 +205,25 @@
             const dotsContainer = document.getElementById(dotsId);
 
             try {
+                console.log(`Fetching data from: ${apiEndpoint}`);
                 const response = await fetchWithAuth(apiEndpoint);
+                console.log('Response status:', response.status);
+
                 if (!response.ok) {
-                    throw new Error('Failed to fetch data');
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
                 }
+
                 const data = await response.json();
-                const items = data.data; // API 응답 구조에 맞게 조정
+                console.log('Received data:', data);
+
+                if (!data || !Array.isArray(data.data)) {
+                    console.error('Invalid data format:', data);
+                    throw new Error('Invalid data format received');
+                }
+
+                const items = data.data;
 
                 // Clear existing content
                 container.innerHTML = '';
