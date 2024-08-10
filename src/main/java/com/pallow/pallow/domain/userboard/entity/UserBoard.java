@@ -25,7 +25,7 @@ public class UserBoard extends TimeStamp implements Likeable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_Id", nullable = false)
     private User user;
 
     @Column(nullable = false)

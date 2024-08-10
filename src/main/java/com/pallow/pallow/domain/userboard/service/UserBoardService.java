@@ -17,6 +17,10 @@ import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,5 +127,23 @@ public class UserBoardService {
 
     private boolean isSameIdAndUser(Long userId, User user) {
         return !user.getId().equals(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserBoardResponseDto> getUserBoardsPage(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<UserBoard> userBoardPage = userBoardRepository.findAll(pageable);
+        return userBoardPage.map(UserBoardResponseDto::new);
+    }
+
+    /**
+     * 오늘의 동친 (무작위 선택)
+     */
+    @Transactional(readOnly = true)
+    public List<UserBoardResponseDto> getTodaysFriends(User user, int limit) {
+        List<UserBoard> todaysFriends = userBoardRepository.findRandomByPosition(user.getProfile().getPosition(), limit);
+        return todaysFriends.stream()
+                .map(UserBoardResponseDto::new)
+                .collect(Collectors.toList());
     }
 }

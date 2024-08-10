@@ -37,6 +37,23 @@
 </head>
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 <body class="bg-white">
+<header class="flex justify-between items-center p-4 bg-white shadow">
+  <div class="flex items-center">
+    <a href="/public/main">
+      <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
+    </a>
+    <nav>
+      <a th:href="@{/public/main}" class="mr-4">홈</a>
+      <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
+      <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
+      <a href="/public/MyPage" class="mr-4">MyPage</a>
+    </nav>
+  </div>
+  <div class="flex items-center">
+    <button id="profileBtn" class="mr-4">내 프로필</button>
+    <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
+  </div>
+</header>
 <div class="container mx-auto p-4 flex h-screen">
   <div class="w-1/3 bg-white border-r border-gray-200 flex flex-col">
     <div class="p-4 border-b border-gray-200">
