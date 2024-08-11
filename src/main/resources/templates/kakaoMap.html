@@ -100,9 +100,6 @@
   kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
     var latlng = mouseEvent.latLng;
 
-    // 클릭한 위치를 폼의 위치 필드에 입력합니다.
-    document.getElementById('location').value = latlng.getLat() + ',' + latlng.getLng();
-
     // 역지오코딩을 통해 주소를 얻어옵니다
     geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
       if (status === kakao.maps.services.Status.OK) {
@@ -112,7 +109,8 @@
         var addressParts = address.split(' ');
         var detailedAddress = addressParts.slice(0, 2).join(' '); // 예: '전남 여수시'
 
-        // 모임 위치 입력 필드에 주소를 설정합니다.
+        // 시군구까지만 포함된 주소를 폼의 위치 필드에 저장합니다.
+        document.getElementById('location').value = detailedAddress;
         document.getElementById('meetLocation').value = detailedAddress;
         document.getElementById('address').innerText = '클릭한 위치의 주소는 ' + address + '입니다.';
       }

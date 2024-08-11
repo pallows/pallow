@@ -23,7 +23,8 @@ public class CommonController {
     }
 
     @GetMapping("/public/main")
-    public String mainPage() {
+    public String mainPage(Model model) {
+        model.addAttribute("meets", meetsService.getAllMeets());
         return "main";
     }
 
