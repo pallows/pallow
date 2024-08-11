@@ -51,7 +51,7 @@
           <!-- 모임 상세 페이지로 이동할 때 meetId와 creatorId를 URL에 포함 -->
           <a th:href="@{'/public/meets/' + ${meet.id}}"
              class="bg-black text-white px-4 py-2 rounded"
-             onclick="openMeet(${meet.id}, ${meet.creatorId})">상세 보기</a>
+             onclick="openMeet([[${meet.id}]], [[${meet.creatorId}]])">상세 보기</a>
         </div>
       </div>
     </div>
