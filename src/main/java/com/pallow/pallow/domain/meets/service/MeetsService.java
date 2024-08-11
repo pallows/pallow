@@ -213,6 +213,4 @@ public class MeetsService {
                 .map(MeetsResponseDto::new)
                 .collect(Collectors.toList());
     }
-
-
 }

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>위치 지정하기</title>
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=af9f39fb058e901de9cc5db4a059f55a&libraries=services"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+    #map {
+      width: 100%;
+      height: 400px;
+    }
+    .address {
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900">
+<header class="bg-white shadow-md">
+  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold">위치 지정하기</h1>
+  </div>
+</header>
+
+<main class="container mx-auto px-4 py-8">
+  <div id="map"></div>
+  <div class="address" id="address">클릭한 위치의 주소가 여기에 표시됩니다.</div>
+
+  <form id="createMeetForm" method="post" enctype="multipart/form-data" class="mt-8">
+    <input type="hidden" id="location" name="position" required>
+    <div class="mb-4">
+      <label for="meetLocation" class="block text-sm font-medium text-gray-700">모임 위치</label>
+      <input type="text" id="meetLocation" name="meetLocation" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+    </div>
+
+    <div class="mb-4">
+      <label for="title" class="block text-sm font-medium text-gray-700">모임 제목</label>
+      <input type="text" id="title" name="title" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+    </div>
+    <div class="mb-4">
+      <label for="content" class="block text-sm font-medium text-gray-700">모임 내용</label>
+      <textarea id="content" name="content" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required></textarea>
+    </div>
+    <div class="mb-4">
+      <label for="maxMembers" class="block text-sm font-medium text-gray-700">최대 인원수</label>
+      <input type="number" id="maxMembers" name="maxMemberCount" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+    </div>
+    <div class="mb-4">
+      <label for="image" class="block text-sm font-medium text-gray-700">이미지</label>
+      <input type="file" id="image" name="image" accept="image/*" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required>
+    </div>
+    <div class="flex space-x-4">
+      <button type="button" class="bg-black text-white px-4 py-2 rounded" onclick="createMeet()">모임 생성</button>
+      <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded" onclick="closeForm()">닫기</button>
+    </div>
+  </form>
+</main>
+
+<script>
+  var mapContainer = document.getElementById('map'); // 지도를 표시할 div
+  var mapOption = {
+    center: new kakao.maps.LatLng(37.5665, 126.978), // 서울 시청을 기본 중심 좌표로 설정
+    level: 3 // 지도의 확대 레벨
+  };
+
+  // 지도를 생성합니다
+  var map = new kakao.maps.Map(mapContainer, mapOption);
+
+  var geocoder = new kakao.maps.services.Geocoder(); // 역지오코딩 객체 생성
+
+  // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+  if (navigator.geolocation) {
+
+    // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+    navigator.geolocation.getCurrentPosition(function(position) {
+
+      var lat = position.coords.latitude, // 위도
+          lon = position.coords.longitude; // 경도
+
+      var locPosition = new kakao.maps.LatLng(lat, lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+
+      // 지도 중심을 이동 시킵니다
+      map.setCenter(locPosition);
+    });
+
+  } else {
+    // HTML5의 GeoLocation을 사용할 수 없을때 설정해둔 기본 위치로 이동합니다
+    var locPosition = new kakao.maps.LatLng(37.5665, 126.978);
+    map.setCenter(locPosition);
+  }
+
+  // 지도에 클릭 이벤트를 등록합니다
+  kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+    var latlng = mouseEvent.latLng;
+
+    // 역지오코딩을 통해 주소를 얻어옵니다
+    geocoder.coord2Address(latlng.getLng(), latlng.getLat(), function(result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        var address = result[0].address.address_name;
+
+        // 주소를 구분하여 필요한 부분만 추출
+        var addressParts = address.split(' ');
+        var detailedAddress = addressParts.slice(0, 2).join(' '); // 예: '전남 여수시'
+
+        // 시군구까지만 포함된 주소를 폼의 위치 필드에 저장합니다.
+        document.getElementById('location').value = detailedAddress;
+        document.getElementById('meetLocation').value = detailedAddress;
+        document.getElementById('address').innerText = '클릭한 위치의 주소는 ' + address + '입니다.';
+      }
+    });
+  });
+
+  // 토큰
+  const token = localStorage.getItem('Authorization');
+
+  async function createMeet() {
+    const formData = new FormData(document.getElementById('createMeetForm'));
+    try {
+      await fetch(`/api/meets`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `${token}`
+        }
+      })
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        if (data.statusCode === 200) {
+          alert('모임이 생성되었습니다.');
+          window.location.href = '/public/meetsCollection'; // 모임 생성 후 이동
+        } else {
+          alert('모임 생성이 실패했습니다.');
+          location.reload(); // 페이지를 새로 고침
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    } catch (error) {
+      console.error('Error creating meet:', error);
+    }
+  }
+
+  function closeForm() {
+    window.location.href = '/public/meetsCollection'; // 닫기 버튼 클릭 시 이동
+  }
+</script>
+</body>
+</html>

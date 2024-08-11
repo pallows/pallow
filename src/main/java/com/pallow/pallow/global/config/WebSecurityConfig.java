@@ -33,7 +33,7 @@ public class WebSecurityConfig {
 
     String[] WHITE_LIST = {"/", "/users/login", "/email/**", "/users/signup","/users/me", "/public/**", "/profiles/**", "/chat.html", "/ws/**", "/InvitationList.html", "/meets.html",
             "/chat", "/ws/**", "/topic/**", "/app/**", "/api/**", "/chat/**", "/users/only", "/uesrs/me", "/todays-friends",
-            "/userboard.html", "/main", "/main.html"};
+            "/userboard.html", "/main", "/main.html", "/kakaoMap.html"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -85,9 +85,17 @@
         return fetch(url, options);
     }
 
-    //TODO 받아온 MeetId를 넣어줘야합니다.
-    const meetId = 1; // TODO 숫자 1 대신에 받아온 MeetId가 들어가야 정상 작동 됩니다.
+    // //TODO 받아온 MeetId를 넣어줘야합니다.
+    // const meetId = 1; // TODO 숫자 1 대신에 받아온 MeetId가 들어가야 정상 작동 됩니다.
 
+    // URL에서 meetId 가져오기
+    const path = window.location.pathname;
+    const meetId = path.split('/').pop();  // 마지막 경로 부분을 meetId로 추출
+
+    if (!meetId) {
+        alert('모임 ID가 필요합니다.');
+        window.location.href = '/error-page'; // meetId가 없을 경우 오류 페이지로 리다이렉트
+    }
 
     document.getElementById('closeButton').addEventListener('click', function () {
         window.close(); // 팝업 창 닫기
