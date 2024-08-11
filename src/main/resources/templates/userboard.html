@@ -150,8 +150,6 @@
     const userBoardId = urlParams.get('id');  //TODO 숫자 1 대신에 받아온 BoardId 들어가야 정상 작동 됩니다.
     let userId;
     let isAuthor;
-
-
     let originalImgSrc;
 
     // board를 조회합니다. -> board의 작성자 ID를 가져와서 -> 작성자 아이이디로 프로필을 조회합니다. -> 조회한값에서 이미지를 가져온다음 -> 사용
@@ -452,33 +450,29 @@
     /////
 
     function deletePost() {
-        const confirmDelete = confirm("정말로 이 게시글을 삭제하시겠습니까?");
-        if (confirmDelete) {
-            const userBoardId = 1; // 클릭한 Board 의 Id
-            fetchWithAuth(`/users/only`)
-                .then(response => response.json())
-                .then(el => {
-                    return el
-                }).then((currentUserId) => {
-                return currentUserId.data.id // 현재 접속한 유저의 ID
-            }).then((currentUserId) => {
-                fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}`, {
-                    method: 'DELETE'
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.statusCode === 200) {
-                            alert('게시글이 삭제되었습니다.');
-                            window.location.href = '/public/main'; // 메인 페이지로 리다이렉트
-                        } else {
-                            alert('게시글 삭제에 실패했습니다.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error deleting post:', error);
-                    });
-            })
-        }
+      const confirmDelete = confirm("정말로 이 게시글을 삭제하시겠습니까?");
+      if (confirmDelete) {
+        fetchWithAuth(`/users/only`)
+        .then(response => response.json())
+        .then(el => el.data.id) // 현재 접속한 유저의 ID
+        .then(currentUserId => {
+          fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}`, {
+            method: 'DELETE'
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.statusCode === 200) {
+              alert('게시글이 삭제되었습니다.');
+              window.location.href = '/public/main'; // 메인 페이지로 리다이렉트
+            } else {
+              alert('게시글 삭제에 실패했습니다.');
+            }
+          })
+          .catch(error => {
+            console.error('Error deleting post:', error);
+          });
+        });
+      }
     }
 
 
