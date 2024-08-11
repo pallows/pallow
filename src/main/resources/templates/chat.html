@@ -436,15 +436,16 @@
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    function leaveRoom() {
-      if (stompClient && currentChatRoomId) {
-        let leaveMessage = {
-          roomId: currentChatRoomId,
-          type: 'LEAVE'
-        };
-        stompClient.send("/app/chat.leaveRoom", {}, JSON.stringify(leaveMessage));
+  function leaveRoom() {
+    if (stompClient && currentChatRoomId) {
+      let leaveMessage = {
+        roomId: currentChatRoomId,
+        type: 'LEAVE'
+      };
+      stompClient.send("/app/chat.leaveRoom", {}, JSON.stringify(leaveMessage));
 
-        // 채팅방 삭제 요청
+      // 서버의 응답을 기다린 후 채팅방 삭제 요청
+      setTimeout(() => {
         fetch(`/api/chat/rooms/${currentChatRoomId}`, {
           method: 'DELETE',
           headers: {
@@ -453,20 +454,29 @@
         })
         .then(response => {
           if (response.ok) {
-            currentChatRoomId = null;
-            document.getElementById('currentChatRoomName').textContent = "채팅방을 선택해주세요";
-            document.getElementById('chatMessages').innerHTML = '';
-            loadChatRooms(); // 채팅방 목록 새로고침
+            return response.json();
           } else {
-            alert('채팅방 나가기 실패');
+            throw new Error('채팅방 나가기 실패');
           }
+        })
+        .then(data => {
+          console.log('채팅방 나가기 성공:', data);
+          currentChatRoomId = null;
+          document.getElementById('currentChatRoomName').textContent = "채팅방을 선택해주세요";
+          document.getElementById('chatMessages').innerHTML = '';
+          loadChatRooms(); // 채팅방 목록 새로고침
         })
         .catch(error => {
           console.error('Error:', error);
-          alert('채팅방 나가기 중 오류가 발생했습니다.');
+          alert('채팅방 나가기 중 오류가 발생했습니다: ' + error.message);
         });
-      }
+      }, 1000); // 1초 대기 후 삭제 요청 실행
+    } else {
+      console.error('채팅방을 나갈 수 없습니다: 연결되지 않았거나 현재 채팅방이 없습니다.');
+      alert('채팅방을 나갈 수 없습니다. 연결 상태를 확인해주세요.');
     }
+  }
+
 
 
 </script>
