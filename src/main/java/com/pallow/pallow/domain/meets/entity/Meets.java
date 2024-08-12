@@ -53,7 +53,7 @@ public class Meets extends TimeStamp implements Likeable {
     @Column
     private int memberCount;
 
-    @Column(nullable = false)
+    @Column
     private int maxMemberCount;
 
     @Column

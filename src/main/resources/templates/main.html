@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <script src="/js/auth.js" defer></script>
     <meta charset="UTF-8">
@@ -7,9 +7,8 @@
     <title>Pallow</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-        }
+        body {font-family: 'Noto Sans KR', sans-serif;}
+
 
         .carousel {
             display: flex;
@@ -64,25 +63,30 @@
         }
     </style>
     <link rel="icon"
-          href="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" type="image/x-icon">
+          th:href="@{https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96}"
+          type="image/x-icon">
 </head>
 <body class="bg-gray-100 text-black">
-<header class="bg-white shadow">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+<header class="flex justify-between items-center p-4 bg-white shadow">
+    <div class="flex items-center">
         <a href="/public/main">
-            <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70"
-                 height="70" alt="Logo" class="mr-4">
+            <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
         </a>
-        <nav class="space-x-4">
-            <a href="/public/userboardCollection" class="text-gray-700">오늘의 동친</a>
-            <a href="/public/meetsCollection" class="text-gray-700">내 주변 모임</a>
-            <a href="/public/MyPage" class="text-gray-700">My Page</a>
+        <nav>
+            <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
+            <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
+            <a href="/public/MyPage" class="mr-4">MyPage</a>
+
         </nav>
-        <button class="bg-black text-white px-4 py-2 rounded" id="logoutButton">로그아웃</button>
+    </div>
+    <div class="flex items-center">
+        <button id="profileBtn" class="mr-4">내 프로필</button>
+        <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
     </div>
 </header>
 
 <main class="p-4">
+    <!-- 오늘의 동친 섹션 -->
     <section class="mb-8">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">오늘의 동친</h2>
@@ -99,7 +103,8 @@
     <section class="mb-8">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">인기 급 상승 모임</h2>
-            <a href="ingimoim.html" class="text-blue-500">더보기</a>
+<!--            추후에 좋아요 수 필터 적용된 meetscollection.html페이지로 이동하게끔 수정해주어야 함-->
+            <a href="/public/meetsCollection" class="text-blue-500">더보기</a>
         </div>
         <div class="relative">
             <div class="carousel" id="carousel2"></div>
@@ -112,7 +117,7 @@
     <section class="mb-20">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">내 주변 모임</h2>
-            <a href="public/meetsCollection" class="text-blue-500">더보기</a>
+            <a href="/public/meetsCollection" class="text-blue-500">더보기</a>
         </div>
         <div class="relative">
             <div class="carousel" id="carousel3"></div>
@@ -186,7 +191,7 @@
             try {
                 const response = await fetchWithAuth('/chat.html');
                 if (response.ok) {
-                    window.location.href = '/chat.html'; // This will redirect the user to index.html
+                    window.location.href = '/chat.html'; //
                 } else {
                     console.error('Failed to load chat.html');
                 }
@@ -195,85 +200,106 @@
             }
         });
 
-        function createCarousel(containerId, dotsId, numCards) {
+        async function createCarousel(containerId, dotsId, apiEndpoint) {
             const container = document.getElementById(containerId);
             const dotsContainer = document.getElementById(dotsId);
-            const numDots = Math.ceil(numCards / 3);
 
-            // Create cards
-            for (let i = 0; i < numCards; i++) {
-                const card = document.createElement('div');
-                card.className = 'carousel-item bg-white p-4 shadow mr-4';
-                card.style.width = '300px';
-                card.style.height = '200px';
-                card.innerHTML = `
-            <img src="https://via.placeholder.com/280x120" alt="Thumbnail" class="mb-2">
-            <h3 class="font-bold">Card ${i + 1}</h3>
-            <p>Description for Card ${i + 1}</p>
-          `;
-                container.appendChild(card);
-            }
+            try {
+                console.log(`Fetching data from: ${apiEndpoint}`);
+                const response = await fetchWithAuth(apiEndpoint);
+                console.log('Response status:', response.status);
 
-            // Create dots
-            for (let i = 0; i < numDots; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-                dotsContainer.appendChild(dot);
-            }
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+                }
 
-            let currentIndex = 0;
+                const data = await response.json();
+                console.log('Received data:', data);
 
-            function updateCarousel() {
-                container.style.transform = `translateX(-${currentIndex * 33.33}%)`;
-                Array.from(dotsContainer.children).forEach((dot, index) => {
-                    dot.classList.toggle('active', index === Math.floor(currentIndex / 3));
+                if (!data || !Array.isArray(data.data)) {
+                    console.error('Invalid data format:', data);
+                    throw new Error('Invalid data format received');
+                }
+
+                const items = data.data;
+
+                // Clear existing content
+                container.innerHTML = '';
+                dotsContainer.innerHTML = '';
+
+                // Create cards
+                items.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'carousel-item bg-white p-4 shadow mr-4';
+                    card.style.width = '300px';
+                    card.style.height = '200px';
+                    card.innerHTML = `
+                <img src="${item.image || 'https://via.placeholder.com/280x120'}" alt="Thumbnail" class="mb-2 w-full h-24 object-cover">
+                <h3 class="font-bold">${item.title}</h3>
+                <p class="text-sm">${item.content.substring(0, 50)}${item.content.length > 50 ? '...' : ''}</p>
+            `;
+                    container.appendChild(card);
                 });
-            }
 
-            // Arrow click handlers
-            container.parentElement.querySelector('.carousel-arrow.left').addEventListener('click', () => {
-                currentIndex = (currentIndex - 1 + numCards) % numCards;
-                updateCarousel();
-            });
+                // Create dots
+                const numDots = Math.ceil(items.length / 3);
+                for (let i = 0; i < numDots; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                    dotsContainer.appendChild(dot);
+                }
 
-            container.parentElement.querySelector('.carousel-arrow.right').addEventListener('click', () => {
-                currentIndex = (currentIndex + 1) % numCards;
-                updateCarousel();
-            });
+                let currentIndex = 0;
 
-            // Dot click handlers
-            Array.from(dotsContainer.children).forEach((dot, index) => {
-                dot.addEventListener('click', () => {
-                    currentIndex = index * 3;
+                function updateCarousel() {
+                    container.style.transform = `translateX(-${currentIndex * 33.33}%)`;
+                    Array.from(dotsContainer.children).forEach((dot, index) => {
+                        dot.classList.toggle('active', index === Math.floor(currentIndex / 3));
+                    });
+                }
+
+                // Arrow click handlers
+                container.parentElement.querySelector('.carousel-arrow.left').addEventListener('click', () => {
+                    currentIndex = Math.max(currentIndex - 1, 0);
                     updateCarousel();
                 });
-            });
+
+                container.parentElement.querySelector('.carousel-arrow.right').addEventListener('click', () => {
+                    currentIndex = Math.min(currentIndex + 1, items.length - 3);
+                    updateCarousel();
+                });
+
+                // Dot click handlers
+                Array.from(dotsContainer.children).forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        currentIndex = index * 3;
+                        updateCarousel();
+                    });
+                });
+
+                updateCarousel(); // Initialize carousel position
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         }
 
         // Initialize carousels
-        createCarousel('carousel1', 'dots1', 9);
-        createCarousel('carousel2', 'dots2', 9);
-        createCarousel('carousel3', 'dots3', 9);
+        createCarousel('carousel1', 'dots1', '/todays-friends');
+        createCarousel('carousel2', 'dots2', '/api/meets/popular');
+        createCarousel('carousel3', 'dots3', '/api/meets/nearby');
 
 
         document.getElementById('profileBtn').addEventListener('click', () => {
-            window.location.href = 'userboard.html';
-        }); // TODO
-
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            logout();
+            window.location.href = '/public/MyPage';
         });
 
-        //
-        // document.getElementById('loginSignupBtn').addEventListener('click', () => {
-        //     // Check if user is logged in
-        //     const isLoggedIn = false; // Replace with actual login check
-        //     if (isLoggedIn) {
-        //         alert('이미 엘리트 멤버십 혜택을 받고 계십니다!');
-        //     } else {
-        //         window.location.href = 'login.html';
-        //     }
-        // });
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('Authorization');
+            window.location.href = '/login';
+        });
 
 
     });

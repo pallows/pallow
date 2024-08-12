@@ -189,4 +189,28 @@ public class MeetsService {
     public void toggleLike(Long meetsId, User user) {
         likeService.toggleLike(meetsId, user, meetsRepository);
     }
+
+    /**
+     * 내 주변 모임 (무작위 선택)
+     */
+    @Transactional(readOnly = true)
+    public List<MeetsResponseDto> getNearbyMeets(User user, int limit) {
+        // 사용자의 위치 정보를 기반으로 주변 모임을 찾는 로직 구현
+        // 여기서는 간단히 무작위로 선택하는 것으로 가정
+        List<Meets> nearbyMeets = meetsRepository.findRandomNearbyMeets(user.getProfile().getPosition(), limit);
+        return nearbyMeets.stream()
+                .map(MeetsResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 인기 급 상승 모임 (좋아요 순)
+     */
+    @Transactional(readOnly = true)
+    public List<MeetsResponseDto> getPopularMeets(int limit) {
+        List<Meets> popularMeets = meetsRepository.findTopByOrderByLikesCountDesc(limit);
+        return popularMeets.stream()
+                .map(MeetsResponseDto::new)
+                .collect(Collectors.toList());
+    }
 }

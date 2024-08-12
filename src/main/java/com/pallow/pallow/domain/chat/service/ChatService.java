@@ -250,16 +250,15 @@ public class ChatService {
      */
     @Transactional
     public void deleteChatRoom(Long roomId, String nickname) {
+        User user = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("Chat room not found"));
-        User user = findUserByNickname(nickname);
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_CHATROOM));
 
-        userAndChatRoomRepository.deleteByChatRoomAndUser(chatRoom, user);
+        chatRoomRepository.deleteUserFromChatRoom(chatRoom, user);
 
-        // 채팅방에 남아있는 사용자 수 확인
-        long remainingUsers = userAndChatRoomRepository.countByChatRoom(chatRoom);
-
-        if (remainingUsers == 0) {
+        // 채팅방에 남은 사용자가 없으면 채팅방 삭제
+        if (chatRoom.getUserAndChatRooms().isEmpty()) {
             chatRoomRepository.delete(chatRoom);
         }
     }

@@ -3,12 +3,14 @@ package com.pallow.pallow.domain.chat.repository;
 import com.pallow.pallow.domain.chat.entity.ChatRoom;
 import com.pallow.pallow.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
@@ -32,4 +34,9 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     @Query("SELECT cr FROM ChatRoom cr WHERE SIZE(cr.userAndChatRooms) >= :count")
     List<ChatRoom> findByUserCountGreaterThanEqual(@Param("count") int count);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM UserAndChatRoom uacr WHERE uacr.chatRoom = :chatRoom AND (uacr.user1 = :user OR uacr.user2 = :user)")
+    void deleteUserFromChatRoom(@Param("chatRoom") ChatRoom chatRoom, @Param("user") User user);
 }

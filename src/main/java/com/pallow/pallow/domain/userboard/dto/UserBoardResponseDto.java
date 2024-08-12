@@ -17,6 +17,7 @@ public class UserBoardResponseDto {
     private String userProfileImage;
     private LocalDateTime createdAt;
     private Long boardUserId;
+    private String userBoardPosition;
 
     public UserBoardResponseDto(UserBoard userBoard) {
         this.id = userBoard.getId();
@@ -28,6 +29,7 @@ public class UserBoardResponseDto {
         this.userProfileImage = userBoard.getUser().getProfile().getImage();
         this.createdAt = userBoard.getCreatedAt();
         this.boardUserId = userBoard.getUser().getId();
+        this.userBoardPosition = userBoard.getUser().getProfile().getPosition();
     }
 
 }

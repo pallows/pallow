@@ -1,87 +1,71 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <script src="/js/auth.js" defer></script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prototype</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-        }
+<html lang="en" xmlns:th="http://www.thymeleaf.org"><head>
+  <script src="/js/auth.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
 
-        .like-button {
-            cursor: pointer;
-            transition: color 0.3s;
-        }
+    body {font-family: 'Noto Sans KR', sans-serif;}
 
-        .like-button.liked {
-            color: red;
-        }
-
-        .slider {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-            border-radius: 0.5rem;
-        }
-
-        .slides {
-            display: flex;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .slide {
-            min-width: 100%;
-            box-sizing: border-box;
-        }
-
-        .slider-nav {
-            position: absolute;
-            top: 50%;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            transform: translateY(-50%);
-        }
-
-        .slider-nav button {
-            background: rgba(0, 0, 0, 0.5);
-            border: none;
-            color: white;
-            padding: 0.5rem;
-            cursor: pointer;
-        }
-
-        .BoardTitle {
-            text-align: center;
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-    </style>
-    <link rel="icon"
-          href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png"
-          type="image/x-icon">
+    .like-button {
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .like-button.liked {
+      color: red;
+    }
+    .slider {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 0.5rem;
+    }
+    .slides {
+      display: flex;
+      transition: transform 0.3s ease-in-out;
+    }
+    .slide {
+      min-width: 100%;
+      box-sizing: border-box;
+    }
+    .slider-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+    }
+    .slider-nav button {
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      color: white;
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+  </style>
+  <link rel="icon" href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png" type="image/x-icon">
 </head>
 <body class="bg-gray-100">
 <header class="flex justify-between items-center p-4 bg-white shadow">
-    <div class="flex items-center">
-        <a href="/public/main">
-            <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70"
-                 height="70" alt="Logo" class="mr-4">
-        </a>
-        <nav>
-            <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
-            <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
-        </nav>
-    </div>
-    <div class="flex items-center">
-        <button id="profileBtn" class="mr-4">내 프로필</button>
-        <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
-    </div>
+  <div class="flex items-center">
+    <a href="/public/main">
+      <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
+    </a>
+    <nav>
+      <a th:href="@{/public/main}" class="mr-4">홈</a>
+      <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
+      <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
+      <a href="/public/MyPage" class="mr-4">MyPage</a>
+    </nav>
+  </div>
+  <div class="flex items-center">
+    <button id="profileBtn" class="mr-4">내 프로필</button>
+    <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
+  </div>
 </header>
 
 <div class="max-w-6xl mx-auto p-4 bg-white shadow-md rounded-lg">
@@ -162,11 +146,10 @@
     }
 
     //BOARD 를 생성하면 BOARD 컬렉션에 BOARD 가 올라가고 거기서 클릭을햇을때, 해당하는 BOARD 로 이동하게된다. 이동할때 해당하는 BOARD 의 ID를 넘겨줘야 한다.
-    const userBoardId = 1;   //TODO 숫자 1 대신에 받아온 BoardId 들어가야 정상 작동 됩니다.
+    const urlParams = new URLSearchParams(window.location.search);
+    const userBoardId = urlParams.get('id');  //TODO 숫자 1 대신에 받아온 BoardId 들어가야 정상 작동 됩니다.
     let userId;
     let isAuthor;
-
-
     let originalImgSrc;
 
     // board를 조회합니다. -> board의 작성자 ID를 가져와서 -> 작성자 아이이디로 프로필을 조회합니다. -> 조회한값에서 이미지를 가져온다음 -> 사용
@@ -467,33 +450,29 @@
     /////
 
     function deletePost() {
-        const confirmDelete = confirm("정말로 이 게시글을 삭제하시겠습니까?");
-        if (confirmDelete) {
-            const userBoardId = 1; // 클릭한 Board 의 Id
-            fetchWithAuth(`/users/only`)
-                .then(response => response.json())
-                .then(el => {
-                    return el
-                }).then((currentUserId) => {
-                return currentUserId.data.id // 현재 접속한 유저의 ID
-            }).then((currentUserId) => {
-                fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}`, {
-                    method: 'DELETE'
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.statusCode === 200) {
-                            alert('게시글이 삭제되었습니다.');
-                            window.location.href = '/public/main'; // 메인 페이지로 리다이렉트
-                        } else {
-                            alert('게시글 삭제에 실패했습니다.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error deleting post:', error);
-                    });
-            })
-        }
+      const confirmDelete = confirm("정말로 이 게시글을 삭제하시겠습니까?");
+      if (confirmDelete) {
+        fetchWithAuth(`/users/only`)
+        .then(response => response.json())
+        .then(el => el.data.id) // 현재 접속한 유저의 ID
+        .then(currentUserId => {
+          fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}`, {
+            method: 'DELETE'
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.statusCode === 200) {
+              alert('게시글이 삭제되었습니다.');
+              window.location.href = '/public/main'; // 메인 페이지로 리다이렉트
+            } else {
+              alert('게시글 삭제에 실패했습니다.');
+            }
+          })
+          .catch(error => {
+            console.error('Error deleting post:', error);
+          });
+        });
+      }
     }
 
 

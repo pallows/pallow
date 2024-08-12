@@ -53,6 +53,13 @@ public class ProfileController {
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
     }
 
+    /**
+     * 프로필 생성
+     * @param requestDto  생성 데이터
+     * @param username 유저 데이터
+     * @param defaultImage 기본 이미지
+     * @return 생성 성공 메시지 + 생성된 프로필 데이터
+     */
     @PostMapping
     public ResponseEntity<CommonResponseDto> createProfile(
             @ModelAttribute("ProfileRequestDto") @Valid ProfileRequestDto requestDto,

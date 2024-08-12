@@ -128,11 +128,19 @@ public class ChatRestController {
 
     @DeleteMapping("/rooms/{roomId}")
     public ResponseEntity<ApiResponse> deleteChatRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        log.info("Attempting to delete chat room: {}, User: {}", roomId, userDetails.getNickname());
         try {
             chatService.deleteChatRoom(roomId, userDetails.getNickname());
+            log.info("Successfully deleted chat room: {}", roomId);
             return ResponseEntity.ok(new ApiResponse(Message.ROOM_DELETE_SUCCESS, null));
+        } catch (CustomException e) {
+            log.error("Custom exception while deleting chat room: {}", e.getMessage());
+            return ResponseEntity.status(e.getErrorType().getStatus())
+                    .body(new ApiResponse(e.getErrorType(), null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ErrorType.INTERNAL_SERVER_ERROR, null));
+            log.error("Unexpected error while deleting chat room: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(ErrorType.INTERNAL_SERVER_ERROR, null));
         }
     }
 

@@ -1,13 +1,14 @@
 package com.pallow.pallow.domain.meets.controller;
 
 import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
+import com.pallow.pallow.domain.meets.dto.MeetsResponseDto;
 import com.pallow.pallow.domain.meets.service.MeetsService;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * API 경로를 구분하기 위해 @Requestmapping에 "/api" 접두사 추가
  */
-@Slf4j
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -34,15 +34,13 @@ public class MeetsController {
 
     /**
      * 모임 생성
-     *
-     * @param requestDto  생성 데이터 [title, content]
+     * @param requestDto  생성 데이터 [title, content, image, position, maxMemberCount]
      * @param userDetails 유저 데이터
      * @return 생성 성공 메시지 + 생성된 리뷰 데이터
      */
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<CommonResponseDto> createMeets(@ModelAttribute @Valid MeetsRequestDto requestDto,
-                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        log.info(String.valueOf(userDetails.getUser().getId()));
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_CREATE_SUCCESS,
                         meetsService.create(requestDto, userDetails.getUser())));
@@ -50,7 +48,6 @@ public class MeetsController {
 
     /**
      * 모임 선택 조회
-     *
      * @param meets_id 그룹 ID
      * @return 생성 성공 메시지 + 그룹 데이터
      */
@@ -62,7 +59,6 @@ public class MeetsController {
 
     /**
      * 모임 전체 조회
-     *
      * @return 생성 성공 메시지 + 그룹 데이터
      */
     @GetMapping()
@@ -73,7 +69,6 @@ public class MeetsController {
 
     /**
      * 모임 업데이트
-     *
      * @param meets_id    그룹 ID
      * @param requestDto  변경할 데이터 [title, content]
      * @param userDetails 유저 데이터
@@ -91,7 +86,6 @@ public class MeetsController {
 
     /**
      * 모임 삭제
-     *
      * @param meets_id    그룹 ID
      * @param userDetails 유저 데이터
      * @return 삭제 성공 메시지
@@ -107,7 +101,6 @@ public class MeetsController {
 
     /**
      * 그룹 맴버 조회
-     *
      * @param meets_id
      * @return List<UserResponseDto>
      */
@@ -121,7 +114,6 @@ public class MeetsController {
 
     /**
      * 회원 강퇴
-     *
      * @param meets_id
      * @param user_id
      * @param userDetails
@@ -139,7 +131,6 @@ public class MeetsController {
 
     /**
      * 좋아요 토글
-     *
      * @param meets_id
      * @param userDetails
      * @return
@@ -149,5 +140,23 @@ public class MeetsController {
                                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         meetsService.toggleLike(meets_id, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.LIKES_TOGGLE_SUCCESS));
+    }
+
+    /**
+     * 내 주변 모임 (무작위 9개)
+     */
+    @GetMapping("/nearby")
+    public ResponseEntity<CommonResponseDto> getNearbyMeets(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<MeetsResponseDto> nearbyMeets = meetsService.getNearbyMeets(userDetails.getUser(), 9);
+        return ResponseEntity.ok(new CommonResponseDto(Message.MEET_READ_SUCCESS, nearbyMeets));
+    }
+
+    /**
+     * 인기 급 상승 모임 (좋아요 순 상위 9개)
+     */
+    @GetMapping("/popular")
+    public ResponseEntity<CommonResponseDto> getPopularMeets() {
+        List<MeetsResponseDto> popularMeets = meetsService.getPopularMeets(9);
+        return ResponseEntity.ok(new CommonResponseDto(Message.MEET_READ_SUCCESS, popularMeets));
     }
 }

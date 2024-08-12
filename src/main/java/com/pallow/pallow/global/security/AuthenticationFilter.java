@@ -14,9 +14,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j
@@ -80,12 +82,17 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             AuthenticationException failed) throws IOException {
         log.error("로그인 실패 : {}", failed.getMessage());
 
-        // JSON 응답 생성
-        res.setStatus(SC_UNAUTHORIZED);
+        String errorMessage = "로그인 실패: 자격 증명에 실패하였습니다.";
+
+        if (failed instanceof BadCredentialsException) {
+            errorMessage = "아이디 또는 비밀번호를 확인해주세요.";
+        }
+
+        res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         res.setCharacterEncoding("UTF-8");
         res.setContentType("application/json");
         String json = new ObjectMapper().writeValueAsString(
-                new UnauthenticatedResponse("로그인 실패: " + failed.getMessage())
+                new UnauthenticatedResponse(errorMessage)
         );
         res.getWriter().write(json);
     }

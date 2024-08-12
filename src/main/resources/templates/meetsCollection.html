@@ -8,40 +8,51 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-    }
+
+    body {font-family: 'Noto Sans KR', sans-serif;}
+
   </style>
   <link rel="icon" href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png" type="image/x-icon">
 </head>
 <body class="bg-gray-100 text-gray-900">
-<header class="bg-white shadow-md">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      <a href="/public/main">
-        <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
-      </a>
-      <nav class="space-x-4">
-        <a href="/public/userboardCollection" class="text-gray-700">오늘의 동친</a>
-        <a href="/public/meetsCollection" class="text-gray-700">내 주변 모임</a>
-        <a href="/public/MyPage" class="text-gray-700">My Page</a>
-      </nav>
-      <button class="bg-black text-white px-4 py-2 rounded" id="logoutButton">로그아웃</button>
-    </div>
+<header class="flex justify-between items-center p-4 bg-white shadow">
+  <div class="flex items-center">
+    <a href="/public/main">
+      <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70" height="70" alt="Logo" class="mr-4">
+    </a>
+    <nav>
+      <a th:href="@{/public/main}" class="mr-4">홈</a>
+      <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
+      <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
+      <a href="/public/MyPage" class="mr-4">MyPage</a>
+    </nav>
+  </div>
+  <div class="flex items-center">
+    <button id="profileBtn" class="mr-4">내 프로필</button>
+    <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
+  </div>
 </header>
 <main class="container mx-auto px-4 py-8">
   <div class="flex justify-between items-center mb-8">
     <h1 class="text-2xl font-bold">모임 생성 하기</h1>
-    <button class="bg-black text-white px-4 py-2 rounded">모임 생성 하기</button>
+    <button class="bg-black text-white px-4 py-2 rounded" onclick="openCreateMeet()">모임 생성 하기</button>
   </div>
+
+
+  <!-- 모임 리스트 -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     <div th:each="meet : ${meets}" class="bg-white p-4 rounded shadow-md flex items-center space-x-4">
-      <img src="https://via.placeholder.com/100" alt="Profile Image" class="w-24 h-24 rounded-full">
+      <img th:src="${meet.image}" alt="Profile Image" class="w-24 h-24 rounded-full">
       <div>
         <h2 class="text-lg font-bold" th:text="${meet.title}">모임 제목</h2>
-        <p class="text-gray-600" th:text="${meet.content}">모임설명</p>
+        <p class="text-gray-600" th:text="${meet.content}">모임 설명</p>
+        <!-- 현재 인원 수/최대 인원 수 표시 -->
+        <p class="text-gray-600 mt-2">인원: <span th:text="${meet.memberCount}"></span>/<span th:text="${meet.maxMemberCount}"></span></p>
         <div class="mt-4 space-x-2">
-          <button class="bg-black text-white px-4 py-2 rounded">상세 보기</button>
-          <button class="bg-black text-white px-4 py-2 rounded">모임 참가</button>
+          <!-- 모임 상세 페이지로 이동할 때 meetId와 creatorId를 URL에 포함 -->
+          <a th:href="@{'/public/meets/' + ${meet.id}}"
+             class="bg-black text-white px-4 py-2 rounded"
+             onclick="openMeet([[${meet.id}]], [[${meet.creatorId}]])">상세 보기</a>
         </div>
       </div>
     </div>
@@ -57,14 +68,6 @@
       </button>
     </div>
   </div>
-  <div class="mt-8 bg-white p-4 rounded shadow-md">
-    <p class="text-gray-600">유료결제만 해도 받는 엘리트 멤버십 혜택</p>
-    <p class="text-gray-600">결제만 했다면 멤버십 혜택과 함께 할 수 있어요.</p>
-    <div class="mt-4 space-x-2">
-      <a href="/payments" class="bg-blue-500 text-white px-4 py-2 rounded">결제 창</a>
-      <a href="/benefits" class="bg-gray-200 text-gray-700 px-4 py-2 rounded">혜택 자세히 보기</a>
-    </div>
-  </div>
 </main>
 <footer class="bg-white shadow-md mt-8">
   <div class="container mx-auto px-4 py-4 flex justify-end">
@@ -75,5 +78,16 @@
     </button>
   </div>
 </footer>
+
+<script>
+  async function openCreateMeet() {
+    window.location.href = '/public/kakaoMap'; // 모임 생성하기로 이동
+  }
+
+  async function openMeet(meetId, creatorId) {
+    window.location.href = `/public/meets/${meetId}`; // 모임 상세 페이지로 이동
+  }
+
+</script>
 </body>
 </html>
