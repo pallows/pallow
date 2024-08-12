@@ -68,13 +68,6 @@ public class UserBoardService {
     @Transactional
     public UserBoardResponseDto updateUserBoard(long userId, long userBoardId,
                                                 UserBoardRequestDto requestDto, User user) {
-        log.info("requestDto {} : ", requestDto.getContent());
-        log.info("requestDto {} : ", requestDto.getTitle());
-        log.info("requestDto {} : ", requestDto.getTitle());
-        log.info("userId {} : ", userId);
-        log.info("userBoardId {} : ", userBoardId);
-        log.info("user.getId() {} : ", user.getId());
-
         UserBoard userBoard = userBoardRepository.findById(userBoardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
         if (isSameIdAndUser(userId, user)) {

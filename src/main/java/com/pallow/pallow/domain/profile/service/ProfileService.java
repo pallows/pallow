@@ -126,22 +126,11 @@ public class ProfileService {
         List<ProfileItem> items = new ArrayList<>();
         profileList.forEach(profile -> items.add(profileMapper.toRequestItem(profile)));
 
-        // 로그 추가: 전송 데이터 확인
-        log.info("Items to be sent to Flask: {}", items);
-        log.info("Sending request to Flask with data: {}", FlaskRequestDto.builder()
-                .id(currentUserProfile.get().getId())
-                .profiles(items)
-                .build());
-
         // send request to flask
         FlaskResponseDto responseDto = sendRequestToFlask(FlaskRequestDto.builder()
                 .id(currentUserProfile.get().getId())
                 .profiles(items)
                 .build());
-
-        // 로그 추가: 응답 데이터 확인
-        log.info("Received response from Flask: {}", responseDto);
-        log.info("Received sorted ID list from Flask: {}", responseDto.getData().getSortedIdList());
 
         // make response
         List<ProfileFlaskResponseDto> results = new ArrayList<>();
@@ -158,8 +147,6 @@ public class ProfileService {
             // Log or handle the empty results case if needed
             log.warn("No profiles found to remove.");
         }
-
-        log.info("Received sorted ID list from Flask: {}", responseDto.getData().getSortedIdList());
 
         return results;
     }
@@ -180,10 +167,6 @@ public class ProfileService {
                     new HttpEntity<>(requestDto, headers),
                     FlaskResponseDto.class
             );
-
-            // 로그 추가: 요청과 응답 정보 확인
-            log.info("Request sent to Flask: {}", requestDto);
-            log.info("Response received from Flask: {}", responseEntity.getBody());
 
             return responseEntity.getBody();
         } catch (HttpClientErrorException e) {
