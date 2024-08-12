@@ -588,14 +588,14 @@
           populateSelectElement('profileRelationship', relationships, data.relationship);
 
           if (data.interest) {
-            data.interest.split(', ').forEach(value => {
+            data.interest.split(',').forEach(value => {
               selectedInterestValues.add(value);
             });
             updateSelectedInterests();
           }
 
           if (data.ideal) {
-            data.ideal.split(', ').forEach(value => {
+            data.ideal.split(',').forEach(value => {
               selectedIdealValues.add(value);
             });
             updateSelectedIdeals();
