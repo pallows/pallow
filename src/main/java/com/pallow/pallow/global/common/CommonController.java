@@ -75,7 +75,7 @@ public class CommonController {
             @RequestParam(defaultValue = "16") int size) {
         Page<UserBoardResponseDto> profiles = userBoardService.getUserBoardsPage(page, size);
         model.addAttribute("profiles", profiles);
-        return "profileCollection";
+        return "userboardCollection";
     }
 
     @GetMapping("/public/MyPage")
