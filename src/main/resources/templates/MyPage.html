@@ -216,6 +216,7 @@
   import { regionData, interests, ideals, alcoholPreferences, educationLevels, jobTypes, personalities,
     pros, relationships, religions, smokings} from "/js/predefinedData.js";
   const accessToken = localStorage.getItem('Authorization');
+  const curUserId = localStorage.getItem('userId');
   const profileInterestContainer = document.getElementById('profileInterestContainer');
   const interestDropdown = document.getElementById('interestDropdown');
   const profileInterestText = document.getElementById('profileInterestText');
@@ -376,6 +377,7 @@
         if (data.interest) {
           data.interest.split(',').forEach(value => {
             selectedInterestValues.add(value);
+            console.log(value)
           });
           updateSelectedInterests();
         }
@@ -426,15 +428,15 @@
       formData.append('smoking', document.getElementById('profileSmoking').value.trim());
       formData.append('alcohol', document.getElementById('profileAlcohol').value.trim());
       formData.append('jobs', document.getElementById('profileJobs').value.trim());
-      formData.append('interest', Array.from(selectedInterestValues).join(', '));
+      formData.append('interest', Array.from(selectedInterestValues).join(','));
       formData.append('education', document.getElementById('profileEducation').value.trim());
-      formData.append('ideal', Array.from(selectedIdealValues).join(', '));
+      formData.append('ideal', Array.from(selectedIdealValues).join(','));
       formData.append('personality', document.getElementById('profilePersonality').value.trim());
       formData.append('religion', document.getElementById('profileReligion').value.trim());
       formData.append('pros', document.getElementById('profilePros').value.trim());
       formData.append('relationship', document.getElementById('profileRelationship').value.trim());
 
-      fetch(`/profiles/0`, {
+      fetch(`/profiles/${curUserId}`, {
         method: 'PATCH',
         headers: { 'Authorization': accessToken },
         body: formData
@@ -530,89 +532,6 @@
       }
     });
 
-    function getCurrentUserId() {
-      return fetch('/users/only', {
-        method: 'GET',
-        headers: {
-          'Authorization': accessToken,
-          'Content-Type': 'application/json'
-        }
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.statusCode === 200 && data.data && data.data.id) {
-          return data.data.id;
-        } else {
-          throw new Error('Failed to get user ID');
-        }
-      });
-    }
-
-
-    // 프로필 정보를 불러오는 함수
-    function loadProfileAndUserBoards() {
-      getCurrentUserId()
-      .then(id => {
-        userId = id;
-        return fetch('/profiles/', {
-          method: 'GET',
-          headers: {
-            'Authorization': accessToken,
-            'Content-Type': 'application/json'
-          }
-        });
-      })
-      .then(response => response.json())
-      .then(responseData => {
-        if (responseData.statusCode === 200) {
-          const data = responseData.data;
-
-
-          // 프로필 정보 처리
-          document.getElementById('profilePicture').src = data.image;
-          document.getElementById('profileName').textContent = data.name;
-          document.getElementById('profileRegionText').textContent = data.position;
-          document.getElementById('profileLocation').textContent = data.position;
-          document.getElementById('profileBirth').textContent = data.birth;
-          document.getElementById('profileHobby').value = data.hobby;
-          document.getElementById('profileMbti').value = data.mbti;
-          document.getElementById('profileDescription').textContent = data.content;
-
-          populateSelectElement('profileSmoking', smokings, data.smoking);
-          populateSelectElement('profileAlcohol', alcoholPreferences, data.alcohol);
-          populateSelectElement('profileJobs', jobTypes, data.jobs);
-          populateSelectElement('profileEducation', educationLevels, data.education);
-          populateSelectElement('profilePersonality', personalities, data.personality);
-          populateSelectElement('profileReligion', religions, data.religion);
-          populateSelectElement('profilePros', pros, data.pros);
-          populateSelectElement('profileRelationship', relationships, data.relationship);
-
-          if (data.interest) {
-            data.interest.split(', ').forEach(value => {
-              selectedInterestValues.add(value);
-            });
-            updateSelectedInterests();
-          }
-
-          if (data.ideal) {
-            data.ideal.split(', ').forEach(value => {
-              selectedIdealValues.add(value);
-            });
-            updateSelectedIdeals();
-          }
-
-          // userId를 얻은 후 바로 userboards를 로드
-          return loadUserBoards(userId);
-        } else {
-          throw new Error(responseData.message || 'Failed to load profile data');
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        userboardGrid.innerHTML = `<p>Failed to load profile or userboards: ${error.message}</p>`;
-      });
-    }
-
     function loadUserBoards(userId) {
       if (!userId) {
         throw new Error('User ID is not available');
@@ -659,8 +578,7 @@
       });
     }
 
-    // 초기 로드
-    loadProfileAndUserBoards();
+    loadUserBoards(curUserId);
   });
 </script>
 
