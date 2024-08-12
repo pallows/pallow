@@ -108,4 +108,12 @@ public class ProfileController {
                 new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS, responseDto));
     }
 
+    @GetMapping("/near")
+    public ResponseEntity<CommonResponseDto> getNearProfiles(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            List<ProfileResponseDto> responseDto = profileService.getNearProfiles(userDetails.getUser().getId());
+        return ResponseEntity.ok(
+                new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
+    }
+
 }

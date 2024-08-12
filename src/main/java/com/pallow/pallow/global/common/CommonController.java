@@ -64,13 +64,18 @@ public class CommonController {
         return "meetsCollection";
     }
 
+    @GetMapping("/public/profileCollection")
+    public String profileCollectionPage() {
+        return "profileCollection";
+    }
+
     @GetMapping("/public/userboardCollection")
     public String getUserBoardCollection(Model model,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "16") int size) {
         Page<UserBoardResponseDto> profiles = userBoardService.getUserBoardsPage(page, size);
         model.addAttribute("profiles", profiles);
-        return "userboardCollection";
+        return "profileCollection";
     }
 
     @GetMapping("/public/MyPage")

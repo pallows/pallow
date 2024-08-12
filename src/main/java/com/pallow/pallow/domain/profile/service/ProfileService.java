@@ -196,4 +196,15 @@ public class ProfileService {
     private boolean isSameIdAndUser(Long userId, User user) {
         return user.getId().equals(userId);
     }
+
+    public List<ProfileResponseDto> getNearProfiles(Long userId) {
+        Profile foundUser = profileRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+        String[] positionParts = foundUser.getPosition().split(" ");
+
+        String first = positionParts.length > 0 ? positionParts[0].trim() : "";
+        String second = positionParts.length > 1 ? positionParts[1].trim() : "";
+        String third = positionParts.length > 2 ? positionParts[2].trim() : "";
+        return profileCustomRepository.findTop9NearestProfiles(userId, first, second, third);
+    }
 }
