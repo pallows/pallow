@@ -38,7 +38,6 @@ public class ChatWebsocketController {
     public void connect(SimpMessageHeaderAccessor headerAccessor) {
         Authentication auth = (Authentication) headerAccessor.getUser();
         String nickname = ((UserDetailsImpl) auth.getPrincipal()).getNickname();
-        log.info("WebSocket connected for user: {}", nickname);
     }
 
     @Autowired
