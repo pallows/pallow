@@ -84,7 +84,6 @@ public class ProfileController {
             @ModelAttribute @Valid ProfileRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable Long userId) {
-        if (userId == 0) {userId = userDetails.getUser().getId();}
         ProfileResponseDto responseDto = profileService.updateProfile(userId, requestDto,
                 userDetails.getUser());
         return ResponseEntity.ok(

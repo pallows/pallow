@@ -12,6 +12,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -61,20 +63,23 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             FilterChain chain, Authentication authResult) throws IOException {
         log.info("로그인 성공 및 토큰 생성");
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
+        Long userId = ((UserDetailsImpl) authResult.getPrincipal()).getId();
 
         String accessToken = tokenProvider.createAccessToken(username);
         String refreshToken = UUID.randomUUID().toString();
 
-//        res.addHeader(TokenProvider.ACCESS_TOKEN_HEADER, accessToken);
         res.setHeader(TokenProvider.ACCESS_TOKEN_HEADER, accessToken);
         tokenProvider.saveRefreshTokenToCookie(refreshToken, res);
         refreshTokenService.save(username, refreshToken);
         res.setStatus(SC_OK);
         res.setCharacterEncoding("UTF-8");
         res.setContentType("application/json");
-        String json = new ObjectMapper().writeValueAsString(
-                new AuthenticatedResponse(accessToken, "로그인 성공")
-        );
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("accessToken", accessToken);
+        responseBody.put("message", "로그인 성공");
+        responseBody.put("userId", userId);
+
+        String json = new ObjectMapper().writeValueAsString(responseBody);
         res.getWriter().write(json);
     }
 
