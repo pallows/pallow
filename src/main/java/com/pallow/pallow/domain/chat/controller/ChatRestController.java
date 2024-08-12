@@ -39,39 +39,27 @@ public class ChatRestController {
 
     @PostMapping(value = "/rooms", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> createChatRoom(@RequestBody ChatRoomDto chatRoomDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        log.info("채팅방을 생성합니다. 사용자: {}, 채팅방 이름: {}, 상대방: {}",
-                userDetails.getNickname(),
-                chatRoomDto.getName(),
-                chatRoomDto.getOtherUserNickname());
         try {
             ChatRoomDto chatRoom = chatService.createChatRoom(
                     chatRoomDto.getName(),
                     userDetails.getNickname(),
                     chatRoomDto.getOtherUserNickname()
             );
-            log.info("채팅방 생성 완료: {}", chatRoom.getName());
             return ResponseEntity.ok(new ApiResponse(Message.ROOM_CREATE_SUCCESS, chatRoom));
         } catch (CustomException e) {
-            log.error("상대방 사용자를 찾을 수 없습니다: {}", e.getMessage());
             return ResponseEntity.badRequest().body(new ApiResponse(ErrorType.NOT_FOUND_USER, null));
         } catch (Exception e) {
-            log.error("채팅방 생성 실패", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ErrorType.INTERNAL_SERVER_ERROR, null));
         }
     }
 
     @GetMapping("/rooms/{roomId}")
     public ResponseEntity<ApiResponse> enterChatRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        log.info("Entering chat room: {}, User: {}", roomId, userDetails.getNickname());
 
         try {
             ChatRoomResponseDto response = chatService.enterChatRoom(roomId, userDetails.getNickname());
-            log.info("Successfully entered chat room: {}, User: {}", roomId, userDetails.getNickname());
-
             return ResponseEntity.ok(new ApiResponse(Message.ROOM_ENTER_SUCCESS, response));
         } catch (Exception e) {
-            log.error("Failed to enter chat room: {}, User: {}", roomId, userDetails.getNickname(), e);
-
             throw new CustomException(ErrorType.NOT_FOUND_CHATROOM);
         }
     }
@@ -83,20 +71,15 @@ public class ChatRestController {
         }
         try {
             messageDto.setSender(userDetails.getNickname());
-            log.info("Attempting to send message. User: {}, ChatRoom: {}", userDetails.getNickname(), messageDto.getChatRoomId());
             ChatMessageDto sendMessage = chatService.sendAndSaveMessage(messageDto, userDetails.getNickname());
-            log.info("Message sent successfully. MessageId: {}", sendMessage.getId());
-
             messagingTemplate.convertAndSend("/topic/chat/" + messageDto.getChatRoomId(), sendMessage);
 
 
 
             return ResponseEntity.ok(new ApiResponse(Message.MESSAGE_CREATE_SUCCESS, sendMessage));
         } catch (CustomException e) {
-            log.error("User not found: {}", userDetails.getNickname(), e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ErrorType.NOT_FOUND_USER, null));
         } catch (Exception e) {
-            log.error("Error sending message", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ErrorType.INTERNAL_SERVER_ERROR, null));
         }
     }
@@ -104,7 +87,6 @@ public class ChatRestController {
     @GetMapping("/rooms")
     public ResponseEntity<ApiResponse> getChatRooms(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         try {
-       log.info("test get    ");
             List<ChatRoomDto> chatRooms = chatService.getChatRoomsForUser(
                     userDetails.getNickname());
             return ResponseEntity.ok(new ApiResponse(Message.ROOM_READ_SUCCESS, chatRooms));
@@ -128,17 +110,13 @@ public class ChatRestController {
 
     @DeleteMapping("/rooms/{roomId}")
     public ResponseEntity<ApiResponse> deleteChatRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        log.info("Attempting to delete chat room: {}, User: {}", roomId, userDetails.getNickname());
         try {
             chatService.deleteChatRoom(roomId, userDetails.getNickname());
-            log.info("Successfully deleted chat room: {}", roomId);
             return ResponseEntity.ok(new ApiResponse(Message.ROOM_DELETE_SUCCESS, null));
         } catch (CustomException e) {
-            log.error("Custom exception while deleting chat room: {}", e.getMessage());
             return ResponseEntity.status(e.getErrorType().getStatus())
                     .body(new ApiResponse(e.getErrorType(), null));
         } catch (Exception e) {
-            log.error("Unexpected error while deleting chat room: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse(ErrorType.INTERNAL_SERVER_ERROR, null));
         }

@@ -126,22 +126,11 @@ public class ProfileService {
         List<ProfileItem> items = new ArrayList<>();
         profileList.forEach(profile -> items.add(profileMapper.toRequestItem(profile)));
 
-        // 로그 추가: 전송 데이터 확인
-        log.info("Items to be sent to Flask: {}", items);
-        log.info("Sending request to Flask with data: {}", FlaskRequestDto.builder()
-                .id(currentUserProfile.get().getId())
-                .profiles(items)
-                .build());
-
         // send request to flask
         FlaskResponseDto responseDto = sendRequestToFlask(FlaskRequestDto.builder()
                 .id(currentUserProfile.get().getId())
                 .profiles(items)
                 .build());
-
-        // 로그 추가: 응답 데이터 확인
-        log.info("Received response from Flask: {}", responseDto);
-        log.info("Received sorted ID list from Flask: {}", responseDto.getData().getSortedIdList());
 
         // make response
         List<ProfileFlaskResponseDto> results = new ArrayList<>();
@@ -179,10 +168,6 @@ public class ProfileService {
                     FlaskResponseDto.class
             );
 
-            // 로그 추가: 요청과 응답 정보 확인
-            log.info("Request sent to Flask: {}", requestDto);
-            log.info("Response received from Flask: {}", responseEntity.getBody());
-
             return responseEntity.getBody();
         } catch (HttpClientErrorException e) {
             log.error("HTTP error while sending request to Flask: {}", e.getMessage());
@@ -193,5 +178,16 @@ public class ProfileService {
 
     private boolean isSameIdAndUser(Long userId, User user) {
         return user.getId().equals(userId);
+    }
+
+    public List<ProfileResponseDto> getNearProfiles(Long userId) {
+        Profile foundUser = profileRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+        String[] positionParts = foundUser.getPosition().split(" ");
+
+        String first = positionParts.length > 0 ? positionParts[0].trim() : "";
+        String second = positionParts.length > 1 ? positionParts[1].trim() : "";
+        String third = positionParts.length > 2 ? positionParts[2].trim() : "";
+        return profileCustomRepository.findTop9NearestProfiles(userId, first, second, third);
     }
 }

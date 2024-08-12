@@ -69,10 +69,6 @@ public class InvitedBoardService {
 
     @Transactional
     public void acceptApply(long groupId, long userId, User user) {
-        log.info("groupId : {} ", groupId);
-        log.info("userId : {} ", userId);
-        log.info("user : {} ", user.getId());
-        log.info("isUserGroupCreator(groupId, user) : {}", isUserGroupCreator(groupId, user));
         Meets meets = meetsRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_GROUP));
 

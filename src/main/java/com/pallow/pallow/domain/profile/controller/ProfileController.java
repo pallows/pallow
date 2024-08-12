@@ -99,13 +99,21 @@ public class ProfileController {
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_DELETE_SUCCESS));
     }
 
-    @GetMapping("/recommendations")
+    @GetMapping("/todays-friends")
     public ResponseEntity<CommonResponseDto> getRecommendedProfiles(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         List<ProfileFlaskResponseDto> responseDto = profileService.recommendProfiles(
                 userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_RECOMMENDATION_SUCCESS, responseDto));
+    }
+
+    @GetMapping("/near")
+    public ResponseEntity<CommonResponseDto> getNearProfiles(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            List<ProfileResponseDto> responseDto = profileService.getNearProfiles(userDetails.getUser().getId());
+        return ResponseEntity.ok(
+                new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
     }
 
 }

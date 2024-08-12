@@ -64,6 +64,11 @@ public class CommonController {
         return "meetsCollection";
     }
 
+    @GetMapping("/public/profileCollection")
+    public String profileCollectionPage() {
+        return "profileCollection";
+    }
+
     @GetMapping("/public/userboardCollection")
     public String getUserBoardCollection(Model model,
             @RequestParam(defaultValue = "0") int page,

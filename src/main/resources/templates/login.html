@@ -19,9 +19,6 @@
 <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
     <div class="mb-6 text-center">
         <picture>
-            <!-- WebP 포맷을 지원하는 브라우저에서 사용 -->
-            <source srcset="https://github.com/pallows/pallow/raw/front-2/src/main/resources/static/images/352892618-38c43d3b-dce7-422c-b89a-572308799e96.webp" type="image/webp">
-            <!-- PNG 포맷을 대체로 제공 -->
             <source srcset="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" type="image/png">
             <!-- 기본 이미지 (백업용) -->
             <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" alt="Team Logo" class="mx-auto mb-4">
@@ -68,7 +65,7 @@
                 username = username.trim();
                 password = password.trim();
             } else {
-                alert('Username or password field is empty or not found.');
+                alert('아이디 또는 비밀번호를 입력해주세요.');
                 return;
             }
 
@@ -82,17 +79,25 @@
                     if (accessToken) {
                         localStorage.setItem('Authorization', accessToken);
                         localStorage.setItem('username', username);
-                        alert('Login successful!');
+                        alert('로그인에 성공하였습니다!');
                         window.location.href = '/public/main';
                     } else {
                         alert('Login failed: Access token not found.');
                     }
                 },
                 error: function(xhr) {
-                    alert("Login failed: " + xhr.responseText);
+                    try {
+                        const errParts = xhr.responseText.split(",");
+                        let errMsg = errParts.find(part => part.includes('"msg"')).split(":")[1];
+                        errMsg = errMsg.replace(/["}]/g, '').trim();
+                        alert(errMsg);
+                    } catch (e) {
+                        alert("Login failed: " + xhr.responseText);
+                    }
                 }
             });
         }
+
     </script>
 </div>
 

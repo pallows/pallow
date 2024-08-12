@@ -63,25 +63,20 @@ public class ChatService {
      */
     @Transactional
     public ChatRoomDto createChatRoom(String roomName, String user1Nickname, String user2Nickname) throws CustomException {
-        log.info("Creating chat room: {}, User1: {}, User2: {}", roomName, user1Nickname, user2Nickname);
-
         User user1 = findUserByNickname(user1Nickname);
         User user2 = findUserByNickname(user2Nickname);
 
         if (user1 == null || user2 == null) {
-            log.error("One or both users not found: {}, {}", user1Nickname, user2Nickname);
             throw new CustomException(ErrorType.NOT_FOUND_USER);
         }
 
         if (user1.equals(user2)) {
-            log.error("Cannot create a chat room with the same user: {}", user1Nickname);
             throw new CustomException(ErrorType.INVALID_USER_COMBINATION);
         }
 
         // 이미 존재하는 1:1 채팅방인지 확인
         Optional<ChatRoom> existingRoom = chatRoomRepository.findByUsersIn(Arrays.asList(user1, user2), 2L);
         if (existingRoom.isPresent()) {
-            log.info("Existing chat room found: {}", existingRoom.get());
             return convertToChatRoomDto(existingRoom.get());
         }
 
@@ -89,12 +84,10 @@ public class ChatService {
                 .name(roomName)
                 .build();
         chatRoom = chatRoomRepository.save(chatRoom);
-        log.info("Chat room saved: {}", chatRoom);
 
         UserAndChatRoom userAndChatRoom = new UserAndChatRoom(user1, user2, chatRoom);
         chatRoom.getUserAndChatRooms().add(userAndChatRoom);
         chatRoomRepository.save(chatRoom);
-        log.info("Users added to chat room: {}, {}", user1, user2);
 
         // 초대 메시지 생성
         ChatMessage inviteMessage = ChatMessage.builder()
@@ -104,7 +97,6 @@ public class ChatService {
                 .type(MessageType.INVITATION)
                 .build();
         chatMessageRepository.save(inviteMessage);
-        log.info("Invitation message saved: {}", inviteMessage);
 
         return convertToChatRoomDto(chatRoom);
     }
@@ -118,7 +110,6 @@ public class ChatService {
                 .isActive(true)
                 .build();
         userAndChatRoomRepository.save(userAndChatRoom);
-        log.info("UserAndChatRoom saved: {}", userAndChatRoom);
     }
 
 
@@ -172,7 +163,6 @@ public class ChatService {
                 .content(messageDto.getContent())
                 .type(messageDto.getType() != null ? messageDto.getType() : MessageType.CHAT)
                 .build();
-        log.info("Saving message: {}", message);
         message = chatMessageRepository.save(message);
         return convertToChatMessageDto(message);
     }

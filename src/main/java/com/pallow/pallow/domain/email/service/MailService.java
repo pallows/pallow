@@ -29,7 +29,6 @@ public class MailService {
 
     @Async
     public void sendMail(EmailInputRequestDto emailInputRequestDto) {
-        log.info("이메일 리퀘스트 DTO : {} ", emailInputRequestDto);
         String code = generateVerificationCode();
         ValueOperations<String, Object> emailAndCode = redisTemplate.opsForValue();
         emailAndCode.set(emailInputRequestDto.getEmail(), code, 5, TimeUnit.MINUTES);
@@ -69,7 +68,6 @@ public class MailService {
                 return "True";
             }
         }
-        log.info("이메일 인증 실패");
         throw new CustomException(ErrorType.MAIL_MISMATCH_OR_CODE_FORBIDDEN);
     }
 }
