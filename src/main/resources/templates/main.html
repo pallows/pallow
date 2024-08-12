@@ -79,10 +79,6 @@
 
         </nav>
     </div>
-    <div class="flex items-center">
-        <button id="profileBtn" class="mr-4">내 프로필</button>
-        <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
-    </div>
 </header>
 
 <main class="p-4">
@@ -200,9 +196,12 @@
             }
         });
 
-        async function createCarousel(containerId, dotsId, apiEndpoint) {
+        async function createCarousel(containerId, dotsId, apiEndpoint, urlPattern) {
             const container = document.getElementById(containerId);
             const dotsContainer = document.getElementById(dotsId);
+
+            const response = await fetchWithAuth(apiEndpoint);
+            console.log('Response:', response);
 
             try {
                 console.log(`Fetching data from: ${apiEndpoint}`);
@@ -235,11 +234,23 @@
                     card.className = 'carousel-item bg-white p-4 shadow mr-4';
                     card.style.width = '300px';
                     card.style.height = '200px';
-                    card.innerHTML = `
+
+                    const profileUrl = urlPattern.replace('{id}', item.id);
+
+                    // Create the anchor element wrapping the card content
+                    const link = document.createElement('a');
+                    link.href = profileUrl; // Use the `link` property from the item data or `#` if not present
+                    link.target = '_blank'; // Optional: open in a new tab
+
+                    // Set the inner HTML of the card
+                    link.innerHTML = `
                 <img src="${item.image || 'https://via.placeholder.com/280x120'}" alt="Thumbnail" class="mb-2 w-full h-24 object-cover">
-                <h3 class="font-bold">${item.title}</h3>
-                <p class="text-sm">${item.content.substring(0, 50)}${item.content.length > 50 ? '...' : ''}</p>
+                <h3 class="font-bold">${item.name}</h3>
+                <p class="text-sm">${item.mbti}</p>
             `;
+
+                    // Append the link to the card
+                    card.appendChild(link);
                     container.appendChild(card);
                 });
 
@@ -254,7 +265,7 @@
                 let currentIndex = 0;
 
                 function updateCarousel() {
-                    container.style.transform = `translateX(-${currentIndex * 33.33}%)`;
+                    container.style.transform = `translateX(-${currentIndex * 33.3}%)`;
                     Array.from(dotsContainer.children).forEach((dot, index) => {
                         dot.classList.toggle('active', index === Math.floor(currentIndex / 3));
                     });
@@ -287,9 +298,9 @@
         }
 
         // Initialize carousels
-        createCarousel('carousel1', 'dots1', '/todays-friends');
-        createCarousel('carousel2', 'dots2', '/api/meets/popular');
-        createCarousel('carousel3', 'dots3', '/api/meets/nearby');
+        createCarousel('carousel1', 'dots1', '/profiles/todays-friends', '/profiles/{id}');
+        createCarousel('carousel2', 'dots2', '/api/meets/popular', '/public/meets/{id}');
+        createCarousel('carousel3', 'dots3', '/api/meets/nearby', '/public/meets/{id}');
 
 
         document.getElementById('profileBtn').addEventListener('click', () => {

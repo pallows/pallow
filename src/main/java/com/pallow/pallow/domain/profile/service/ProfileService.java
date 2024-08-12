@@ -159,6 +159,8 @@ public class ProfileService {
             log.warn("No profiles found to remove.");
         }
 
+        log.info("Received sorted ID list from Flask: {}", responseDto.getData().getSortedIdList());
+
         return results;
     }
 
