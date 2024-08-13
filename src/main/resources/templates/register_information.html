@@ -288,11 +288,20 @@
     }
 
     try {
-      const response = await fetch('/profiles', {
-        method: 'POST',
-        body: formData,
-      });
-
+      const urlParams = new URLSearchParams(window.location.search);
+      const curUserId = urlParams.get('userId');
+      let response;
+      if (curUserId != null) {
+         response = await fetch(`/profiles?userId=${curUserId}`, {
+          method: 'POST',
+          body: formData,
+        });
+      } else {
+         response = await fetch('/profiles', {
+          method: 'POST',
+          body: formData,
+        });
+      }
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
