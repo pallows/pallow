@@ -55,10 +55,15 @@ public class ProfileController {
      */
     @PostMapping
     public ResponseEntity<CommonResponseDto> createProfile(
-            @ModelAttribute("ProfileRequestDto") @Valid ProfileRequestDto requestDto,
+            @ModelAttribute("ProfileRequestDto") @Valid ProfileRequestDto requestDto, @RequestParam(value = "userId", required = false) Long userId,
             @RequestParam("username") String username, @RequestParam(value = "defaultImage", required = false) String defaultImage) {
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_USER));
+        User user;
+        if (userId != null) {
+            user = userRepository.findById(userId).orElseThrow(
+                    () -> new CustomException(ErrorType.NOT_FOUND_USER));
+        } else {
+            user = userRepository.findByUsername(username).orElseThrow();
+        }
         ProfileResponseDto responseDto = profileService.createProfile(requestDto, user, defaultImage);
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_CREATE_SUCCESS, responseDto));
