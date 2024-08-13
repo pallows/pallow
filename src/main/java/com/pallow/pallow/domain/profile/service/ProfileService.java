@@ -55,12 +55,6 @@ public class ProfileService {
         return new ProfileResponseDto(foundUser, foundUser.getUser().getUsername());
     }
 
-    public ProfileResponseDto getMyProfile(Long userId) {
-        Profile foundUser = profileRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
-    }
-
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user, String defaultImage) {
         String imageUrl;
         if (requestDto.getImage() == null || requestDto.getImage().isEmpty()) {
