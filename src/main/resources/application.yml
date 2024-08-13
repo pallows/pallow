@@ -74,3 +74,6 @@ cloud:
     s3:
       bucket: pallowbucket
 
+flask:
+  server:
+    url: ${FLASK_URL}

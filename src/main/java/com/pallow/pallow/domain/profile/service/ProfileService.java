@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,9 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
+
+    @Value("${FLASK_URL}")
+    private String flaskServerUrl;
 
     private final ImageService imageService;
 
@@ -163,7 +167,7 @@ public class ProfileService {
 
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<FlaskResponseDto> responseEntity = restTemplate.postForEntity(
-                    "http://localhost:8000/api/profile/recommend",
+                    flaskServerUrl + "/api/profile/recommend",
                     new HttpEntity<>(requestDto, headers),
                     FlaskResponseDto.class
             );
