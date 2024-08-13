@@ -106,6 +106,8 @@ jobs:
                 -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
                 -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
                 -e FLASK_URL=${{ secrets.FLASK_URL }} \
+                -e AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} \
+                -e AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }} \
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
 
             # Check the logs for debugging
