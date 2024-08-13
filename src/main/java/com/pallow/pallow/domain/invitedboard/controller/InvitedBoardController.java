@@ -10,6 +10,8 @@ import com.pallow.pallow.global.security.UserDetailsImpl;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/groups/{groupId}/invitation")
 @RequiredArgsConstructor
@@ -31,6 +34,11 @@ public class InvitedBoardController {
             @PathVariable("groupId") long groupId,
             @RequestBody InvitedBoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (invitedBoardService.declinedUser(userDetails.getUser())) {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(new CommonResponseDto(Message.DECLINED_APPLY_SUCCESS));
+        }
         invitedBoardService.applyForGroup(groupId, requestDto, userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.APPLY_FOR_GROUP_SUCCESS));
     }

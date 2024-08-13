@@ -15,9 +15,11 @@ import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.InviteStatus;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.s3.service.ImageService;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +63,6 @@ public class MeetsService {
                 .build();
 
         meetsRepository.save(meets);
-
         // entity -> responseDto
         return new MeetsResponseDto(meets);
     }
@@ -72,6 +73,7 @@ public class MeetsService {
     public MeetsResponseDto getMeets(Long meetsId) {
         Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
                 () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+        meets.updateMemberList();
         return new MeetsResponseDto(meets);
     }
 
@@ -139,6 +141,7 @@ public class MeetsService {
 
     /**
      * 그룹에 존재하는 회원 전체 조회 (그룹생성자 포함)
+     *
      * @param meetsId
      * @return
      */
@@ -158,6 +161,7 @@ public class MeetsService {
 
     /**
      * 맴버 강퇴
+     *
      * @param meetsId
      * @param userId
      * @param user
@@ -182,6 +186,7 @@ public class MeetsService {
 
     /**
      * 좋아요 토글
+     *
      * @param meetsId
      * @param user
      */

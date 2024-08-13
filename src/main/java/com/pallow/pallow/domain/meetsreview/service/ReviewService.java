@@ -12,12 +12,16 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -66,6 +70,7 @@ public class ReviewService {
      */
     public List<ReviewResponseDto> getAllReview(Long meetsId) {
         List<MeetsReview> reviewList = reviewRepository.findAllByMeetsId(meetsId);
+        log.info("reviewList : {}", reviewList);
         return reviewList.stream()
                 .map(ReviewResponseDto::new)
                 .collect(Collectors.toList());
@@ -76,7 +81,7 @@ public class ReviewService {
      */
     @Transactional
     public ReviewResponseDto update(Long meetsId, Long reviewId, ReviewRequestDto requestDto,
-            User user) {
+                                    User user) {
         MeetsReview review = getValidatedMeetsAndReview(meetsId, reviewId);
 
         // 리뷰 작성자인지 검사
@@ -126,6 +131,7 @@ public class ReviewService {
 
     /**
      * 좋아요 토글
+     *
      * @param reviewId
      * @param user
      */

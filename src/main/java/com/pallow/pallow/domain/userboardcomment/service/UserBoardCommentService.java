@@ -11,7 +11,9 @@ import com.pallow.pallow.domain.userboardcomment.entity.UserBoardComment;
 import com.pallow.pallow.domain.userboardcomment.repository.UserBoardCommentRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,8 +29,9 @@ public class UserBoardCommentService {
     private final UserBoardCommentRepository userBoardCommentRepository;
     private final UserBoardRepository userBoardRepository;
 
+
     public UserBoardCommentResponseDto createComment(long boardId, User user,
-            UserBoardCommentRequestDto requestDto) {
+                                                     UserBoardCommentRequestDto requestDto) {
         User createdBy = userService.findUserById(user.getId());
         UserBoard userBoard = userBoardRepository.findById(boardId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_BOARD));
@@ -45,7 +48,7 @@ public class UserBoardCommentService {
 
     @Transactional
     public UserBoardCommentResponseDto updateComment(long commentId,
-            User user, UserBoardCommentRequestDto requestDto) {
+                                                     User user, UserBoardCommentRequestDto requestDto) {
         UserBoardComment comment = userBoardCommentRepository.findById(commentId)
                 .orElseThrow(() -> new CustomException(
                         ErrorType.NOT_FOUND_USER_BOARD_COMMENT));
@@ -68,12 +71,13 @@ public class UserBoardCommentService {
 
     /**
      * 좋아요 토글
+     *
      * @param userBoardId
      * @param user
      */
     @Transactional
     public void toggleLike(Long userBoardId, User user) {
-        likeService.toggleLike(userBoardId, user, userBoardRepository);
+        likeService.toggleLike(userBoardId, user, userBoardCommentRepository);
     }
 
     private boolean isSameIdAndUser(long userId, User user) {

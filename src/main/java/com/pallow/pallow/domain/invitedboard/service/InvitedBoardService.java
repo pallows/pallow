@@ -53,9 +53,15 @@ public class InvitedBoardService {
         if (isAppliedUser(wantToApplyUser, meet)) {
             throw new CustomException(ErrorType.ALREADY_APPLIED_GROUP);
         }
-
         applyUserToGroup(user, meet);
     }
+
+    public boolean declinedUser(User user) {
+        InvitedBoard invitedUser = invitedBoardRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+        return invitedUser.getStatus() == InviteStatus.DECLINED; // true 면 거절당한유저
+    }
+
 
     private boolean isAppliedUser(User user, Meets meets) {
         return userRepository.existsById(user.getId())

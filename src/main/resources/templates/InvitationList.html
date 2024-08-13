@@ -30,10 +30,11 @@
 <script>
     const accessToken = localStorage.getItem('Authorization');
     document.addEventListener('DOMContentLoaded', function () {
-        //   const urlParams = new URLSearchParams(window.location.search);
-        //    const meetId = urlParams.get('meetId'); // URL 에 해당 그룹에 대한 아이디 가져옴
+        const urlParams = new URLSearchParams(window.location.search);
+        const meetId = urlParams.get('meetId'); // URL 에 해당 그룹에 대한 아이디 가져옴
         const accessToken = localStorage.getItem("Authorization")
-        const meetId = 1;
+
+
         fetch(`/groups/${meetId}/invitation`, {
             method: 'GET',
             headers: {

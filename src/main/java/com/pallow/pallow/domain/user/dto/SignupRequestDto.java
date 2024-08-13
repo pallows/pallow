@@ -1,5 +1,6 @@
 package com.pallow.pallow.domain.user.dto;
 
+import com.pallow.pallow.global.common.CommonOauth;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -25,6 +26,6 @@ public class SignupRequestDto {
     @NotNull(message = "성별을 선택해 주세요.")
     private String gender;
 
-//    private CommonOauth oauth;
+    private CommonOauth oauth;
 
 }

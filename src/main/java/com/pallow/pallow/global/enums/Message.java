@@ -53,6 +53,7 @@ public enum Message {
     ACCEPT_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 수락했습니다."),
     DECLINE_APPLY_SUCCESS(HttpStatus.OK, "가입 신청을 거절했습니다."),
     INVITATION_READ_SUCCESS(HttpStatus.OK, "신청 목록을 불러왔습니다."),
+    DECLINED_APPLY_SUCCESS(HttpStatus.OK, "이미 거절 당한 유저입니다."),
 
 
     // group(meets)
@@ -81,9 +82,7 @@ public enum Message {
     MESSAGE_CREATE_SUCCESS(HttpStatus.OK, "메시지를 생성하였습니다."),
 
     //likes
-    LIKES_TOGGLE_SUCCESS(HttpStatus.OK, "좋아요")
-
-   ;
+    LIKES_TOGGLE_SUCCESS(HttpStatus.OK, "좋아요");
 
 
     private final HttpStatus status;

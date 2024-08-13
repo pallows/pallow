@@ -114,9 +114,15 @@
             body: JSON.stringify({userId: currentUser.data.id})
         })
         if (invitationResponse.ok) {
-            alert('Invitation accepted successfully');
-        } else if (!invitationResponse.ok) {
-            alert("이미 신청중인 모임입니다.")
+            alert('해당 모임에 신청을 완료했습니다.');
+        } else if (invitationResponse.status === 403) {
+            // 403 Forbidden 상태 코드 확인
+            const errorResponse = await invitationResponse.json();
+            alert(errorResponse.message); // 서버에서 반환한 메시지를 표시
+        } else {
+            const errorResponse = await invitationResponse.json();
+            console.log(errorResponse)
+            alert("이미 신청중인 모임입니다.");
         }
     });
     document.addEventListener('DOMContentLoaded', function () {
@@ -146,7 +152,7 @@
                 console.error('Error fetching data:', error);
             }
         }
-
+        
         function displayMeetData(resData) {
             document.getElementById('meets-container').classList.remove('hidden');
             document.getElementById('profile-image').src = resData.creatorProfilePhoto || 'https://source.unsplash.com/random/100x100';
@@ -156,13 +162,35 @@
             document.getElementById('title').value = resData.title;
             document.getElementById('content').value = resData.content;
             document.getElementById('groupMaster').value = resData.groupCreator;
+            console.log("resData.groupCreatorId", resData.groupCreatorId)
+            checkIfGroupMaster(resData.groupCreatorId);
         }
+
+        async function checkIfGroupMaster(id) {
+            try {
+                const userResponse = await fetchWithAuth(`/users/only`);
+                const currentUser = await userResponse.json();
+                console.log("currentUser.data.id", currentUser.data.id)
+                if (currentUser.data.id !== id) {
+                    document.getElementById('deleteButton').style.display = 'none';
+                    document.getElementById('InvitationList').style.display = 'none';
+                }
+                if (currentUser.data.id === id) {
+                    document.getElementById('deleteButton').style.display = 'block';
+                    document.getElementById('InvitationList').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error checking group master:', error);
+            }
+        }
+
 
         async function fetchReviews() {
             try {
                 const response = await fetchWithAuth(`/meets/${meetId}/review`, {
                     method: 'GET'
                 });
+                console.log("meets Reviews : ", response)
                 if (!response.ok) {
                     throw new Error(`모임에 참여중인 유저가 아닙니다.`);
                 }
@@ -230,7 +258,7 @@
                 }
             } catch (error) {
                 console.error('Error creating review:', error);
-                alert('리뷰를 작성하는 중 오류가 발생했습니다. 나중에 다시 시도해주세요.');
+                alert('모임 참가자만 리뷰를 작성할 수 있습니다.');
             }
         });
     });
@@ -285,6 +313,7 @@
             likeCountElement.innerText = likesCount;
         }
     });
+
 
     // 페이지 로드 시 좋아요 상태 초기화
     initializeLikeStatus();

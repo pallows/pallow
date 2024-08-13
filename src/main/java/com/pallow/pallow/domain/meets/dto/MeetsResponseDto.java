@@ -35,6 +35,8 @@ public class MeetsResponseDto {
 
     private String groupCreator;
 
+    private Long groupCreatorId;
+
     public MeetsResponseDto(Meets meets) {
         this.id = meets.getId();
         this.title = meets.getTitle();
@@ -48,5 +50,7 @@ public class MeetsResponseDto {
         this.creatorProfilePhoto = meets.getGroupCreator().getProfile().getImage(); // 생성자의 프로필 사진 URL 설정
         this.createdAt = meets.getCreatedAt();
         this.groupCreator = meets.getGroupCreator().getNickname();
+        this.groupCreatorId = meets.getGroupCreator().getId()
+        ;
     }
 }
