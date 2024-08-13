@@ -58,7 +58,11 @@ public class InvitedBoardService {
 
     public boolean declinedUser(User user) {
         InvitedBoard invitedUser = invitedBoardRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+                .orElse(null);
+        if (invitedUser == null) {
+            // invitedUser가 null인 경우 처리
+            return false;  // false 반환
+        }
         return invitedUser.getStatus() == InviteStatus.DECLINED; // true 면 거절당한유저
     }
 

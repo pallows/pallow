@@ -113,6 +113,7 @@
             method: "POST",
             body: JSON.stringify({userId: currentUser.data.id})
         })
+        console.log("currentUser.data.id : ", currentUser.data.id)
         if (invitationResponse.ok) {
             alert('해당 모임에 신청을 완료했습니다.');
         } else if (invitationResponse.status === 403) {
@@ -152,7 +153,7 @@
                 console.error('Error fetching data:', error);
             }
         }
-        
+
         function displayMeetData(resData) {
             document.getElementById('meets-container').classList.remove('hidden');
             document.getElementById('profile-image').src = resData.creatorProfilePhoto || 'https://source.unsplash.com/random/100x100';
