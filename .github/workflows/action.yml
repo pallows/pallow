@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - main
+      - dev
 
 env:
   DOCKER_IMAGE_TAG_NAME: pal-world
@@ -73,6 +74,7 @@ jobs:
             echo "REDIRECT_URI=${{ secrets.REDIRECT_URI }}"
             echo "REDIS_HOST=${{ secrets.REDIS_HOST }}"
             echo "REDIS_PORT=${{ secrets.REDIS_PORT }}"
+            echo "FLASK_URL=${{ secrets.FLASK_URL }}"
 
             # Check if the Docker container is running
             CONTAINER_ID=$(sudo docker ps -q --filter "publish=8080-8080")
@@ -104,6 +106,7 @@ jobs:
                 -e REDIRECT_URI=${{ secrets.REDIRECT_URI }} \
                 -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
                 -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
+                -e FLASK_URL=${{ secrets.FLASK_URL }} \
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_TAG_NAME }}:latest
 
             # Check the logs for debugging
