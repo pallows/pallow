@@ -48,7 +48,8 @@ public class UserService {
                 dto.getName(),
                 Gender.fromString(dto.getGender()),
                 passwordEncoder.encode(dto.getPassword()),
-                Role.USER);
+                Role.USER,
+                dto.getKakaoId());
         userRepository.save(creadtedUser);
         return creadtedUser;
     }

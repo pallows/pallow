@@ -28,4 +28,6 @@ public class SignupRequestDto {
 
     private CommonOauth oauth;
 
+    private Long kakaoId;
+
 }

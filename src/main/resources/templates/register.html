@@ -99,7 +99,8 @@
             <button type="submit" class="bg-green-500 text-white w-full px-4 py-2 rounded-lg">회원가입
             </button>
         </div>
-        <input TYPE="hidden" id="oauth" name="oauth" value="LOCAL">
+        <input type="hidden" id="oauth" value="LOCAL">
+        <input type="hidden" id="kakaoId" value="">
     </form>
 </div>
 
@@ -173,8 +174,12 @@
 <script type="module">
     const urlParams = new URLSearchParams(window.location.search);
     const oauth = urlParams.get('oauth');
+    const kakaoId = urlParams.get('kakaoId');
     if (oauth) {
         document.getElementById('oauth').value = oauth;
+    }
+    if (kakaoId) {
+        document.getElementById('kakaoId').value = kakaoId;
     }
     document.getElementById('registerForm').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -185,6 +190,7 @@
         const email = document.getElementById('email').value;
         const name = document.getElementById("name").value;
         const oauth = document.getElementById('oauth').value;
+        const kakaoId = document.getElementById('kakaoId').value;
         const gender = document.querySelector('input[name="gender"]:checked').value;
         const isEmailVerified = $("#Confirm").val();
 
@@ -210,6 +216,7 @@
                 password: password,
                 email: email,
                 oauth: oauth,
+                kakaoId: kakaoId,
                 gender: gender
             }),
             success: function (response) {
