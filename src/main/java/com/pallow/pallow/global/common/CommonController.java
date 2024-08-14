@@ -6,6 +6,7 @@ import com.pallow.pallow.domain.profile.service.ProfileService;
 import com.pallow.pallow.domain.userboard.dto.UserBoardResponseDto;
 import com.pallow.pallow.domain.userboard.service.UserBoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +20,9 @@ public class CommonController {
     private final MeetsService meetsService;
     private final UserBoardService userBoardService;
     private final ProfileService profileService;
+
+    @Value("${kakao.map.app-key}")
+    private String kakaoMapAppKey;
 
     @GetMapping("/")
     public String home() {
@@ -52,7 +56,8 @@ public class CommonController {
     }
 
     @GetMapping("/public/register_information")
-    public String registerInformationPage() {
+    public String registerInformationPage(Model model) {
+        model.addAttribute("kakaoMapAppKey", kakaoMapAppKey);
         return "register_information";
     }
 
@@ -103,7 +108,8 @@ public class CommonController {
     public String popularMeets() { return "popularMeets"; }
 
     @GetMapping("/public/kakaoMap")
-    public String kakaoMap() {
+    public String kakaoMap(Model model) {
+        model.addAttribute("kakaoMapAppKey", kakaoMapAppKey);
         return "kakaoMap";
     }
 }
