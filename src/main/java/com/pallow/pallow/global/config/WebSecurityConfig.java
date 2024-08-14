@@ -31,9 +31,9 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    String[] WHITE_LIST = {"/", "/users/login", "/email/**", "/users/signup","/users/me", "/public/**", "/profiles/**", "/chat.html", "/ws/**", "/InvitationList.html", "/meets.html",
+    String[] WHITE_LIST = {"/", "/users/login", "/email/**", "/users/signup", "/users/me", "/public/**", "/profiles/**", "/chat.html", "/ws/**", "/InvitationList.html", "/meets.html",
             "/chat", "/ws/**", "/topic/**", "/app/**", "/api/**", "/chat/**", "/users/only", "/uesrs/me", "/todays-friends",
-            "/userboard.html", "/main", "/main.html", "/kakaoMap.html"};
+            "/userboard.html", "/main", "/main.html", "/kakaoMap.html", "/oauth/**", "/favicon.ico", "/callback.html"};
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -61,7 +61,6 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 설정
         http.csrf(AbstractHttpConfigurer::disable);
-
         // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
         http.sessionManagement((sessionManagement) ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -21,8 +21,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +41,7 @@ public class User extends TimeStamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="user_id")
+    @Column(name = "user_id")
     private Long id;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
@@ -75,6 +77,9 @@ public class User extends TimeStamp {
     @Column
     private CommonOauth oauth;
 
+    @Column(nullable = true)
+    private Long kakaoId = null;
+
     @OneToMany(mappedBy = "groupCreator", fetch = FetchType.LAZY)
     private List<Meets> meets = new ArrayList<>();
 
@@ -86,7 +91,7 @@ public class User extends TimeStamp {
 
 
     public User(Long id, Profile profile, String username, String password, String email,
-            String nickname, Role userRole, String name, List<Meets> meets, Gender gender) {
+                String nickname, Role userRole, String name, List<Meets> meets, Gender gender) {
         this.id = id;
         this.profile = profile;
         this.username = username;
@@ -116,8 +121,8 @@ public class User extends TimeStamp {
     }
 
     public static User createdUser(String username, String nickname, String email, String name,
-            Gender gender,
-            String password, Role role) {
+                                   Gender gender,
+                                   String password, Role role, Long kakaoId) {
         User user = new User();
         user.username = username;
         user.nickname = nickname;
@@ -127,8 +132,10 @@ public class User extends TimeStamp {
         user.gender = gender;
         user.userRole = role;
         user.status = CommonStatus.ACTIVE;
+        user.kakaoId = kakaoId;
         return user;
     }
+
     public void addUserAndChatRoom(UserAndChatRoom userAndChatRoom) {
         if (this.equals(userAndChatRoom.getUser1())) {
             userAndChatRoomsAsUser1.add(userAndChatRoom);
