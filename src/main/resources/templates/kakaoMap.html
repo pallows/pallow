@@ -121,7 +121,24 @@
   const token = localStorage.getItem('Authorization');
 
   async function createMeet() {
+
+
     const formData = new FormData(document.getElementById('createMeetForm'));
+
+    // 폼 요소 가져오기
+    const location = document.getElementById('location').value;
+    const meetLocation = document.getElementById('meetLocation').value;
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+    const maxMembers = document.getElementById('maxMembers').value;
+    const image = document.getElementById('image').files.length;
+
+    // 입력 필드 검증
+    if (!location || !meetLocation || !title || !content || !maxMembers || image === 0) {
+      alert('모든 항목을 입력해 주세요.');
+      return; // 필드가 비어있으면 함수 종료
+    }
+
     try {
       await fetch(`/api/meets`, {
         method: 'POST',

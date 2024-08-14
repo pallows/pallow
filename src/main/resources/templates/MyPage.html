@@ -55,7 +55,7 @@
     </a>
     <nav>
       <a th:href="@{/public/main}" class="mr-4">홈</a>
-      <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
+      <a href="/public/profileCollection" class="mr-4">오늘의 동친</a>
       <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
       <a href="/public/MyPage" class="mr-4">MyPage</a>
     </nav>
@@ -345,7 +345,7 @@
       });
     }
 
-    fetch('/profiles/', {
+    fetch(`/profiles/${curUserId}`, {
       method: 'GET',
       headers: {
         'Authorization': accessToken,

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,9 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
+
+    @Value("${FLASK_URL}")
+    private String flaskServerUrl;
 
     private final ImageService imageService;
 
@@ -49,12 +53,6 @@ public class ProfileService {
         Profile foundUser = profileRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         return new ProfileResponseDto(foundUser, foundUser.getUser().getUsername());
-    }
-
-    public ProfileResponseDto getMyProfile(Long userId) {
-        Profile foundUser = profileRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
     }
 
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user, String defaultImage) {
@@ -151,11 +149,7 @@ public class ProfileService {
         return results;
     }
 
-    /**
-     * TODO 배포 전 localhost -> flask 서버 퍼블릭 주소로 변경 필요
-     * @param requestDto
-     * @return
-     */
+
     private FlaskResponseDto sendRequestToFlask(FlaskRequestDto requestDto) {
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -163,7 +157,7 @@ public class ProfileService {
 
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<FlaskResponseDto> responseEntity = restTemplate.postForEntity(
-                    "http://localhost:8000/api/profile/recommend",
+                    flaskServerUrl + "/api/profile/recommend",
                     new HttpEntity<>(requestDto, headers),
                     FlaskResponseDto.class
             );

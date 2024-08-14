@@ -1,12 +1,10 @@
 package com.pallow.pallow.global.security;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_OK;
-import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pallow.pallow.domain.user.dto.LoginRequestDto;
 import com.pallow.pallow.domain.user.service.RefreshTokenService;
-import com.pallow.pallow.global.dtos.AuthenticatedResponse;
 import com.pallow.pallow.global.dtos.UnauthenticatedResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +18,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j
@@ -61,9 +58,26 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res,
             FilterChain chain, Authentication authResult) throws IOException {
+
+        Long userId = ((UserDetailsImpl) authResult.getPrincipal()).getId();
+
+        if (((UserDetailsImpl) authResult.getPrincipal()).getUser().getProfile() == null) {
+            res.setStatus(SC_OK);
+            res.setCharacterEncoding("UTF-8");
+            res.setContentType("application/json");
+
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("statusCode", 302);
+            responseBody.put("message", "Redirecting to profile creation page.");
+            responseBody.put("redirectUrl", "/public/register_information?userId=" + userId);
+
+            String json = new ObjectMapper().writeValueAsString(responseBody);
+            res.getWriter().write(json);
+            return;
+        }
+
         log.info("로그인 성공 및 토큰 생성");
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
-        Long userId = ((UserDetailsImpl) authResult.getPrincipal()).getId();
 
         String accessToken = tokenProvider.createAccessToken(username);
         String refreshToken = UUID.randomUUID().toString();

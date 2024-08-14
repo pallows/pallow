@@ -1,6 +1,8 @@
 package com.pallow.pallow.global.common;
 
 import com.pallow.pallow.domain.meets.service.MeetsService;
+import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
+import com.pallow.pallow.domain.profile.service.ProfileService;
 import com.pallow.pallow.domain.userboard.dto.UserBoardResponseDto;
 import com.pallow.pallow.domain.userboard.service.UserBoardService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ public class CommonController {
 
     private final MeetsService meetsService;
     private final UserBoardService userBoardService;
+    private final ProfileService profileService;
 
     @GetMapping("/")
     public String home() {
@@ -81,6 +84,14 @@ public class CommonController {
     @GetMapping("/public/MyPage")
     public String MyPage() {
         return "MyPage";
+    }
+
+    @GetMapping("/public/Profile")
+    public String profilePage(@RequestParam Long profileId, Model model) {
+        ProfileResponseDto profile = profileService.getProfile(profileId);
+        model.addAttribute("profile", profile);
+        model.addAttribute("userId", profileId);
+        return "profile";
     }
 
     @GetMapping("/public/userboard")

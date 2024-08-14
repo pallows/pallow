@@ -71,12 +71,13 @@
     <div class="mb-4">
       <label for="birthday" class="block text-gray-700">생일</label>
       <input type="date" id="birthday" name="birth"
-             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
     </div>
     <div class="mb-4">
       <label for="mbti" class="block text-gray-700">MBTI</label>
       <select id="mbti" name="mbti"
-              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+        <option value="">선택해주세요.</option>
         <option value="INTJ">INTJ</option>
         <option value="INTP">INTP</option>
         <option value="ENTJ">ENTJ</option>
@@ -113,7 +114,7 @@
 
     <div class="mb-4">
       <label class="block text-gray-700">관심사</label>
-      <div id="interestButtons" class="flex flex-wrap">
+      <div id="interestButtons" class="flex flex-wrap" >
       </div>
       <input type="hidden" id="selectedInterests" name="interest">
     </div>
@@ -260,6 +261,17 @@
   document.getElementById('profileForm').addEventListener('submit', async function (event) {
     event.preventDefault();
 
+    const requiredFields = ['selectedInterests', 'selectedIdeals', 'selectedAlcohol',
+      'selectedPersonality', 'selectedJob', 'selectedSmoking',
+      'selectedReligion', 'selectedPros', 'selectedEducation'];
+
+    const missingFields = requiredFields.filter(id => !document.getElementById(id).value);
+
+    if (missingFields.length > 0) {
+      alert('선택되지 않은 항목이 있습니다. 당신을 더 알려주세요!');
+      return;
+    }
+
     const form = document.getElementById('profileForm');
     const formData = new FormData(form);
     let username = localStorage.getItem('username');
@@ -276,17 +288,24 @@
     }
 
     try {
-      const response = await fetch('/profiles', {
-        method: 'POST',
-        body: formData,
-      });
-
+      const urlParams = new URLSearchParams(window.location.search);
+      const curUserId = urlParams.get('userId');
+      let response;
+      if (curUserId != null) {
+         response = await fetch(`/profiles?userId=${curUserId}`, {
+          method: 'POST',
+          body: formData,
+        });
+      } else {
+         response = await fetch('/profiles', {
+          method: 'POST',
+          body: formData,
+        });
+      }
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
-      const data = await response.json();
-      alert('정상적으로 처리되었습니다.');
+      alert('프로필 생성이 완료되었습니다.');
       window.location.href = '/';
     } catch (error) {
       console.error('Error:', error);
@@ -373,7 +392,10 @@
   });
 </script>
 
+<!--<script type="text/javascript"-->
+<!--        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f4c83d9a4b318776896b44ad0eaf0ff8&libraries=services"></script>-->
 <script type="text/javascript"
-        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f4c83d9a4b318776896b44ad0eaf0ff8&libraries=services"></script>
+    src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=af9f39fb058e901de9cc5db4a059f55a&libraries=services"></script>
+
 </body>
 </html>
