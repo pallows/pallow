@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pallow.pallow.domain.user.dto.LoginRequestDto;
 import com.pallow.pallow.domain.user.service.RefreshTokenService;
 import com.pallow.pallow.global.dtos.UnauthenticatedResponse;
+import com.pallow.pallow.global.enums.CommonStatus;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -60,17 +61,23 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             FilterChain chain, Authentication authResult) throws IOException {
 
         Long userId = ((UserDetailsImpl) authResult.getPrincipal()).getId();
+        res.setStatus(SC_OK);
+        res.setCharacterEncoding("UTF-8");
+        res.setContentType("application/json");
+        Map<String, Object> responseBody = new HashMap<>();
 
         if (((UserDetailsImpl) authResult.getPrincipal()).getUser().getProfile() == null) {
-            res.setStatus(SC_OK);
-            res.setCharacterEncoding("UTF-8");
-            res.setContentType("application/json");
-
-            Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("statusCode", 302);
             responseBody.put("message", "Redirecting to profile creation page.");
             responseBody.put("redirectUrl", "/public/register_information?userId=" + userId);
 
+            String json = new ObjectMapper().writeValueAsString(responseBody);
+            res.getWriter().write(json);
+            return;
+        }
+
+        if (((UserDetailsImpl) authResult.getPrincipal()).getUser().getStatus() == CommonStatus.DELETED) {
+            responseBody.put("statusCode", 401);
             String json = new ObjectMapper().writeValueAsString(responseBody);
             res.getWriter().write(json);
             return;
@@ -85,10 +92,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         res.setHeader(TokenProvider.ACCESS_TOKEN_HEADER, accessToken);
         tokenProvider.saveRefreshTokenToCookie(refreshToken, res);
         refreshTokenService.save(username, refreshToken);
-        res.setStatus(SC_OK);
-        res.setCharacterEncoding("UTF-8");
-        res.setContentType("application/json");
-        Map<String, Object> responseBody = new HashMap<>();
+
         responseBody.put("accessToken", accessToken);
         responseBody.put("message", "로그인 성공");
         responseBody.put("userId", userId);
