@@ -3,9 +3,14 @@ package com.pallow.pallow.global.common;
 import com.pallow.pallow.domain.meets.service.MeetsService;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.service.ProfileService;
+import com.pallow.pallow.domain.user.entity.User;
+import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.domain.userboard.dto.UserBoardResponseDto;
 import com.pallow.pallow.domain.userboard.service.UserBoardService;
+import com.pallow.pallow.global.enums.ErrorType;
+import com.pallow.pallow.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.model.ModelMutationLogging;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -20,6 +25,7 @@ public class CommonController {
     private final MeetsService meetsService;
     private final UserBoardService userBoardService;
     private final ProfileService profileService;
+    private final UserRepository userRepository;
 
     @Value("${kakao.map.app-key}")
     private String kakaoMapAppKey;
@@ -93,7 +99,10 @@ public class CommonController {
 
     @GetMapping("/public/Profile")
     public String profilePage(@RequestParam Long profileId, Model model) {
+        User user = userRepository.findById(profileId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         ProfileResponseDto profile = profileService.getProfile(profileId);
+        model.addAttribute("nickname", user.getNickname());
         model.addAttribute("profile", profile);
         model.addAttribute("userId", profileId);
         return "profile";

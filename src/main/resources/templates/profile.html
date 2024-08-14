@@ -63,7 +63,7 @@
 </header>
 <main class="container mx-auto px-4 py-8">
   <div class="text-center mb-8">
-    <h1 th:text="${profile.name} + ' 님의 프로필'" class="text-3xl font-bold"></h1>
+    <h1 th:text="${nickname} + ' 님의 프로필'" class="text-3xl font-bold"></h1>
   </div>
   <div class="bg-white shadow rounded-lg p-8">
     <div class="flex items-center mb-8">
@@ -72,7 +72,7 @@
         <input type="file" id="profilePictureInput" class="hidden">
       </div>
       <div id="profile">
-        <h1 th:text="${profile.name}">Profile Name</h1>
+        <h1 th:text="${nickname}">Profile nickname</h1>
         <h2 th:text="${profile.position}">Profile Position</h2>
       </div>
     </div>
