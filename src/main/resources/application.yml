@@ -13,10 +13,10 @@ spring:
     password: ${DB_PASSWORD}
     username: ${DB_USERNAME}
     url: ${DB_URL}
-  sql:
-    init:
-      mode: always
-      schema-locations: classpath:db/schema.sql
+#  sql:
+#    init:
+#      mode: always
+#      schema-locations: classpath:db/schema.sql
   mail:
     host: smtp.gmail.com
     port: 587
