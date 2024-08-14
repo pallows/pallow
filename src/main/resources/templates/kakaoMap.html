@@ -102,13 +102,8 @@
       if (status === kakao.maps.services.Status.OK) {
         var address = result[0].address.address_name;
 
-        // 주소를 구분하여 필요한 부분만 추출
-        var addressParts = address.split(' ');
-        var detailedAddress = addressParts.slice(0, 2).join(' '); // 예: '전남 여수시'
-
-        // 시군구까지만 포함된 주소를 폼의 위치 필드에 저장합니다.
-        document.getElementById('location').value = detailedAddress;
-        document.getElementById('meetLocation').value = detailedAddress;
+        document.getElementById('location').value = address;
+        document.getElementById('meetLocation').value = address;
         document.getElementById('address').innerText = '클릭한 위치의 주소는 ' + address + '입니다.';
       }
     });
