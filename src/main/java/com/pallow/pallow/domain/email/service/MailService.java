@@ -24,7 +24,7 @@ public class MailService {
 
     private final JavaMailSender mailSender;
     @Value("${spring.mail.username}")
-    private static final String senderEmail = "pallow-company@gmail.com";
+    private static final String senderEmail = "pallow.company@gmail.com";
     private final RedisTemplate<String, Object> redisTemplate;
 
     @Async
