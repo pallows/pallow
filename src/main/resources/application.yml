@@ -57,6 +57,8 @@ jwt:
 kakao:
   clientId: ${CLIENT_ID}
   redirectUri: ${REDIRECT_URI}
+  map:
+    app-key: ${KAKAO_MAP_APP_KEY}
 
 cloud:
   aws:

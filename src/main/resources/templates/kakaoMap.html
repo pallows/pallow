@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>위치 지정하기</title>
-  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=af9f39fb058e901de9cc5db4a059f55a&libraries=services"></script>
+  <script th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoMapAppKey} + '&libraries=services'"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
@@ -77,10 +77,8 @@
 
   // HTML5의 geolocation으로 사용할 수 있는지 확인합니다
   if (navigator.geolocation) {
-
     // GeoLocation을 이용해서 접속 위치를 얻어옵니다
     navigator.geolocation.getCurrentPosition(function(position) {
-
       var lat = position.coords.latitude, // 위도
           lon = position.coords.longitude; // 경도
 
@@ -89,7 +87,6 @@
       // 지도 중심을 이동 시킵니다
       map.setCenter(locPosition);
     });
-
   } else {
     // HTML5의 GeoLocation을 사용할 수 없을때 설정해둔 기본 위치로 이동합니다
     var locPosition = new kakao.maps.LatLng(37.5665, 126.978);
@@ -121,8 +118,6 @@
   const token = localStorage.getItem('Authorization');
 
   async function createMeet() {
-
-
     const formData = new FormData(document.getElementById('createMeetForm'));
 
     // 폼 요소 가져오기
@@ -147,9 +142,7 @@
           'Authorization': `${token}`
         }
       })
-      .then(response => {
-        return response.json();
-      })
+      .then(response => response.json())
       .then(data => {
         if (data.statusCode === 200) {
           alert('모임이 생성되었습니다.');

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile Registration</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoMapAppKey} + '&libraries=services'"></script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
         rel="stylesheet">
   <style>
@@ -394,8 +395,7 @@
 
 <!--<script type="text/javascript"-->
 <!--        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f4c83d9a4b318776896b44ad0eaf0ff8&libraries=services"></script>-->
-<script type="text/javascript"
-    src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=af9f39fb058e901de9cc5db4a059f55a&libraries=services"></script>
+<!--<script type="text/javascript" th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoMapAppKey} + '&libraries=services'"></script>-->
 
 </body>
 </html>
