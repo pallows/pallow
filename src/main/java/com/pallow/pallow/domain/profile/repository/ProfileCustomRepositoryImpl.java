@@ -66,7 +66,7 @@ public class ProfileCustomRepositoryImpl implements ProfileCustomRepository {
 
         return jpaQueryFactory
                 .select(new QProfileResponseDto(profile.id, profile.content, profile.birth,
-                        profile.position, profile.mbti, profile.hobby, profile.image, user.name))
+                        profile.position, profile.mbti, profile.hobby, profile.image, user.name, user.nickname))
                 .from(profile)
                 .join(profile.user, user)
                 .where(profile.user.id.ne(userId).and(positionExpression)

@@ -42,9 +42,11 @@ public class ProfileResponseDto {
 
     @Setter
     private String name;
+    @Setter
+    private String nickname;
 
     @QueryProjection
-    public ProfileResponseDto(Long id, String content, String birth, String position, Mbti mbti, String hobby, String image, String name) {
+    public ProfileResponseDto(Long id, String content, String birth, String position, Mbti mbti, String hobby, String image, String name, String nickname) {
         this.content = content;
         this.birth = birth;
         this.position = position;
@@ -53,9 +55,10 @@ public class ProfileResponseDto {
         this.image = image;
         this.name = name.trim();
         this.id = id;
+        this.nickname = nickname;
     }
 
-    public ProfileResponseDto(Profile foundUser, String name) {
+    public ProfileResponseDto(Profile foundUser, String name, String nickname) {
         this.id = foundUser.getId();
         this.content = foundUser.getContent();
         this.birth = foundUser.getBirth();
@@ -64,6 +67,7 @@ public class ProfileResponseDto {
         this.image = foundUser.getImage();
         this.hobby = foundUser.getHobby();
         this.name = name.trim();
+        this.nickname = nickname;
         this.smoking = foundUser.getSmoking();
         this.interest = foundUser.getInterest();
         this.education = foundUser.getEducation();
