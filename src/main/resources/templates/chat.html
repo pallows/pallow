@@ -144,7 +144,7 @@
   function connect() {
     if (isConnected) return;
     console.log("Attempting to connect to WebSocket");
-    const socket = new SockJS('wss://pallow.net/ws');
+    const socket = new SockJS('https://pallow.net/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({'Authorization': accessToken}, onConnected, onError);
   }
@@ -216,7 +216,7 @@
 
 
   function loadChatRooms() {
-    fetch('/api/chat/rooms', {
+    fetch(`/api/chat/rooms/`, {
       headers: {
         'Authorization': accessToken
       }
