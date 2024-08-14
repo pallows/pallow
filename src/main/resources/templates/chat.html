@@ -106,7 +106,7 @@
   console.log("엑셋슷톡큰", accessToken)
 
   if (!accessToken) {
-    window.location.href = '/login';
+    window.location.href = 'https://pallow.net/login';
   }
   document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM fully loaded and parsed");
@@ -216,7 +216,7 @@
 
 
   function loadChatRooms() {
-    fetch(`/api/chat/rooms/`, {
+    fetch('https://pallow.net/api/chat/rooms', {
       headers: {
         'Authorization': accessToken
       }
@@ -266,7 +266,7 @@
     }
 
     function loadChatMessages(roomId) {
-      fetch(`/api/chat/rooms/${roomId}`, {
+      fetch(`https://pallow.net/api/chat/rooms/${roomId}`, {
         headers: {
           'Authorization': accessToken
         }
@@ -304,7 +304,7 @@
         chatRoomId: currentChatRoomId,
         content: message
       };
-      fetch('/api/chat/messages', {
+      fetch('https://pallow.net/api/chat/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -352,7 +352,7 @@
       if (roomName) {
         const otherUserNickname = prompt("대화할 상대방의 닉네임을 입력하세요:");
         if (otherUserNickname) {
-          fetch('/api/chat/rooms', {
+          fetch('https://pallow.net/api/chat/rooms', {
             method: 'POST',
             headers: {
               'Authorization': accessToken,
@@ -446,7 +446,7 @@
 
       // 서버의 응답을 기다린 후 채팅방 삭제 요청
       setTimeout(() => {
-        fetch(`/api/chat/rooms/${currentChatRoomId}`, {
+        fetch(`https://pallow.net/api/chat/rooms/${currentChatRoomId}`, {
           method: 'DELETE',
           headers: {
             'Authorization': accessToken
