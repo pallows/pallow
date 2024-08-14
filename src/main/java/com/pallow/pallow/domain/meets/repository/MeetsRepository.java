@@ -17,6 +17,6 @@ public interface MeetsRepository extends JpaRepository<Meets, Long> {
     @Query(value = "SELECT * FROM meets m WHERE m.position = :position ORDER BY RAND() LIMIT :limit", nativeQuery = true)
     List<Meets> findRandomNearbyMeets(@Param("position") String position, @Param("limit") int limit);
 
-    @Query(value = "SELECT * FROM meets m ORDER BY m.likes_count DESC LIMIT :limit", nativeQuery = true)
+    @Query(value = "SELECT * FROM meets m WHERE m.status = 'ACTIVE' ORDER BY m.likes_count DESC LIMIT :limit", nativeQuery = true)
     List<Meets> findTopByOrderByLikesCountDesc(@Param("limit") int limit);
 }
