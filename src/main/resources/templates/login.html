@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Welcome to Pallow</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
-        rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-    }
-  </style>
-  <link rel="icon"
-        href="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96"
-        type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Pallow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+          rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+    <link rel="icon"
+          href="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96"
+          type="image/x-icon">
 </head>
 
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -63,9 +63,9 @@
         });
     });
 
-        function login() {
-            let username = $('#username').val();
-            let password = $('#password').val();
+    function login() {
+        let username = $('#username').val();
+        let password = $('#password').val();
 
         if (username && password) {
             username = username.trim();
@@ -75,37 +75,35 @@
             return;
         }
 
-      $.ajax({
-        type: "POST",
-        url: "/users/login",
-        contentType: "application/json",
-        data: JSON.stringify({username: username, password: password}),
-        success: function (data, textStatus, xhr) {
-          const accessToken = xhr.getResponseHeader('Authorization');
-          if (accessToken) {
-            localStorage.setItem('Authorization', accessToken);
-            localStorage.setItem('username', username);
-            localStorage.setItem('userId', data.userId);
-            alert('로그인에 성공하였습니다!');
-            window.location.href = '/public/main';
-          } else if (data.statusCode === 302 && data.redirectUrl) {
-            alert('프로필을 작성해주세요!');
-            window.location.href = data.redirectUrl;
-          } else {
-            alert('Login failed: Access token not found.');
-          }
-        },
-        error: function (xhr) {
-          try {
-            const errParts = xhr.responseText.split(",");
-            let errMsg = errParts.find(part => part.includes('"msg"')).split(":")[1];
-            errMsg = errMsg.replace(/["}]/g, '').trim();
-            alert(errMsg);
-          } catch (e) {
-            alert("Login failed: " + xhr.responseText);
-          }
-        }
-      });
+        $.ajax({
+            type: "POST",
+            url: "/users/login",
+            contentType: "application/json",
+            data: JSON.stringify({username: username, password: password}),
+            success: function (data, textStatus, xhr) {
+                const accessToken = xhr.getResponseHeader('Authorization');
+                if (accessToken) {
+                    localStorage.setItem('Authorization', accessToken);
+                    alert('로그인에 성공하였습니다!');
+                    window.location.href = '/public/main';
+                } else if (data.statusCode === 302 && data.redirectUrl) {
+                    alert('프로필을 작성해주세요!');
+                    window.location.href = data.redirectUrl;
+                } else {
+                    alert('Login failed: Access token not found.');
+                }
+            },
+            error: function (xhr) {
+                try {
+                    const errParts = xhr.responseText.split(",");
+                    let errMsg = errParts.find(part => part.includes('"msg"')).split(":")[1];
+                    errMsg = errMsg.replace(/["}]/g, '').trim();
+                    alert(errMsg);
+                } catch (e) {
+                    alert("Login failed: " + xhr.responseText);
+                }
+            }
+        });
     }
 
     document.getElementById('kakaoLogin').onclick = function () {
