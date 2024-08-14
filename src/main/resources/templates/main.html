@@ -197,7 +197,7 @@
       }
     });
 
-    async function createCarousel(containerId, dotsId, apiEndpoint, urlPattern) {
+    async function createCarouselForUser(containerId, dotsId, apiEndpoint, urlPattern) {
       const container = document.getElementById(containerId);
       const dotsContainer = document.getElementById(dotsId);
 
@@ -300,10 +300,113 @@
       }
     }
 
+    async function createCarouselForMeet(containerId, dotsId, apiEndpoint, urlPattern) {
+      const container = document.getElementById(containerId);
+      const dotsContainer = document.getElementById(dotsId);
+
+      const response = await fetchWithAuth(apiEndpoint);
+      console.log('Response:', response);
+
+      try {
+        console.log(`Fetching data from: ${apiEndpoint}`);
+        const response = await fetchWithAuth(apiEndpoint);
+        console.log('Response status:', response.status);
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+          throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log('Received data:', data);
+
+        if (!data || !Array.isArray(data.data)) {
+          console.error('Invalid data format:', data);
+          throw new Error('Invalid data format received');
+        }
+
+        const items = data.data;
+
+        // Clear existing content
+        container.innerHTML = '';
+        dotsContainer.innerHTML = '';
+
+        // Create cards
+        items.forEach((item, index) => {
+          const card = document.createElement('div');
+          card.className = 'carousel-item bg-white p-4 shadow mr-4';
+          card.style.width = '300px';
+          card.style.height = '200px';
+
+          const profileUrl = urlPattern.replace('{id}', item.id);
+
+          // Create the anchor element wrapping the card content
+          const link = document.createElement('a');
+          link.href = profileUrl; // Use the `link` property from the item data or `#` if not present
+          link.target = '_blank'; // Optional: open in a new tab
+
+          // Set the inner HTML of the card
+          link.innerHTML = `
+                <img src="${item.image || 'https://via.placeholder.com/280x120'}" alt="Thumbnail" class="mb-2 w-full h-24 object-cover">
+                <h3 class="font-bold">${item.title}</h3>
+                <p class="text-sm">${item.content}</p>
+            `;
+
+          // Append the link to the card
+          card.appendChild(link);
+          container.appendChild(card);
+        });
+
+        // Create dots
+        const numDots = Math.ceil(items.length / 3);
+        for (let i = 0; i < numDots; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+          dotsContainer.appendChild(dot);
+        }
+
+        let currentIndex = 0;
+
+        function updateCarousel() {
+          container.style.transform = `translateX(-${currentIndex * 33.3}%)`;
+          Array.from(dotsContainer.children).forEach((dot, index) => {
+            dot.classList.toggle('active', index === Math.floor(currentIndex / 3));
+          });
+        }
+
+        // Arrow click handlers
+        container.parentElement.querySelector('.carousel-arrow.left').addEventListener('click',
+            () => {
+              currentIndex = Math.max(currentIndex - 1, 0);
+              updateCarousel();
+            });
+
+        container.parentElement.querySelector('.carousel-arrow.right').addEventListener('click',
+            () => {
+              currentIndex = Math.min(currentIndex + 1, items.length - 3);
+              updateCarousel();
+            });
+
+        // Dot click handlers
+        Array.from(dotsContainer.children).forEach((dot, index) => {
+          dot.addEventListener('click', () => {
+            currentIndex = index * 3;
+            updateCarousel();
+          });
+        });
+
+        updateCarousel(); // Initialize carousel position
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
     // Initialize carousels
-    createCarousel('carousel1', 'dots1', '/profiles/todays-friends', '/profiles/{id}');
-    createCarousel('carousel2', 'dots2', '/api/meets/popular', '/public/meets/{id}');
-    createCarousel('carousel3', 'dots3', '/api/meets/nearby', '/public/meets/{id}');
+    createCarouselForUser('carousel1', 'dots1', '/profiles/todays-friends', '/profiles/{id}');
+    createCarouselForMeet('carousel2', 'dots2', '/api/meets/popular', '/public/meets/{id}');
+    createCarouselForMeet('carousel3', 'dots3', '/api/meets/nearby', '/public/meets/{id}');
 
     document.getElementById('profileBtn').addEventListener('click', () => {
       window.location.href = '/public/MyPage';
