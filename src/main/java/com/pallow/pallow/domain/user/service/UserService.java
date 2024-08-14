@@ -60,7 +60,7 @@ public class UserService {
      * @param user 로그아웃 요청한 이용자
      */
     @Transactional
-    public void logout(User user) {
+    public void logout(User user) { //TODO 쿠키 유효성 제거
         refreshTokenRepository.deleteById(user.getUsername());
     }
 

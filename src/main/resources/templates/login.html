@@ -84,6 +84,8 @@
                 const accessToken = xhr.getResponseHeader('Authorization');
                 if (accessToken) {
                     localStorage.setItem('Authorization', accessToken);
+                    localStorage.setItem('username', username);
+                    localStorage.setItem('userId', data.userId);
                     alert('로그인에 성공하였습니다!');
                     window.location.href = '/public/main';
                 } else if (data.statusCode === 302 && data.redirectUrl) {
