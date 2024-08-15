@@ -119,6 +119,14 @@
       console.error('Failed to load user info:', error);
       // 사용자에게 오류 메시지를 표시하거나 로그인 페이지로 리다이렉트
     });
+    // 메시지 입력 필드에 키 이벤트 리스너 추가
+    const messageInput = document.getElementById('messageInput');
+    messageInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault(); // 기본 엔터 동작 방지
+        sendMessage();
+      }
+    });
   });
 
   function loadUserInfo() {
@@ -295,6 +303,7 @@
     });
   }
 
+  // sendMessage 함수 수정
   function sendMessage() {
     const messageInput = document.getElementById('messageInput');
     const message = messageInput.value.trim();
@@ -318,12 +327,12 @@
           console.error('Error sending message:', data.error);
         } else {
           console.log('Message sent successfully:', data.data);
+          messageInput.value = ''; // 메시지 전송 후 입력 필드 초기화
         }
       })
       .catch(error => {
         console.error('Error:', error);
       });
-      messageInput.value = '';
     }
   }
 
