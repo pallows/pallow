@@ -3,8 +3,11 @@ package com.pallow.pallow.domain.email.controller;
 import com.pallow.pallow.domain.email.dto.EmailCodeRequestDto;
 import com.pallow.pallow.domain.email.dto.EmailInputRequestDto;
 import com.pallow.pallow.domain.email.service.MailService;
+import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.common.CommonResponseDto;
+import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.Message;
+import com.pallow.pallow.global.exception.CustomException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class MailController {
 
     private final MailService mailService;
+    private final UserRepository userRepository;
 
     @PostMapping("/send")
     public ResponseEntity<CommonResponseDto> sendVerificationEmail(@Valid @RequestBody EmailInputRequestDto emailInputRequestDto) {
+        if (userRepository.findByEmail(emailInputRequestDto.getEmail()).isPresent()){
+            throw new CustomException(ErrorType.DUPLICATED_MAIL);
+        }
         mailService.sendMail(emailInputRequestDto);
         return ResponseEntity.ok(new CommonResponseDto(Message.MAIL_SEND_SUCCESS));
     }

@@ -153,7 +153,8 @@
 
         function displayMeetData(resData) {
             document.getElementById('meets-container').classList.remove('hidden');
-            document.getElementById('profile-image').src = resData.creatorProfilePhoto || 'https://source.unsplash.com/random/100x100';
+            //           document.getElementById('profile-image').src = resData.creatorProfilePhoto || 'https://source.unsplash.com/random/100x100';
+            document.getElementById('profile-image').src = resData.image;
             document.getElementById('meets-date').innerText = new Date(resData.createdAt).toLocaleDateString();
             document.getElementById('member-count').value = `${resData.memberCount}명`;
             document.getElementById('position').value = resData.position || '위치 정보 없음';

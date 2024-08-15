@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(responseData => {
                 if (responseData.statusCode === 200) {
+                    localStorage.removeItem('Authorization');
                     alert('성공적으로 로그아웃 되었습니다.');
                     window.location.href = '/';
                 } else {
