@@ -51,7 +51,7 @@
     </a>
     <nav>
       <a href="/public/main" class="mr-4">홈</a>
-      <a href="/public/userboardCollection" class="mr-4">오늘의 동친</a>
+      <a href="/public/profileCollection" class="mr-4">오늘의 동친</a>
       <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
       <a href="/public/MyPage" class="mr-4">MyPage</a>
       <a href="/public/userboardCollection" class="mr-4">내 게시물 작성하기</a>
@@ -63,7 +63,7 @@
 </header>
 <main class="container mx-auto px-4 py-8">
   <div class="text-center mb-8">
-    <h1 th:text="${nickname} + ' 님의 프로필'" class="text-3xl font-bold"></h1>
+    <h1 th:text="${profile.nickname} + ' 님의 프로필'" class="text-3xl font-bold"></h1>
   </div>
   <div class="bg-white shadow rounded-lg p-8">
     <div class="flex items-center mb-8">
@@ -72,7 +72,7 @@
         <input type="file" id="profilePictureInput" class="hidden">
       </div>
       <div id="profile">
-        <h1 th:text="${nickname}">Profile nickname</h1>
+        <h1 th:text="${profile.nickname}">Profile nickname</h1>
         <h2 th:text="${profile.position}">Profile Position</h2>
       </div>
     </div>
@@ -147,7 +147,7 @@
       </div>
 
       <div class="mt-12 border-t pt-8">
-        <h2 th:text="${profile.name} + ' 님의 게시물'" class="text-3xl font-bold"></h2>
+        <h2 th:text="${profile.nickname} + ' 님의 게시물'" class="text-3xl font-bold"></h2>
         <div id="userboardGrid" class="userboard-grid">
           <!-- UserBoard 아이템들이 여기에 동적으로 추가됩니다 -->
         </div>

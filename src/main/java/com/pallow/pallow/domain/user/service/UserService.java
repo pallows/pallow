@@ -70,12 +70,9 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
     }
 
-    public void deleteUser(Long userId, Long currentUserId) {
-        if (!Objects.equals(userId, currentUserId)) { // 탈퇴를 하기위한 유저가 본인인지 검사
-            throw new CustomException(ErrorType.NOT_AUTHORIZED_TO_DELETE_ACCOUNT);
-        }
-        User user = findUserById(userId);
+    public void deleteUser(User user) {
         user.softDeleteUser();
+        userRepository.save(user);
     }
 
     public List<UserResponseDto> findAllUsers() {

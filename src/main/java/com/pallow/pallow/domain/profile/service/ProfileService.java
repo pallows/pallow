@@ -52,7 +52,7 @@ public class ProfileService {
     public ProfileResponseDto getProfile(Long userId) {
         Profile foundUser = profileRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        return new ProfileResponseDto(foundUser, foundUser.getUser().getUsername());
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getUsername(), foundUser.getUser().getNickname());
     }
 
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user, String defaultImage) {
@@ -67,7 +67,7 @@ public class ProfileService {
             }
         }
         Profile profile = profileRepository.save(requestDto.toEntity(user, imageUrl));
-        return new ProfileResponseDto(profile, profile.getUser().getName());
+        return new ProfileResponseDto(profile, profile.getUser().getName(), profile.getUser().getNickname());
     }
 
     @Transactional
@@ -90,7 +90,7 @@ public class ProfileService {
             imageUrl = foundUser.getImage();
         }
         foundUser.update(requestDto, imageUrl);
-        return new ProfileResponseDto(foundUser, foundUser.getUser().getName());
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getName(), foundUser.getUser().getNickname());
     }
 
     @Transactional

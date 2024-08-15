@@ -48,11 +48,9 @@ public class UserController {
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_LOGOUT_SUCCESS));
     }
 
-
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<CommonResponseDto> deleteUser(@PathVariable Long userId,
-                                                        UserDetailsImpl currentUser) {
-        userService.deleteUser(userId, currentUser.getUser().getId()); //본인 계정만 본인이 탈퇴
+    @DeleteMapping("/")
+    public ResponseEntity<CommonResponseDto> deleteUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userService.deleteUser(userDetails.getUser());
         return ResponseEntity.ok(new CommonResponseDto(Message.USER_DELETE_SUCCESS));
     }
 

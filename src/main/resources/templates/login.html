@@ -91,6 +91,8 @@
                 } else if (data.statusCode === 302 && data.redirectUrl) {
                     alert('프로필을 작성해주세요!');
                     window.location.href = data.redirectUrl;
+                } else if (data.statusCode === 401) {
+                    alert("삭제된 유저입니다.")
                 } else {
                     alert('Login failed: Access token not found.');
                 }

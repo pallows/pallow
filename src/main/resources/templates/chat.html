@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+  <script src="/js/auth.js" defer></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat</title>
@@ -143,7 +144,7 @@
   function connect() {
     if (isConnected) return;
     console.log("Attempting to connect to WebSocket");
-    const socket = new SockJS('http://localhost:8080/ws');
+    const socket = new SockJS('https://pallow.net/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({'Authorization': accessToken}, onConnected, onError);
   }
@@ -215,7 +216,7 @@
 
 
   function loadChatRooms() {
-    fetch('/api/chat/rooms', {
+    fetch(`/api/chat/rooms/`, {
       headers: {
         'Authorization': accessToken
       }

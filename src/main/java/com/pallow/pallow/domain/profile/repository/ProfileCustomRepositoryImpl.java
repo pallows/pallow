@@ -5,6 +5,7 @@ import com.pallow.pallow.domain.profile.dto.QProfileResponseDto;
 import com.pallow.pallow.domain.profile.entity.Profile;
 import com.pallow.pallow.domain.profile.entity.QProfile;
 import com.pallow.pallow.domain.user.entity.QUser;
+import com.pallow.pallow.global.enums.CommonStatus;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -66,11 +67,11 @@ public class ProfileCustomRepositoryImpl implements ProfileCustomRepository {
 
         return jpaQueryFactory
                 .select(new QProfileResponseDto(profile.id, profile.content, profile.birth,
-                        profile.position, profile.mbti, profile.hobby, profile.image, user.name))
+                        profile.position, profile.mbti, profile.hobby, profile.image, user.name, user.nickname))
                 .from(profile)
                 .join(profile.user, user)
                 .where(profile.user.id.ne(userId).and(positionExpression)
-                        .and(profile.position.isNotNull()).and(profile.id.notIn(existingProfileIds)))
+                        .and(profile.position.isNotNull()).and(profile.id.notIn(existingProfileIds)).and(user.status.ne(CommonStatus.DELETED)))
                 .orderBy(profile.position.asc())
                 .limit(limit)
                 .fetch();
