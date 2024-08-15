@@ -125,10 +125,11 @@ public class OauthService {
         String accessToken = getAccessToken(provider, code);
         Map<String, Object> userinfo = getUserInfo(provider, accessToken);
         //카카오에서 카카오 계정의 고유 id를 가져옵니다.
+
         Long kakaoId = ((Number) userinfo.get("id")).longValue();
         User user = userRepository.findBykakaoId(kakaoId).orElse(null);
-        Log.info("kakaoId : ", kakaoId);
-        Log.info("카카오 유저 아이디", user);
+        log.info("kakaoId : {}", kakaoId);
+        log.info("카카오 유저 아이디 {}", user);
         Map<String, String> responseMap = new HashMap<>();
         if (user == null) {
             // 유저가 없으면 회원가입 페이지로 리다이렉션
