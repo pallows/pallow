@@ -110,9 +110,6 @@ public class CommonController {
         return "userboard";
     }
 
-    @GetMapping("/public/popularMeets")
-    public String popularMeets() { return "popularMeets"; }
-
     @GetMapping("/public/kakaoMap")
     public String kakaoMap(Model model) {
         model.addAttribute("kakaoMapAppKey", kakaoMapAppKey);

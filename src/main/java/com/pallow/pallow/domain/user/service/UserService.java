@@ -41,6 +41,9 @@ public class UserService {
             throw new CustomException(ErrorType.DUPLICATE_ACCOUNT_ID);
         }
 
+        if (userRepository.findByNickname(dto.getNickname()).isPresent()) {
+            throw new CustomException(ErrorType.DUPLICATE_ACCOUNT_NICKNAME);
+        }
         User creadtedUser = User.createdUser(
                 dto.getUsername(),
                 dto.getNickname(),

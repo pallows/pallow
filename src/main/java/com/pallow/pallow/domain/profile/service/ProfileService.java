@@ -13,9 +13,12 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.dtos.FlaskRequestDto;
 import com.pallow.pallow.global.dtos.FlaskResponseDto;
+import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.s3.service.ImageService;
+import com.pallow.pallow.global.security.UserDetailsImpl;
+import com.pallow.pallow.global.security.UserDetailsServiceImpl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +29,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -36,6 +43,7 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class ProfileService {
 
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
     @Value("${FLASK_URL}")
     private String flaskServerUrl;
 
@@ -184,4 +192,5 @@ public class ProfileService {
         String third = positionParts.length > 2 ? positionParts[2].trim() : "";
         return profileCustomRepository.findTop9NearestProfiles(userId, first, second, third);
     }
+
 }

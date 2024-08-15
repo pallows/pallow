@@ -216,7 +216,7 @@
 
 
   function loadChatRooms() {
-    fetch(`/api/chat/rooms/`, {
+    fetch('/api/chat/rooms', {
       headers: {
         'Authorization': accessToken
       }
@@ -251,49 +251,49 @@
     console.log('Room participants updated:', participants);
   }
 
-    function openChatRoom(roomId, roomName) {
-      currentChatRoomId = roomId;
-      document.getElementById('currentChatRoomName').textContent = roomName;
+  function openChatRoom(roomId, roomName) {
+    currentChatRoomId = roomId;
+    document.getElementById('currentChatRoomName').textContent = roomName;
 
-      if (currentSubscription) {
-        currentSubscription.unsubscribe();
+    if (currentSubscription) {
+      currentSubscription.unsubscribe();
+    }
+    currentSubscription = stompClient.subscribe(`/topic/chat/${roomId}`, onMessageReceived);
+
+    loadChatMessages(roomId);
+    stompClient.subscribe(`/topic/chat/${roomId}/participants`, onParticipantsUpdated);
+    stompClient.send("/app/chat.getRoomParticipants", {}, JSON.stringify({roomId: roomId}));
+  }
+
+  function loadChatMessages(roomId) {
+    fetch(`/api/chat/rooms/${roomId}`, {
+      headers: {
+        'Authorization': accessToken
       }
-      currentSubscription = stompClient.subscribe(`/topic/chat/${roomId}`, onMessageReceived);
-
-      loadChatMessages(roomId);
-      stompClient.subscribe(`/topic/chat/${roomId}/participants`, onParticipantsUpdated);
-      stompClient.send("/app/chat.getRoomParticipants", {}, JSON.stringify({roomId: roomId}));
-    }
-
-    function loadChatMessages(roomId) {
-      fetch(`/api/chat/rooms/${roomId}`, {
-        headers: {
-          'Authorization': accessToken
-        }
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to load chat messages');
-        }
-        console.log("{}", response);
-        return response.json();
-      })
-      .then(data => {
-        const chatMessages = document.getElementById('chatMessages');
-        chatMessages.innerHTML = '';
-        if (data.data && Array.isArray(data.data.messages)) {
-          data.data.messages.forEach(message => {
-            appendMessage(message);
-          });
-        } else {
-          console.error('Unexpected data format:', data);
-        }
-      })
-      .catch(error => {
-        console.error('Error loading chat messages:', error);
-        alert('채팅 메시지를 불러오는 데 실패했습니다.');
-      });
-    }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to load chat messages');
+      }
+      console.log("{}", response);
+      return response.json();
+    })
+    .then(data => {
+      const chatMessages = document.getElementById('chatMessages');
+      chatMessages.innerHTML = '';
+      if (data.data && Array.isArray(data.data.messages)) {
+        data.data.messages.forEach(message => {
+          appendMessage(message);
+        });
+      } else {
+        console.error('Unexpected data format:', data);
+      }
+    })
+    .catch(error => {
+      console.error('Error loading chat messages:', error);
+      alert('채팅 메시지를 불러오는 데 실패했습니다.');
+    });
+  }
 
   function sendMessage() {
     const messageInput = document.getElementById('messageInput');
@@ -327,114 +327,114 @@
     }
   }
 
-    function onMessageReceived(payload) {
-      const message = JSON.parse(payload.body);
-      console.log(`Received message in room ${currentChatRoomId}: `, message);
-      appendMessage(message);
-    }
+  function onMessageReceived(payload) {
+    const message = JSON.parse(payload.body);
+    console.log(`Received message in room ${currentChatRoomId}: `, message);
+    appendMessage(message);
+  }
 
-    function subscribeToNotifications() {
-      console.log("Attempting to subscribe to notifications");
-      if (stompClient && stompClient.connected) {
-        stompClient.subscribe('/user/queue/notifications', onNotificationReceived,
-            {'Authorization': accessToken});
-        console.log("Successfully subscribed to notifications");
+  function subscribeToNotifications() {
+    console.log("Attempting to subscribe to notifications");
+    if (stompClient && stompClient.connected) {
+      stompClient.subscribe('/user/queue/notifications', onNotificationReceived,
+          {'Authorization': accessToken});
+      console.log("Successfully subscribed to notifications");
+    } else {
+      console.error('STOMP client not connected. Unable to subscribe to notifications');
+      // 연결이 완료되면 다시 시도
+      setTimeout(subscribeToNotifications, 1000);
+    }
+  }
+
+  function createChatRoom() {
+    console.log("createChatRoom을 실행했습니다.");
+    const roomName = prompt("새 채팅방 이름을 입력하세요:");
+    if (roomName) {
+      const otherUserNickname = prompt("대화할 상대방의 닉네임을 입력하세요:");
+      if (otherUserNickname) {
+        fetch('/api/chat/rooms', {
+          method: 'POST',
+          headers: {
+            'Authorization': accessToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: roomName,
+            otherUserNickname: otherUserNickname
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            alert(data.error);
+          } else {
+            alert(`${otherUserNickname}님과의 채팅방이 생성되었습니다.`);
+            loadChatRooms();
+            // 새로 생성된 채팅방으로 바로 입장
+            openChatRoom(data.data.id, data.data.name);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('채팅방 생성 중 오류가 발생했습니다.');
+        });
       } else {
-        console.error('STOMP client not connected. Unable to subscribe to notifications');
-        // 연결이 완료되면 다시 시도
-        setTimeout(subscribeToNotifications, 1000);
+        alert('대화할 상대방의 닉네임을 입력해야 합니다.');
       }
     }
+  }
 
-    function createChatRoom() {
-      console.log("createChatRoom을 실행했습니다.");
-      const roomName = prompt("새 채팅방 이름을 입력하세요:");
-      if (roomName) {
-        const otherUserNickname = prompt("대화할 상대방의 닉네임을 입력하세요:");
-        if (otherUserNickname) {
-          fetch('/api/chat/rooms', {
-            method: 'POST',
-            headers: {
-              'Authorization': accessToken,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              name: roomName,
-              otherUserNickname: otherUserNickname
-            })
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.error) {
-              alert(data.error);
-            } else {
-              alert(`${otherUserNickname}님과의 채팅방이 생성되었습니다.`);
-              loadChatRooms();
-              // 새로 생성된 채팅방으로 바로 입장
-              openChatRoom(data.data.id, data.data.name);
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-            alert('채팅방 생성 중 오류가 발생했습니다.');
-          });
-        } else {
-          alert('대화할 상대방의 닉네임을 입력해야 합니다.');
-        }
+  function joinRoom(roomId) {
+    if (stompClient) {
+      let joinMessage = {
+        roomId: roomId,
+        type: 'JOIN'
+      };
+      stompClient.send("/app/chat.joinRoom", {}, JSON.stringify(joinMessage));
+    }
+  }
+
+  function onNotificationReceived(payload) {
+    console.log('Received notification payload:', payload);
+    const notification = JSON.parse(payload.body);
+    console.log('Parsed notification:', notification);
+    // 초대 관련 로직 제거
+  }
+
+  function appendMessage(message) {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageElement = document.createElement('div');
+
+    if (message.type === 'JOIN' || message.type === 'LEAVE') {
+      messageElement.className = 'text-center text-gray-500 my-2';
+      messageElement.textContent = `${message.sender}님이 ${message.type === 'JOIN' ? '입장'
+          : '퇴장'}하셨습니다.`;
+    }else {
+      const isMyMessage = currentUser && message.sender === currentUser.nickname;
+      console.log('Is my message:', isMyMessage, 'Sender:', message.sender, 'Current user:', currentUser?.nickname);
+
+      messageElement.className = `message-bubble ${isMyMessage ? 'my-message'
+          : 'sender-message'}`;
+
+      // 추가 스타일 적용
+      if (isMyMessage) {
+        messageElement.style.alignSelf = 'flex-end';
+        messageElement.style.backgroundColor = '#E3F2FD';
+      } else {
+        messageElement.style.alignSelf = 'flex-start';
+        messageElement.style.backgroundColor = '#FFF9C4';
       }
-    }
 
-    function joinRoom(roomId) {
-      if (stompClient) {
-        let joinMessage = {
-          roomId: roomId,
-          type: 'JOIN'
-        };
-        stompClient.send("/app/chat.joinRoom", {}, JSON.stringify(joinMessage));
-      }
-    }
-
-    function onNotificationReceived(payload) {
-      console.log('Received notification payload:', payload);
-      const notification = JSON.parse(payload.body);
-      console.log('Parsed notification:', notification);
-      // 초대 관련 로직 제거
-    }
-
-    function appendMessage(message) {
-      const chatMessages = document.getElementById('chatMessages');
-      const messageElement = document.createElement('div');
-
-      if (message.type === 'JOIN' || message.type === 'LEAVE') {
-        messageElement.className = 'text-center text-gray-500 my-2';
-        messageElement.textContent = `${message.sender}님이 ${message.type === 'JOIN' ? '입장'
-            : '퇴장'}하셨습니다.`;
-      }else {
-        const isMyMessage = currentUser && message.sender === currentUser.nickname;
-        console.log('Is my message:', isMyMessage, 'Sender:', message.sender, 'Current user:', currentUser?.nickname);
-
-        messageElement.className = `message-bubble ${isMyMessage ? 'my-message'
-            : 'sender-message'}`;
-
-        // 추가 스타일 적용
-        if (isMyMessage) {
-          messageElement.style.alignSelf = 'flex-end';
-          messageElement.style.backgroundColor = '#E3F2FD';
-        } else {
-          messageElement.style.alignSelf = 'flex-start';
-          messageElement.style.backgroundColor = '#FFF9C4';
-        }
-
-        messageElement.innerHTML = `
+      messageElement.innerHTML = `
             <div class="font-bold">${message.sender}</div>
             <div>${message.content}</div>
             <div class="text-xs text-gray-500 text-right">${message.formattedTime || new Date().toLocaleTimeString()}</div>
         `;
-      }
-
-      chatMessages.appendChild(messageElement);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+
+    chatMessages.appendChild(messageElement);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
 
   function leaveRoom() {
     if (stompClient && currentChatRoomId) {

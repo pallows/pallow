@@ -79,4 +79,8 @@ public class ProfileResponseDto {
         this.jobs = foundUser.getJobs();
         this.pros = foundUser.getPros();
     }
+
+    public ProfileResponseDto(Long id){
+        this.id = id;
+    }
 }

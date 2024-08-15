@@ -14,6 +14,7 @@ public enum ErrorType {
     //MAIL
     MAIL_NOT_SEND(HttpStatus.NOT_FOUND, "메일이 전송되지 않았습니다."),
     MAIL_MISMATCH_OR_CODE_FORBIDDEN(HttpStatus.FORBIDDEN, "입력한 이메일과 다르거나, 코드가 일치하지 않습니다."),
+    DUPLICATED_MAIL(HttpStatus.FORBIDDEN, "해당 이메일로 가입된 계정이 있습니다."),
 
     //TOKEN
     TOKEN_MISMATCH(HttpStatus.NOT_FOUND, "리프레쉬 토큰이 일치하지 않습니다."),
@@ -21,6 +22,7 @@ public enum ErrorType {
     TOKEN_CHECK_EXPIRED(HttpStatus.FORBIDDEN, "토큰이 만료되었습니다."),
     // user
     DUPLICATE_ACCOUNT_ID(HttpStatus.CONFLICT, "이미 존재하는 아이디입니다."),
+    DUPLICATE_ACCOUNT_NICKNAME(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다."),
     USER_ALREADY_DELETED(HttpStatus.FORBIDDEN, "이미 탈퇴한 유저입니다."),
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     NOT_FOUND_USER_BOARD(HttpStatus.NOT_FOUND, "유저 게시글을 찾을 수 없습니다."),

@@ -97,8 +97,7 @@ public class ProfileController {
     }
 
     @GetMapping("/todays-friends")
-    public ResponseEntity<CommonResponseDto> getRecommendedProfiles(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<CommonResponseDto> getRecommendedProfiles(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         List<ProfileFlaskResponseDto> responseDto = profileService.recommendProfiles(
                 userDetails.getUser());
         return ResponseEntity.ok(
@@ -106,11 +105,17 @@ public class ProfileController {
     }
 
     @GetMapping("/near")
-    public ResponseEntity<CommonResponseDto> getNearProfiles(
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<CommonResponseDto> getNearProfiles(@AuthenticationPrincipal UserDetailsImpl userDetails) {
             List<ProfileResponseDto> responseDto = profileService.getNearProfiles(userDetails.getUser().getId());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
+    }
+
+    @GetMapping("/getProfileId")
+    public ResponseEntity<CommonResponseDto> getProfileId(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        ProfileResponseDto profileResponseDto = new ProfileResponseDto(userDetails.getUser().getProfile().getId());
+        return ResponseEntity.ok(
+                new CommonResponseDto(Message.PROFILE_READ_SUCCESS, profileResponseDto));
     }
 
 }
