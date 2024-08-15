@@ -21,8 +21,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -120,7 +122,7 @@ public class User extends TimeStamp {
 
     public static User createdUser(String username, String nickname, String email, String name,
                                    Gender gender,
-                                   String password, Role role, Long kakaoId) {
+                                   String password, Role role, Long kakaoId, CommonOauth oauth) {
         User user = new User();
         user.username = username;
         user.nickname = nickname;
@@ -131,6 +133,7 @@ public class User extends TimeStamp {
         user.userRole = role;
         user.status = CommonStatus.ACTIVE;
         user.kakaoId = kakaoId;
+        user.oauth = oauth;
         return user;
     }
 

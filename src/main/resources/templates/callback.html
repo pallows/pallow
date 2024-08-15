@@ -33,6 +33,7 @@
                         console.log("Response data received:", data);
                         if (data.redirectUrl) {
                             // Redirect to the URL provided by the server
+                            alert("회원 가입이 필요합니다.")
                             console.log("Redirecting to:", data.redirectUrl);
                             window.location.href = data.redirectUrl;
                         }

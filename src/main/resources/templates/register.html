@@ -176,6 +176,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const oauth = urlParams.get('oauth');
     const kakaoId = urlParams.get('kakaoId');
+    console.log("oauth", oauth)
     if (oauth) {
         document.getElementById('oauth').value = oauth;
     }
