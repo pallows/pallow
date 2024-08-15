@@ -58,7 +58,7 @@ public class ProfileService {
     private final ProfileCustomRepository profileCustomRepository;
 
     public ProfileResponseDto getProfile(Long userId) {
-        Profile foundUser = profileRepository.findById(userId)
+        Profile foundUser = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         return new ProfileResponseDto(foundUser, foundUser.getUser().getUsername(), foundUser.getUser().getNickname());
     }
@@ -80,7 +80,7 @@ public class ProfileService {
 
     @Transactional
     public ProfileResponseDto updateProfile(Long userId, ProfileRequestDto requestDto, User user) {
-        Profile foundUser = profileRepository.findById(userId)
+        Profile foundUser = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
 
         if (!isSameIdAndUser(userId, user)) {
@@ -183,7 +183,7 @@ public class ProfileService {
     }
 
     public List<ProfileResponseDto> getNearProfiles(Long userId) {
-        Profile foundUser = profileRepository.findById(userId)
+        Profile foundUser = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         String[] positionParts = foundUser.getPosition().split(" ");
 
