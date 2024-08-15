@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = {"http://localhost:8080", "https://pallow.net"})
+@CrossOrigin(origins = {"http://localhost:8080", "https://pallow.net", "https://pallow.net:8080"})
 @RestController
 @RequestMapping("/oauth")
 @RequiredArgsConstructor
