@@ -12,7 +12,7 @@ public enum Personality {
     HUMOR("유머러스한"),
     HOT("화끈한"),
     UPSTAGE("도도한"),
-    Enthusiastic("열정적인"),
+    ENTHUSIASTIC("열정적인"),
     BOLD("대범한"),
     CUTE("귀여운"),
     SMOOTH("부드러운"),

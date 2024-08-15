@@ -280,8 +280,30 @@
   const selectedIdeals = document.getElementById('selectedIdeals');
   let selectedIdealValues = new Set();
 
-  document.addEventListener('DOMContentLoaded', function () {
+  async function getProfileId() {
+    try {
+      const response = await fetch('/profiles/getProfileId', {
+        method: 'GET',
+        headers: {
+          'Authorization': accessToken,
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+
+      if (data.statusCode === 200) {
+        return data.data.id;
+      } else {
+        console.error('Error fetching profile ID:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching profile ID:', error);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async function () {
     const userboardGrid = document.getElementById('userboardGrid');
+    const curProfileId = await getProfileId();
 
     function populateSelectElement(elementId, dataObject, selectedValue) {
       const selectElement = document.getElementById(elementId);
@@ -397,7 +419,7 @@
       });
     }
 
-    fetch(`/profiles/${curUserId}`, {
+    fetch(`/profiles/${curProfileId}`, {
       method: 'GET',
       headers: {
         'Authorization': accessToken,
@@ -487,7 +509,7 @@
       formData.append('pros', document.getElementById('profilePros').value.trim());
       formData.append('relationship', document.getElementById('profileRelationship').value.trim());
 
-      fetch(`/profiles/${curUserId}`, {
+      fetch(`/profiles/${curProfileId}`, {
         method: 'PATCH',
         headers: {'Authorization': accessToken},
         body: formData
@@ -572,7 +594,8 @@
     });
 
     document.addEventListener('click', function (event) {
-      if (!event.target.closest('#profileInterestContainer') && !event.target.closest('#interestDropdown')) {
+      if (!event.target.closest('#profileInterestContainer') && !event.target.closest(
+          '#interestDropdown')) {
         interestDropdown.classList.add('hidden');
       }
     });
