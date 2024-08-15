@@ -128,14 +128,14 @@ public class OauthService {
         Long kakaoId = ((Number) userinfo.get("id")).longValue();
         User user = userRepository.findBykakaoId(kakaoId).orElse(null);
         Log.info("kakaoId : ", kakaoId);
-
+        Log.info("카카오 유저 아이디", user);
         Map<String, String> responseMap = new HashMap<>();
         if (user == null) {
             // 유저가 없으면 회원가입 페이지로 리다이렉션
             responseMap.put("redirectUrl", "/public/signup?kakaoId=" + kakaoId + "&oauth=KAKAO");
             return responseMap;
         }
-
+        Log.info("카카오 유저 아이디가 존재합니다", user);
         // 유저가 존재하는 경우, 토큰 생성 후 반환
         // Authenticate user with PreAuthenticatedAuthenticationToken
         PreAuthenticatedAuthenticationToken authenticationToken = new PreAuthenticatedAuthenticationToken(

@@ -21,7 +21,7 @@
         <img id="profile-image" src="https://source.unsplash.com/random/100x100" alt="Profile"
              class="w-24 h-24 rounded-full mr-6">
         <div>
-            <h1 class="text-2xl font-bold">조회수</h1>
+            <h1 id="bigTitle" class="text-2xl font-bold">큰 제목</h1>
             <p id="meets-date" class="text-gray-500">2024.07.20 작성됨</p>
         </div>
         <div class="flex justify-between items-center mb-6">
@@ -160,6 +160,7 @@
             document.getElementById('position').value = resData.position || '위치 정보 없음';
             document.getElementById('title').value = resData.title;
             document.getElementById('content').value = resData.content;
+            document.getElementById('bigTitle').value = resData.title;
             document.getElementById('groupMaster').value = resData.groupCreator;
             console.log("resData.groupCreatorId", resData.groupCreatorId)
             checkIfGroupMaster(resData.groupCreatorId);
