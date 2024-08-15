@@ -31,6 +31,10 @@
                     })
                     .then(data => {
                         console.log("Response data received:", data);
+                        if (data.redirectUrl) {
+                            // Redirect to the URL provided by the server
+                            console.log("Redirecting to:", data.redirectUrl);
+                        }
                         const accessToken = data.accessToken;
                         if (accessToken) {
                             console.log("Access token:", accessToken);
