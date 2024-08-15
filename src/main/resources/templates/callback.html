@@ -34,6 +34,7 @@
                         if (data.redirectUrl) {
                             // Redirect to the URL provided by the server
                             console.log("Redirecting to:", data.redirectUrl);
+                            window.location.href = data.redirectUrl;
                         }
                         const accessToken = data.accessToken;
                         if (accessToken) {
