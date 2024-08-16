@@ -170,8 +170,6 @@
     document.getElementById('chatBtn').style.display = 'block';
 
     document.addEventListener('DOMContentLoaded', function () {
-        localStorage.removeItem('username'); //불필요한 정보 제거
-        localStorage.removeItem('userId');
         const accessToken = localStorage.getItem('Authorization');
         if (!accessToken) {
             window.location.href = '/login';

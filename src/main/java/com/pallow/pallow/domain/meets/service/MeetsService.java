@@ -63,7 +63,13 @@ public class MeetsService {
                 .build();
 
         meetsRepository.save(meets);
-        // entity -> responseDto
+        InvitedBoard invitedBoard = InvitedBoard.builder()
+                .meets(meets)
+                .user(existUser)
+                .status(InviteStatus.ACCEPTED)
+                .build();
+        invitedBoardRepository.save(invitedBoard);
+
         return new MeetsResponseDto(meets);
     }
 

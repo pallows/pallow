@@ -13,9 +13,11 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.dtos.FlaskRequestDto;
 import com.pallow.pallow.global.dtos.FlaskResponseDto;
+import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.s3.service.ImageService;
+import com.pallow.pallow.global.security.UserDetailsImpl;
 import com.pallow.pallow.global.security.UserDetailsServiceImpl;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,6 +29,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
@@ -52,11 +58,9 @@ public class ProfileService {
     private final ProfileCustomRepository profileCustomRepository;
 
     public ProfileResponseDto getProfile(Long userId) {
-        ProfileResponseDto profileResponseDto = profileCustomRepository.findByProfileId(userId);
-        if (profileResponseDto == null) {
-            throw new CustomException(ErrorType.NOT_FOUND_USER);
-        }
-        return profileResponseDto;
+        Profile foundUser = profileRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getUsername(), foundUser.getUser().getNickname());
     }
 
     public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user,
@@ -178,11 +182,11 @@ public class ProfileService {
 
 
     private boolean isSameIdAndUser(Long userId, User user) {
-        return user.getId().equals(userId);
+        return user.getProfile().getId().equals(userId);
     }
 
     public List<ProfileResponseDto> getNearProfiles(Long userId) {
-        Profile foundUser = profileRepository.findById(userId)
+        Profile foundUser = profileRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         String[] positionParts = foundUser.getPosition().split(" ");
 

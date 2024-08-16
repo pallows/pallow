@@ -32,7 +32,7 @@ public class InvitedBoardController {
             @PathVariable("groupId") long groupId,
             @RequestBody InvitedBoardRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        if (invitedBoardService.declinedUser(userDetails.getUser())) {
+        if (invitedBoardService.declinedUser(userDetails.getUser(), groupId)) {
             return ResponseEntity
                     .status(HttpStatus.FORBIDDEN)
                     .body(new CommonResponseDto(Message.DECLINED_APPLY_SUCCESS));
@@ -63,8 +63,7 @@ public class InvitedBoardController {
     public ResponseEntity<CommonResponseDto> getAllInvitation(
             @PathVariable("groupId") long groupId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<InvitedBoardResponseDto> responseDtos = invitedBoardService.getAllInvitation(groupId,
-                userDetails.getUser());
+        List<InvitedBoardResponseDto> responseDtos = invitedBoardService.getAllInvitation(groupId, userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.INVITATION_READ_SUCCESS, responseDtos));
     }

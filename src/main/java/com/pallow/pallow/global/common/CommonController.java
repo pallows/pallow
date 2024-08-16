@@ -1,12 +1,20 @@
 package com.pallow.pallow.global.common;
 
+import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
+import com.pallow.pallow.domain.invitedboard.repository.InvitedBoardRepository;
 import com.pallow.pallow.domain.meets.service.MeetsService;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.service.ProfileService;
+import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.domain.userboard.dto.UserBoardResponseDto;
 import com.pallow.pallow.domain.userboard.service.UserBoardService;
+import com.pallow.pallow.global.enums.ErrorType;
+import com.pallow.pallow.global.exception.CustomException;
+import jakarta.persistence.EntityNotFoundException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.model.ModelMutationLogging;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -22,6 +30,7 @@ public class CommonController {
     private final UserBoardService userBoardService;
     private final ProfileService profileService;
     private final UserRepository userRepository;
+    private final InvitedBoardRepository invitedBoardRepository;
 
     @Value("${kakao.map.app-key}")
     private String kakaoMapAppKey;
@@ -96,8 +105,11 @@ public class CommonController {
     @GetMapping("/public/Profile")
     public String profilePage(@RequestParam Long profileId, Model model) {
         ProfileResponseDto profile = profileService.getProfile(profileId);
+        User user = userRepository.findByUsername(profile.getName())
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         model.addAttribute("profile", profile);
-        model.addAttribute("userId", profileId);
+        model.addAttribute("userId", user.getId());
+
         return "profile";
     }
 
@@ -110,5 +122,14 @@ public class CommonController {
     public String kakaoMap(Model model) {
         model.addAttribute("kakaoMapAppKey", kakaoMapAppKey);
         return "kakaoMap";
+    }
+
+    @GetMapping("/public/InvitationList")
+    public String InvitationList(@RequestParam("meetId") Long meetId, @RequestParam("userId") Long userId ,Model model) {
+        InvitedBoard invitedBoard = invitedBoardRepository.findByUserIdAndMeetsId(userId, meetId)
+                .orElseThrow(() -> new RuntimeException("InvitedBoard not found for meetId: " + meetId));
+        Long profileId = invitedBoard.getUser().getProfile().getId();
+        model.addAttribute("profileId", profileId);
+        return "InvitationList";
     }
 }
