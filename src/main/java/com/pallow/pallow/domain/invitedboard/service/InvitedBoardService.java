@@ -117,7 +117,11 @@ public class InvitedBoardService {
             throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
         }
 
-        List<InvitedBoard> boards = invitedBoardRepository.findAllByStatus(InviteStatus.WAITING);
+        Meets meets = meetsRepository.findById(groupId).orElseThrow(
+                () -> new CustomException(ErrorType.NOT_FOUND_GROUP)
+        );
+
+        List<InvitedBoard> boards = invitedBoardRepository.findAllByMeetsAndStatus(meets, InviteStatus.WAITING);
 
         return boards.stream()
                 .map(InvitedBoardResponseDto::new)

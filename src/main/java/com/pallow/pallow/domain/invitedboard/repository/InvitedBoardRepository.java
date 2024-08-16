@@ -14,8 +14,6 @@ public interface InvitedBoardRepository extends JpaRepository<InvitedBoard, Long
 
     Optional<InvitedBoard> findByUserIdAndMeetsIdAndStatus(Long userId, Long meetsId, InviteStatus status);
 
-    List<InvitedBoard> findAllByStatus(InviteStatus status);
-
     Optional<InvitedBoard> findByUserId(long userId);
 
     List<InvitedBoard> findAllByMeetsAndStatus(Meets meets, InviteStatus status);
