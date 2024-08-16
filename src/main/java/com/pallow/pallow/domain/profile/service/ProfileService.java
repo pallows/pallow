@@ -182,7 +182,7 @@ public class ProfileService {
 
 
     private boolean isSameIdAndUser(Long userId, User user) {
-        return user.getId().equals(userId);
+        return user.getProfile().getId().equals(userId);
     }
 
     public List<ProfileResponseDto> getNearProfiles(Long userId) {
