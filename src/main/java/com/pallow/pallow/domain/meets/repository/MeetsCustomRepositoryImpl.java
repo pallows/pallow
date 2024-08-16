@@ -39,4 +39,15 @@ public class MeetsCustomRepositoryImpl implements MeetsCustomRepository {
         return Optional.ofNullable(foundMeets);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Meets> findTopByOrderByLikesCountDesc(int limit) {
+        return jpaQueryFactory
+                .selectFrom(qMeets)
+                .where(qMeets.status.eq(CommonStatus.ACTIVE)) // assuming status is an enum or string in your entity
+                .orderBy(qMeets.likesCount.desc()) // order by likes_count descending
+                .limit(limit)
+                .fetch();
+    }
+
 }

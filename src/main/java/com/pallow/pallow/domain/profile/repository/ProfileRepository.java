@@ -10,6 +10,4 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
     Optional<Profile> findByUserId(Long id);
 
-    List<Profile> findAllByPositionAndUserStatus(String position, CommonStatus status);
-
 }
