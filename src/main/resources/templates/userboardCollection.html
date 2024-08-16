@@ -122,22 +122,7 @@
 
   async function getUserPosition() {
     try {
-      // 먼저 프로필 ID를 가져옵니다.
-      const profileIdResponse = await fetchWithAuth('/profiles/getProfileId');
-      if (!profileIdResponse.ok) {
-        throw new Error(`HTTP error! status: ${profileIdResponse.status}`);
-      }
-      const profileIdData = await profileIdResponse.json();
-      console.log('Profile ID data:', profileIdData);
-
-      if (!profileIdData.data || !profileIdData.data.id) {
-        throw new Error('Profile ID not found in the response');
-      }
-
-      const profileId = profileIdData.data.id;
-
-      // 이제 프로필 ID를 사용하여 프로필 정보를 가져옵니다.
-      const response = await fetchWithAuth(`/profiles/${profileId}`);
+      const response = await fetchWithAuth(`/profiles/${userId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

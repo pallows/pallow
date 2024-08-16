@@ -41,7 +41,8 @@ public class ProfileController {
      * @return 조회 성공 메시지 + 조회 데이터
      */
     @GetMapping("/{userId}")
-    public ResponseEntity<CommonResponseDto> getProfile(@PathVariable Long userId) {
+    public ResponseEntity<CommonResponseDto> getProfile(@PathVariable Long userId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (userId == 0) {userId = userDetails.getId();}
         ProfileResponseDto responseDto = profileService.getProfile(userId);
         return ResponseEntity.ok(new CommonResponseDto(Message.PROFILE_READ_SUCCESS, responseDto));
     }
@@ -82,6 +83,7 @@ public class ProfileController {
             @ModelAttribute @Valid ProfileRequestDto requestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PathVariable Long userId) {
+        if (userId == 0) {userId = userDetails.getId();}
         ProfileResponseDto responseDto = profileService.updateProfile(userId, requestDto,
                 userDetails.getUser());
         return ResponseEntity.ok(

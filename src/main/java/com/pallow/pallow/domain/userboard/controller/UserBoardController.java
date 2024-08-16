@@ -40,6 +40,7 @@ public class UserBoardController {
     public ResponseEntity<CommonResponseDto> getAllUserBoard(
             @PathVariable("userId") long userId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (userId == 0) {userId = userDetails.getId();}
         List<UserBoardResponseDto> responseDtos = userBoardService.getBoards(userId,
                 userDetails.getUser());
         return ResponseEntity.ok(

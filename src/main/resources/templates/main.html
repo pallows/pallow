@@ -82,6 +82,20 @@
         .carousel-arrow.right {
             right: 10px;
         }
+
+        .footer {
+            background-color: #F8F9FA;
+            padding: 20px;
+            border-top: 1px solid #E9ECEF;
+        }
+        .footer a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
     </style>
     <link rel="icon"
           th:href="@{https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96}"
@@ -156,6 +170,24 @@
     <!--    <a href="/benefits" class="bg-gray-200 text-gray-700 px-4 py-2 rounded">혜택 자세히 보기</a>-->
     <!--  </section>-->
 </main>
+
+<footer class="footer text-center mt-8">
+    <div class="container mx-auto">
+
+        <a href="https://www.notion.so" target="_blank" class="inline-block">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Notion" class="w-6 h-6 mx-auto mb-2">
+        </a>
+        <p>&copy; 2024, Pallow. All rights reserved</p>
+        <p>Team Email: pallow.company@gmail.com</p>
+        <p>Created by: Team Palworld</p>
+        <p>Company Address: 1234 Street Name, City, Country</p>
+        <p class="mt-2">
+            <a href="#">Terms of Service</a> |
+            <a href="#">Privacy Policy</a>
+        </p>
+    </div>
+</footer>
+
 <button id="chatBtn" class="p-2 rounded flex flex-col items-center">
     <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor"
          class="bi bi-chat-heart"

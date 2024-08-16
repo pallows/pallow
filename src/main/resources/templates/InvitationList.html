@@ -29,10 +29,6 @@
   </div>
 </div>
 
-<script th:inline="javascript">
-  const profileId = [[${profileId}]];
-</script>
-
 <script>
   const accessToken = localStorage.getItem('Authorization');
   document.addEventListener('DOMContentLoaded', function () {
@@ -56,7 +52,7 @@
         const data = responseData.data;
 
         data.forEach(item => {
-          fetch(`/profiles/${profileId}`, {
+          fetch(`/profiles/${item.userId}`, {
             method: 'GET',
             headers: {
               'Authorization': accessToken,
