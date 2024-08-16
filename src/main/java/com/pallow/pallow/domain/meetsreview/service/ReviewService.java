@@ -3,6 +3,7 @@ package com.pallow.pallow.domain.meetsreview.service;
 import com.pallow.pallow.domain.invitedboard.service.InvitedBoardService;
 import com.pallow.pallow.domain.like.service.LikeService;
 import com.pallow.pallow.domain.meets.entity.Meets;
+import com.pallow.pallow.domain.meets.repository.MeetsCustomRepository;
 import com.pallow.pallow.domain.meets.repository.MeetsRepository;
 import com.pallow.pallow.domain.meetsreview.dto.ReviewRequestDto;
 import com.pallow.pallow.domain.meetsreview.dto.ReviewResponseDto;
@@ -12,10 +13,8 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,17 +29,20 @@ public class ReviewService {
     private final MeetsRepository meetsRepository;
     private final InvitedBoardService invitedBoardService;
     private final LikeService likeService;
+    private final MeetsCustomRepository meetsCustomRepository;
 
     /**
      * 리뷰 생성
      */
     public ReviewResponseDto create(Long meetsId, ReviewRequestDto requestDto, User user) {
         // 그룹이 존재하는지 확인
-        Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+        Meets meets = meetsCustomRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE)
+                .orElseThrow(
+                        () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
 
         // 유저가 그룹에 속해있는지 확인
-        if (!meets.getGroupCreator().getId().equals(user.getId()) && !invitedBoardService.isUserInGroup(user, meets)) {
+        if (!meets.getGroupCreator().getId().equals(user.getId())
+                && !invitedBoardService.isUserInGroup(user, meets)) {
             throw new CustomException(ErrorType.NOT_FOUND_USER_IN_GROUP);
         }
 
@@ -81,7 +83,7 @@ public class ReviewService {
      */
     @Transactional
     public ReviewResponseDto update(Long meetsId, Long reviewId, ReviewRequestDto requestDto,
-                                    User user) {
+            User user) {
         MeetsReview review = getValidatedMeetsAndReview(meetsId, reviewId);
 
         // 리뷰 작성자인지 검사

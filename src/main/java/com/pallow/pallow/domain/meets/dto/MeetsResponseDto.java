@@ -1,11 +1,8 @@
 package com.pallow.pallow.domain.meets.dto;
 
 import com.pallow.pallow.domain.meets.entity.Meets;
-import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.global.enums.CommonStatus;
-
 import java.time.LocalDateTime;
-
 import lombok.Getter;
 
 @Getter

@@ -7,9 +7,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Primary
 @Repository
 @RequiredArgsConstructor
 public class MeetsCustomRepositoryImpl implements MeetsCustomRepository {

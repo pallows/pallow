@@ -12,11 +12,9 @@ import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.InviteStatus;
 import com.pallow.pallow.global.exception.CustomException;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,7 +40,7 @@ public class InvitedBoardService {
             throw new CustomException(ErrorType.YES_GROUP_CREATOR);
         }
 
-        User wantToApplyUser = userCustomRepository.findById(requestDto.getUserId());
+        User wantToApplyUser = userCustomRepository.findByUserId(requestDto.getUserId());
 
         Meets meet = meetsRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_GROUP));

@@ -6,9 +6,11 @@ import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Primary
 @Repository
 @RequiredArgsConstructor
 public class UserCustomRepositoryImpl implements UserCustomRepository {
@@ -19,7 +21,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public User findById(Long id) {
+    public User findByUserId(Long id) {
         User foundUser = jpaQueryFactory
                 .selectFrom(qUser)
                 .where(qUser.id.eq(id))

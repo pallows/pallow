@@ -1,9 +1,8 @@
 package com.pallow.pallow.domain.chat.dto;
 
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.Builder;
+import lombok.Getter;
 
 @Getter
 @Builder

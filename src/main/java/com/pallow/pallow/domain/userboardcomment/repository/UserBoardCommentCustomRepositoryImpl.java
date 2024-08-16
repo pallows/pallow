@@ -7,9 +7,11 @@ import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Primary
 @Repository
 @RequiredArgsConstructor
 public class UserBoardCommentCustomRepositoryImpl implements UserBoardCommentCustomRepository {
