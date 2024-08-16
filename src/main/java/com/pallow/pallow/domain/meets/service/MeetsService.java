@@ -6,9 +6,11 @@ import com.pallow.pallow.domain.like.service.LikeService;
 import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
 import com.pallow.pallow.domain.meets.dto.MeetsResponseDto;
 import com.pallow.pallow.domain.meets.entity.Meets;
+import com.pallow.pallow.domain.meets.repository.MeetsCustomRepository;
 import com.pallow.pallow.domain.meets.repository.MeetsRepository;
 import com.pallow.pallow.domain.user.dto.UserResponseDto;
 import com.pallow.pallow.domain.user.entity.User;
+import com.pallow.pallow.domain.user.repository.UserCustomRepository;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.CommonStatus;
 import com.pallow.pallow.global.enums.ErrorType;
@@ -33,15 +35,15 @@ public class MeetsService {
     private final LikeService likeService;
     private final ImageService imageService;
     private final InvitedBoardRepository invitedBoardRepository;
+    private final UserCustomRepository userCustomRepository;
+    private final MeetsCustomRepository meetsCustomRepository;
 
     /**
      * 그룹 생성
      */
     public MeetsResponseDto create(MeetsRequestDto requestDto, User user) {
         //userId가 존재하는지 확인
-        User existUser = userRepository.findById(user.getId()).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_USER)
-        );
+        User existUser = userCustomRepository.findById(user.getId());
 
         // 이미지 업로드
         String imageUrl = null;
@@ -81,7 +83,7 @@ public class MeetsService {
      * 그룹 전체 조회
      */
     public List<MeetsResponseDto> getAllMeets() {
-        List<Meets> meetsList = meetsRepository.findAllByStatus(CommonStatus.ACTIVE);
+        List<Meets> meetsList = meetsCustomRepository.findAllByStatus(CommonStatus.ACTIVE);
         return meetsList.stream()
                 .map(MeetsResponseDto::new)
                 .collect(Collectors.toList());
@@ -92,8 +94,9 @@ public class MeetsService {
      */
     @Transactional
     public MeetsResponseDto update(Long meetsId, MeetsRequestDto requestDto, User user) {
-        Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+        Meets meets = meetsCustomRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE)
+                .orElseThrow(
+                        () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
 
         // 로그인된 유저와 그룹 생성자가 일치하는지 확인
         if (!user.getId().equals(meets.getGroupCreator().getId())) {
@@ -123,8 +126,9 @@ public class MeetsService {
      */
     @Transactional
     public void delete(Long meetsId, User user) {
-        Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+        Meets meets = meetsCustomRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE)
+                .orElseThrow(
+                        () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
 
         // 로그인된 유저와 그룹 생성자가 일치하는지 확인
         if (!user.getId().equals(meets.getGroupCreator().getId())) {
@@ -202,7 +206,8 @@ public class MeetsService {
     public List<MeetsResponseDto> getNearbyMeets(User user, int limit) {
         // 사용자의 위치 정보를 기반으로 주변 모임을 찾는 로직 구현
         // 여기서는 간단히 무작위로 선택하는 것으로 가정
-        List<Meets> nearbyMeets = meetsRepository.findRandomNearbyMeets(user.getProfile().getPosition(), limit);
+        List<Meets> nearbyMeets = meetsRepository.findRandomNearbyMeets(
+                user.getProfile().getPosition(), limit);
         return nearbyMeets.stream()
                 .map(MeetsResponseDto::new)
                 .collect(Collectors.toList());

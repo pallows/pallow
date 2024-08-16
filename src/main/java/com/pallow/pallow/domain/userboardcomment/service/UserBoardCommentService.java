@@ -4,10 +4,12 @@ import com.pallow.pallow.domain.like.service.LikeService;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.service.UserService;
 import com.pallow.pallow.domain.userboard.entity.UserBoard;
+import com.pallow.pallow.domain.userboard.repository.UserBoardCustomRepository;
 import com.pallow.pallow.domain.userboard.repository.UserBoardRepository;
 import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentRequestDto;
 import com.pallow.pallow.domain.userboardcomment.dto.UserBoardCommentResponseDto;
 import com.pallow.pallow.domain.userboardcomment.entity.UserBoardComment;
+import com.pallow.pallow.domain.userboardcomment.repository.UserBoardCommentCustomRepository;
 import com.pallow.pallow.domain.userboardcomment.repository.UserBoardCommentRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
@@ -28,13 +30,14 @@ public class UserBoardCommentService {
     private final LikeService likeService;
     private final UserBoardCommentRepository userBoardCommentRepository;
     private final UserBoardRepository userBoardRepository;
+    private final UserBoardCustomRepository userBoardCustomRepository;
+    private final UserBoardCommentCustomRepository userBoardCommentCustomRepository;
 
 
     public UserBoardCommentResponseDto createComment(long boardId, User user,
-                                                     UserBoardCommentRequestDto requestDto) {
+            UserBoardCommentRequestDto requestDto) {
         User createdBy = userService.findUserById(user.getId());
-        UserBoard userBoard = userBoardRepository.findById(boardId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_BOARD));
+        UserBoard userBoard = userBoardCustomRepository.findById(boardId);
         UserBoardComment comment = userBoardCommentRepository.save(
                 requestDto.toEntity(createdBy, userBoard));
         return new UserBoardCommentResponseDto(comment);
@@ -48,10 +51,8 @@ public class UserBoardCommentService {
 
     @Transactional
     public UserBoardCommentResponseDto updateComment(long commentId,
-                                                     User user, UserBoardCommentRequestDto requestDto) {
-        UserBoardComment comment = userBoardCommentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(
-                        ErrorType.NOT_FOUND_USER_BOARD_COMMENT));
+            User user, UserBoardCommentRequestDto requestDto) {
+        UserBoardComment comment = userBoardCommentCustomRepository.findById(commentId);
         if (!isSameIdAndUser(comment.getUser().getId(), user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
@@ -61,8 +62,7 @@ public class UserBoardCommentService {
 
     @Transactional
     public void deleteComment(long commentId, User user) {
-        UserBoardComment comment = userBoardCommentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD_COMMENT));
+        UserBoardComment comment = userBoardCommentCustomRepository.findById(commentId);
         if (!isSameIdAndUser(comment.getUser().getId(), user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }

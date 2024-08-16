@@ -58,12 +58,15 @@ public class ProfileService {
     private final ProfileCustomRepository profileCustomRepository;
 
     public ProfileResponseDto getProfile(Long userId) {
-        Profile foundUser = profileRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
-        return new ProfileResponseDto(foundUser, foundUser.getUser().getUsername(), foundUser.getUser().getNickname());
+        ProfileResponseDto profileResponseDto = profileCustomRepository.findById(userId);
+        if (profileResponseDto == null) {
+            throw new CustomException(ErrorType.NOT_FOUND_USER);
+        }
+        return profileResponseDto;
     }
 
-    public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user, String defaultImage) {
+    public ProfileResponseDto createProfile(ProfileRequestDto requestDto, User user,
+            String defaultImage) {
         String imageUrl;
         if (requestDto.getImage() == null || requestDto.getImage().isEmpty()) {
             imageUrl = defaultImage;
@@ -75,7 +78,8 @@ public class ProfileService {
             }
         }
         Profile profile = profileRepository.save(requestDto.toEntity(user, imageUrl));
-        return new ProfileResponseDto(profile, profile.getUser().getName(), profile.getUser().getNickname());
+        return new ProfileResponseDto(profile, profile.getUser().getName(),
+                profile.getUser().getNickname());
     }
 
     @Transactional
@@ -98,7 +102,8 @@ public class ProfileService {
             imageUrl = foundUser.getImage();
         }
         foundUser.update(requestDto, imageUrl);
-        return new ProfileResponseDto(foundUser, foundUser.getUser().getName(), foundUser.getUser().getNickname());
+        return new ProfileResponseDto(foundUser, foundUser.getUser().getName(),
+                foundUser.getUser().getNickname());
     }
 
     @Transactional
@@ -124,9 +129,9 @@ public class ProfileService {
 
         user = userRepository.save(user);
 
-        Optional<Profile> currentUserProfile = profileRepository.findByUserId(user.getId());
+        Optional<Profile> currentUserProfile = profileCustomRepository.findByUserId(user.getId());
 
-        List<Profile> profileList = profileRepository.findAllByPositionAndUserStatus(
+        List<Profile> profileList = profileCustomRepository.findAllByPositionAndUserStatus(
                 user.getProfile().getPosition(), user.getStatus());
 
         List<ProfileItem> items = new ArrayList<>();

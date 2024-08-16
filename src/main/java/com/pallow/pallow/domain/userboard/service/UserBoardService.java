@@ -2,10 +2,12 @@ package com.pallow.pallow.domain.userboard.service;
 
 import com.pallow.pallow.domain.like.service.LikeService;
 import com.pallow.pallow.domain.user.entity.User;
+import com.pallow.pallow.domain.user.repository.UserCustomRepository;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.domain.userboard.dto.UserBoardRequestDto;
 import com.pallow.pallow.domain.userboard.dto.UserBoardResponseDto;
 import com.pallow.pallow.domain.userboard.entity.UserBoard;
+import com.pallow.pallow.domain.userboard.repository.UserBoardCustomRepository;
 import com.pallow.pallow.domain.userboard.repository.UserBoardRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
@@ -33,11 +35,12 @@ public class UserBoardService {
     private final ImageService imageService;
     private final UserBoardRepository userBoardRepository;
     private final UserRepository userRepository;
+    private final UserCustomRepository userCustomRepository;
+    private final UserBoardCustomRepository userBoardCustomRepository;
 
     public UserBoardResponseDto createBoard(UserBoardRequestDto requestDto, User user,
-                                            long userId) {
-        User createdBy = userRepository.findById(user.getId())
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+            long userId) {
+        User createdBy = userCustomRepository.findById(user.getId());
         if (isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
@@ -55,8 +58,7 @@ public class UserBoardService {
     }
 
     public UserBoardResponseDto getBoard(long userId, long userBoardId, User user) {
-        UserBoard userBoard = userBoardRepository.findById(userBoardId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
+        UserBoard userBoard = userBoardCustomRepository.findById(userBoardId);
         return new UserBoardResponseDto(userBoard);
     }
 
@@ -67,9 +69,8 @@ public class UserBoardService {
 
     @Transactional
     public UserBoardResponseDto updateUserBoard(long userId, long userBoardId,
-                                                UserBoardRequestDto requestDto, User user) {
-        UserBoard userBoard = userBoardRepository.findById(userBoardId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
+            UserBoardRequestDto requestDto, User user) {
+        UserBoard userBoard = userBoardCustomRepository.findById(userBoardId);
         if (isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
@@ -93,8 +94,7 @@ public class UserBoardService {
 
     @Transactional
     public void deleteUserBoard(long userId, long userBoardId, User user) {
-        UserBoard userBoard = userBoardRepository.findById(userBoardId)
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER_BOARD));
+        UserBoard userBoard = userBoardCustomRepository.findById(userBoardId);
         if (isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }
@@ -134,7 +134,8 @@ public class UserBoardService {
      */
     @Transactional(readOnly = true)
     public List<UserBoardResponseDto> getTodaysFriends(User user, int limit) {
-        List<UserBoard> todaysFriends = userBoardRepository.findRandomByPosition(user.getProfile().getPosition(), limit);
+        List<UserBoard> todaysFriends = userBoardRepository.findRandomByPosition(
+                user.getProfile().getPosition(), limit);
         return todaysFriends.stream()
                 .map(UserBoardResponseDto::new)
                 .collect(Collectors.toList());

@@ -7,6 +7,7 @@ import com.pallow.pallow.domain.invitedboard.repository.InvitedBoardRepository;
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.meets.repository.MeetsRepository;
 import com.pallow.pallow.domain.user.entity.User;
+import com.pallow.pallow.domain.user.repository.UserCustomRepository;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.InviteStatus;
@@ -30,6 +31,7 @@ public class InvitedBoardService {
     private final InvitedBoardRepository invitedBoardRepository;
     private final UserRepository userRepository;
     private final MeetsRepository meetsRepository;
+    private final UserCustomRepository userCustomRepository;
 
     public void applyForGroup(long groupId, InvitedBoardRequestDto requestDto, User user) {
         if (!requestDto.getUserId().equals(user.getId())) {
@@ -40,8 +42,7 @@ public class InvitedBoardService {
             throw new CustomException(ErrorType.YES_GROUP_CREATOR);
         }
 
-        User wantToApplyUser = userRepository.findById(requestDto.getUserId())
-                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+        User wantToApplyUser = userCustomRepository.findById(requestDto.getUserId());
 
         Meets meet = meetsRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_GROUP));
@@ -121,7 +122,8 @@ public class InvitedBoardService {
                 () -> new CustomException(ErrorType.NOT_FOUND_GROUP)
         );
 
-        List<InvitedBoard> boards = invitedBoardRepository.findAllByMeetsAndStatus(meets, InviteStatus.WAITING);
+        List<InvitedBoard> boards = invitedBoardRepository.findAllByMeetsAndStatus(meets,
+                InviteStatus.WAITING);
 
         return boards.stream()
                 .map(InvitedBoardResponseDto::new)
