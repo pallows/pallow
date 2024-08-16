@@ -277,6 +277,7 @@
     const formData = new FormData(form);
     let username = localStorage.getItem('username');
     formData.append('username', username);
+    localStorage.removeItem("username")
     formData.delete('region1');
     formData.delete('region2');
 

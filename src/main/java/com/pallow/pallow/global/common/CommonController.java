@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.sql.model.ModelMutationLogging;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -103,13 +104,12 @@ public class CommonController {
     }
 
     @GetMapping("/public/Profile")
-    public String profilePage(@RequestParam Long profileId, Model model) {
-        ProfileResponseDto profile = profileService.getProfile(profileId);
-        User user = userRepository.findByUsername(profile.getName())
+    public String profilePage(@RequestParam("profileUsername") String username, Model model) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+        ProfileResponseDto profile = profileService.getProfile(user.getId());
         model.addAttribute("profile", profile);
         model.addAttribute("userId", user.getId());
-
         return "profile";
     }
 
@@ -125,11 +125,7 @@ public class CommonController {
     }
 
     @GetMapping("/public/InvitationList")
-    public String InvitationList(@RequestParam("meetId") Long meetId, @RequestParam("userId") Long userId ,Model model) {
-        InvitedBoard invitedBoard = invitedBoardRepository.findByUserIdAndMeetsId(userId, meetId)
-                .orElseThrow(() -> new RuntimeException("InvitedBoard not found for meetId: " + meetId));
-        Long profileId = invitedBoard.getUser().getProfile().getId();
-        model.addAttribute("profileId", profileId);
+    public String InvitationList() {
         return "InvitationList";
     }
 }

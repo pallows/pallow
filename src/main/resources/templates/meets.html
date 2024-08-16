@@ -87,7 +87,6 @@
     // URL에서 meetId 가져오기
     const path = window.location.pathname;
     const meetId = path.split('/').pop();  // 마지막 경로 부분을 meetId로 추출
-    const curUserId = localStorage.getItem('userId');
 
     if (!meetId) {
         alert('모임 ID가 필요합니다.');
@@ -99,13 +98,12 @@
     });
     document.getElementById('InvitationList').addEventListener('click', async () => {
 
-        window.open(`/public/InvitationList?meetId=${meetId}&userId=${curUserId}`, '신청 목록', `width=800,height=600,top=${(screen.height - 600) / 2},left=${(screen.width - 800) / 2}`);
+        window.open(`/public/InvitationList?meetId=${meetId}`, '신청 목록', `width=800,height=600,top=${(screen.height - 600) / 2},left=${(screen.width - 800) / 2}`);
     });
 
     document.getElementById('participant').addEventListener('click', async function () {
         const userResponse = await fetchWithAuth(`/users/only`)
         const currentUser = await userResponse.json();
-        // currentUser.data.id
         const invitationResponse = await fetchWithAuth(`/groups/${meetId}/invitation`, {
             method: "POST",
             body: JSON.stringify({userId: currentUser.data.id})

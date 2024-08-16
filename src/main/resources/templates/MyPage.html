@@ -268,7 +268,6 @@
   } from "/js/predefinedData.js";
 
   const accessToken = localStorage.getItem('Authorization');
-  const curUserId = localStorage.getItem('userId');
   const profileInterestContainer = document.getElementById('profileInterestContainer');
   const interestDropdown = document.getElementById('interestDropdown');
   const profileInterestText = document.getElementById('profileInterestText');
@@ -280,30 +279,8 @@
   const selectedIdeals = document.getElementById('selectedIdeals');
   let selectedIdealValues = new Set();
 
-  async function getProfileId() {
-    try {
-      const response = await fetch('/profiles/getProfileId', {
-        method: 'GET',
-        headers: {
-          'Authorization': accessToken,
-          'Content-Type': 'application/json'
-        }
-      });
-      const data = await response.json();
-
-      if (data.statusCode === 200) {
-        return data.data.id;
-      } else {
-        console.error('Error fetching profile ID:', data.message);
-      }
-    } catch (error) {
-      console.error('Error fetching profile ID:', error);
-    }
-  }
-
   document.addEventListener('DOMContentLoaded', async function () {
     const userboardGrid = document.getElementById('userboardGrid');
-    const curProfileId = await getProfileId();
 
     function populateSelectElement(elementId, dataObject, selectedValue) {
       const selectElement = document.getElementById(elementId);
@@ -419,7 +396,7 @@
       });
     }
 
-    fetch(`/profiles/${curProfileId}`, {
+    fetch(`/profiles/${0}`, {
       method: 'GET',
       headers: {
         'Authorization': accessToken,
@@ -509,7 +486,7 @@
       formData.append('pros', document.getElementById('profilePros').value.trim());
       formData.append('relationship', document.getElementById('profileRelationship').value.trim());
 
-      fetch(`/profiles/${curProfileId}`, {
+      fetch(`/profiles/${0}`, {
         method: 'PATCH',
         headers: {'Authorization': accessToken},
         body: formData
@@ -607,11 +584,8 @@
       }
     });
 
-    function loadUserBoards(userId) {
-      if (!userId) {
-        throw new Error('User ID is not available');
-      }
-      return fetch(`/users/${userId}/userboards`, {
+    function loadUserBoards() {
+      return fetch(`/users/${0}/userboards`, {
         method: 'GET',
         headers: {
           'Authorization': accessToken,
@@ -653,7 +627,7 @@
       });
     }
 
-    loadUserBoards(curUserId);
+    loadUserBoards();
   });
 
   function deleteAccount() {
