@@ -4,7 +4,7 @@
     <script src="/js/auth.js" defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prototype</title>
+    <title>My Post</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -169,39 +169,39 @@
 
         //TODO: Board 및 해당 User 의 정보를 불러옵니다.
         fetchWithAuth(`/users/only`)
-            .then(response => response.json())
-            .then(el => {
-                return el
-            }).then((elData) => {
+        .then(response => response.json())
+        .then(el => {
+            return el
+        }).then((elData) => {
             fetchWithAuth(`/users/0/userboards/${userBoardId}`) //TODO 중간에 숫자 0 이 들어간 이유는 컨트롤러 맵핑을 저렇게 하고 있어서
-                .then(response => response.json())              //TODO 사용처가 없음에도 불구하고 0을 넣어줬습니다.
-                .then(data => {
-                    userId = data.data.boardUserId;
-                    document.getElementById('username').textContent = data.data.userNickName;
-                    document.getElementById('profileImage').src = data.data.userProfileImage;
-                    document.getElementById('boardTitle').textContent = data.data.title;
-                    document.getElementById('boardContent').textContent = data.data.content;
-                    document.getElementById('boardImg').src = data.data.image;
-                    document.getElementById('boardDate').textContent = new Date(data.data.createdAt).toLocaleDateString('ko-KR', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                    });
-                    document.getElementById('boardLikeCount').textContent = data.data.likesCount;
-                    originalImgSrc = data.data.image;
-
-                    initializeLikeStatus();
-                })
-                .then(() => {
-                        if (elData.data.id !== userId) { // elData.data.id 접속한 유저의 id // board를 작성한 유저
-                            document.getElementById('edit-button').style.display = 'none';
-                            document.getElementById('delete-button').style.display = 'none';
-                        }
-                    }
-                )
-                .catch(error => {
-                    console.error('Error fetching user data:', error);
+            .then(response => response.json())              //TODO 사용처가 없음에도 불구하고 0을 넣어줬습니다.
+            .then(data => {
+                userId = data.data.boardUserId;
+                document.getElementById('username').textContent = data.data.userNickName;
+                document.getElementById('profileImage').src = data.data.userProfileImage;
+                document.getElementById('boardTitle').textContent = data.data.title;
+                document.getElementById('boardContent').textContent = data.data.content;
+                document.getElementById('boardImg').src = data.data.image;
+                document.getElementById('boardDate').textContent = new Date(data.data.createdAt).toLocaleDateString('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
                 });
+                document.getElementById('boardLikeCount').textContent = data.data.likesCount;
+                originalImgSrc = data.data.image;
+
+                initializeLikeStatus();
+            })
+            .then(() => {
+                    if (elData.data.id !== userId) { // elData.data.id 접속한 유저의 id // board를 작성한 유저
+                        document.getElementById('edit-button').style.display = 'none';
+                        document.getElementById('delete-button').style.display = 'none';
+                    }
+                }
+            )
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+            });
 
 
         })
@@ -210,29 +210,29 @@
         // TODO COMMENT 페이지가 로드 되었을때 구현
         {
             fetchWithAuth(`/users/only`)
-                .then(response => response.json())
-                .then(el => {
-                    return el
-                }).then((currentUserId) => {
+            .then(response => response.json())
+            .then(el => {
+                return el
+            }).then((currentUserId) => {
                 return currentUserId.data.id // 현재 접속한 유저의 ID
             }).then((currentUserId) => {
                 fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}/comments`)
-                    //해당 board에 접속한 유저의 id로 접근
-                    .then(response => response.json())
-                    .then(data => {
-                        data.data.forEach((el) => {
-                            if (currentUserId !== el.commentUserId) {
-                                isAuthor = false;
-                            }
-                            if (currentUserId === el.commentUserId) {
-                                isAuthor = true;
-                            }
-                            addCommentToDOM(el, isAuthor)
-                        })
+                //해당 board에 접속한 유저의 id로 접근
+                .then(response => response.json())
+                .then(data => {
+                    data.data.forEach((el) => {
+                        if (currentUserId !== el.commentUserId) {
+                            isAuthor = false;
+                        }
+                        if (currentUserId === el.commentUserId) {
+                            isAuthor = true;
+                        }
+                        addCommentToDOM(el, isAuthor)
                     })
-                    .catch(error => {
-                        console.error('Error fetching user data:', error);
-                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error);
+                });
             })
         }
 
@@ -329,17 +329,17 @@
         fetchWithAuth(`/userboardscomment/${commentId}/like`, {
             method: 'POST'
         })
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                initializeCommentLikeStatus(commentId, commentElement)
-                // 서버에서 제공된 좋아요 수를 그대로 사용
-            })
-            .catch(error => {
-                console.error('Error toggling comment like:', error);
-                alert('댓글 좋아요 상태를 업데이트하는 중 오류가 발생했습니다.');
-            });
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            initializeCommentLikeStatus(commentId, commentElement)
+            // 서버에서 제공된 좋아요 수를 그대로 사용
+        })
+        .catch(error => {
+            console.error('Error toggling comment like:', error);
+            alert('댓글 좋아요 상태를 업데이트하는 중 오류가 발생했습니다.');
+        });
     }
 
     async function initializeCommentLikeStatus(commentId, commentElement) {
@@ -360,24 +360,24 @@
             return;
         }
         fetchWithAuth(`/users/only`)
-            .then(response => response.json())
-            .then(el => {
-                return el
-            }).then((elData) => {
+        .then(response => response.json())
+        .then(el => {
+            return el
+        }).then((elData) => {
             // TODO : 커맨트 작성   elData.data.id는 현재 접속한 유저의 ID
             const url = `/users/${elData.data.id}/userboards/${userBoardId}/comments`;
             fetchWithAuth(url, {
                 method: 'POST',
                 body: JSON.stringify({content: newComment})
             })
-                .then(response => response.json())
-                .then(data => {
-                    addCommentToDOM(data.data, true);
-                    document.getElementById('newComment').value = ''; // 댓글 작성란 비우기
-                })
-                .catch(error => {
-                    console.error('Error adding comment:', error);
-                });
+            .then(response => response.json())
+            .then(data => {
+                addCommentToDOM(data.data, true);
+                document.getElementById('newComment').value = ''; // 댓글 작성란 비우기
+            })
+            .catch(error => {
+                console.error('Error adding comment:', error);
+            });
         })
     }
 
@@ -386,18 +386,18 @@
         fetchWithAuth(url, {
             method: 'DELETE'
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message === "댓글을 삭제하였습니다.") {
-                    const commentElement = document.getElementById(`comment-${commentId}`);
-                    if (commentElement) {
-                        commentElement.remove();
-                    }
-                } else {
-                    console.error('Failed to delete comment:', data.message);
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === "댓글을 삭제하였습니다.") {
+                const commentElement = document.getElementById(`comment-${commentId}`);
+                if (commentElement) {
+                    commentElement.remove();
                 }
-            })
-            .catch(error => console.error('Error deleting comment:', error));
+            } else {
+                console.error('Failed to delete comment:', data.message);
+            }
+        })
+        .catch(error => console.error('Error deleting comment:', error));
     }
 
     function editComment(commentId) {
@@ -420,33 +420,33 @@
     function saveComment(commentId) {
         const newContent = document.getElementById(`editCommentTextarea-${commentId}`).value;
         fetchWithAuth(`/users/only`)
-            .then(response => response.json())
-            .then(el => {
-                return el
-            }).then((currentUserId) => {
+        .then(response => response.json())
+        .then(el => {
+            return el
+        }).then((currentUserId) => {
             return currentUserId.data.id // 현재 접속한 유저의 ID
         }).then((currentUserId) => {
             fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}/comments/${commentId}`, {
                 method: 'PATCH',
                 body: JSON.stringify({content: newContent}),
             })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(text || 'Unknown error');
-                        });
-                    }
-                    return response.json();
-                    //   response.json()
-                })
-                .then(data => {
-                    const commentElement = document.getElementById(`comment-${commentId}`);
-                    const contentElement = commentElement.querySelector('.text-gray-600');
-                    contentElement.textContent = newContent;
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || 'Unknown error');
+                    });
+                }
+                return response.json();
+                //   response.json()
+            })
+            .then(data => {
+                const commentElement = document.getElementById(`comment-${commentId}`);
+                const contentElement = commentElement.querySelector('.text-gray-600');
+                contentElement.textContent = newContent;
 
-                    // 수정 버튼과 삭제 버튼을 다시 추가
-                    const actionsElement = commentElement.querySelector('.flex.items-center.space-x-2');
-                    actionsElement.innerHTML = `
+                // 수정 버튼과 삭제 버튼을 다시 추가
+                const actionsElement = commentElement.querySelector('.flex.items-center.space-x-2');
+                actionsElement.innerHTML = `
                 <button class="like-button" onclick="toggleCommentLike(this, ${commentId})">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15a7 7 0 0114 0c0 7-7 7-7 7s-7 0-7-7z"/>
@@ -455,10 +455,10 @@
                 <button class="delete-button text-red-500 hover:text-red-700" onclick="deleteComment(${commentId})">삭제</button>
                 <button class="edit-button text-blue-500 hover:text-blue-700" onclick="editComment(${commentId})">수정</button>
             `
-                })
-                .catch(error => {
-                    console.error('Error saving comment:', error);
-                })
+            })
+            .catch(error => {
+                console.error('Error saving comment:', error);
+            })
         })
     }
 
@@ -489,42 +489,42 @@
                 'Authorization': `${token}`
             }
         })
-            .then(response => response.json())
-            .then(data => {
-                console.log("data", data)
-                if (data.statusCode === 200) {
-                    alert('게시물이 수정되었습니다.');
-                    location.reload(); // Refresh the page to show updated data
-                } else {
-                    alert('수정에 실패했습니다.');
-                }
-            })
-            .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(data => {
+            console.log("data", data)
+            if (data.statusCode === 200) {
+                alert('게시물이 수정되었습니다.');
+                location.reload(); // Refresh the page to show updated data
+            } else {
+                alert('수정에 실패했습니다.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     function deletePost() {
         const confirmDelete = confirm("정말로 이 게시글을 삭제하시겠습니까?");
         if (confirmDelete) {
             fetchWithAuth(`/users/only`)
+            .then(response => response.json())
+            .then(el => el.data.id) // 현재 접속한 유저의 ID
+            .then(currentUserId => {
+                fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}`, {
+                    method: 'DELETE'
+                })
                 .then(response => response.json())
-                .then(el => el.data.id) // 현재 접속한 유저의 ID
-                .then(currentUserId => {
-                    fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}`, {
-                        method: 'DELETE'
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.statusCode === 200) {
-                                alert('게시글이 삭제되었습니다.');
-                                window.location.href = '/public/main'; // 메인 페이지로 리다이렉트
-                            } else {
-                                alert('게시글 삭제에 실패했습니다.');
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error deleting post:', error);
-                        });
+                .then(data => {
+                    if (data.statusCode === 200) {
+                        alert('게시글이 삭제되었습니다.');
+                        window.location.href = '/public/main'; // 메인 페이지로 리다이렉트
+                    } else {
+                        alert('게시글 삭제에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting post:', error);
                 });
+            });
         }
     }
 

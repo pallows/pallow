@@ -55,8 +55,8 @@ public class InvitedBoardService {
         applyUserToGroup(user, meet);
     }
 
-    public boolean declinedUser(User user) {
-        InvitedBoard invitedUser = invitedBoardRepository.findByUserId(user.getId())
+    public boolean declinedUser(User user, Long groupId) {
+        InvitedBoard invitedUser = invitedBoardRepository.findByUserIdAndMeetsId(user.getId(), groupId)
                 .orElse(null);
         if (invitedUser == null) {
             // invitedUser가 null인 경우 처리
@@ -88,8 +88,7 @@ public class InvitedBoardService {
         if (meets.getMemberCount() >= meets.getMaxMemberCount()) {
             throw new CustomException(ErrorType.MAX_MEMBER_REACHED);
         }
-
-        InvitedBoard invitedUser = invitedBoardRepository.findByUserId(userId)
+        InvitedBoard invitedUser = invitedBoardRepository.findByUserIdAndMeetsId(userId, groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
         invitedUser.acceptInvite();
     }
@@ -99,7 +98,7 @@ public class InvitedBoardService {
         if (!isUserGroupCreator(groupId, user)) {
             throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
         }
-        InvitedBoard invitedUser = invitedBoardRepository.findByUserId(userId)
+        InvitedBoard invitedUser = invitedBoardRepository.findByUserIdAndMeetsId(userId, groupId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_APPLY));
         invitedUser.rejectInvite();
     }
@@ -116,18 +115,14 @@ public class InvitedBoardService {
             throw new CustomException(ErrorType.NOT_GROUP_CREATOR);
         }
 
-        Meets meets = meetsRepository.findById(groupId).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_GROUP)
+        Meets meets = meetsRepository.findById(groupId).orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_GROUP)
         );
 
-        List<InvitedBoard> boards = invitedBoardRepository.findAllByMeetsAndStatus(meets,
-                InviteStatus.WAITING);
+        List<InvitedBoard> boards = invitedBoardRepository.findAllByMeetsAndStatus(meets, InviteStatus.WAITING);
 
         return boards.stream()
                 .map(InvitedBoardResponseDto::new)
                 .collect(Collectors.toList());
-
-
     }
 
     private boolean isUserGroupCreator(long groupId, User user) {

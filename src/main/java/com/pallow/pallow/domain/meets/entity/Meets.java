@@ -119,7 +119,7 @@ public class Meets extends TimeStamp implements Likeable {
 
     // 멤버 리스트를 업데이트하는 메서드
     public void updateMemberList() {
-        this.memberCount = calculatedMemberList().size() + 1;
+        this.memberCount = calculatedMemberList().size();
     }
 
     @Override
