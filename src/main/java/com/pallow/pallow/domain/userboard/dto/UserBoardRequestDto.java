@@ -2,7 +2,6 @@ package com.pallow.pallow.domain.userboard.dto;
 
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.userboard.entity.UserBoard;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;

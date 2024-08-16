@@ -1,9 +1,8 @@
 package com.pallow.pallow.domain.userboardcomment.dto;
 
 import com.pallow.pallow.domain.userboardcomment.entity.UserBoardComment;
-import lombok.Getter;
-
 import java.time.LocalDateTime;
+import lombok.Getter;
 
 @Getter
 public class UserBoardCommentResponseDto {

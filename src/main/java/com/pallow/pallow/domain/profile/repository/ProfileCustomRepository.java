@@ -12,7 +12,7 @@ public interface ProfileCustomRepository {
 
     List<Profile> findAllByPositionAndUserStatus(String position, CommonStatus status);
 
-    ProfileResponseDto findById(Long id);
+    ProfileResponseDto findByProfileId(Long id);
 
     List<ProfileResponseDto> findTop9NearestProfiles(Long userId, String first, String second,
             String third);

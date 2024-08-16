@@ -16,9 +16,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Primary
 @Repository
 @RequiredArgsConstructor
 public class ProfileCustomRepositoryImpl implements ProfileCustomRepository {
@@ -30,7 +32,7 @@ public class ProfileCustomRepositoryImpl implements ProfileCustomRepository {
 
     @Override
     @Transactional(readOnly = true)
-    public ProfileResponseDto findById(Long id) {
+    public ProfileResponseDto findByProfileId(Long id) {
         return jpaQueryFactory
                 .select(Projections.constructor(ProfileResponseDto.class,
                         qProfile.id,

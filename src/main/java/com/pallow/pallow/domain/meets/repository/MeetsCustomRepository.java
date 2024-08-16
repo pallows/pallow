@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface MeetsCustomRepository {
 
+    List<Meets> findTopByOrderByLikesCountDesc(int limit);
+
     List<Meets> findAllByStatus(CommonStatus status);
 
     Optional<Meets> findByIdAndStatus(Long meetsId, CommonStatus status);

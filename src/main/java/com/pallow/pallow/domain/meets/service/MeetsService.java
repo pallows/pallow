@@ -17,11 +17,9 @@ import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.InviteStatus;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.s3.service.ImageService;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +41,7 @@ public class MeetsService {
      */
     public MeetsResponseDto create(MeetsRequestDto requestDto, User user) {
         //userId가 존재하는지 확인
-        User existUser = userCustomRepository.findById(user.getId());
+        User existUser = userCustomRepository.findByUserId(user.getId());
 
         // 이미지 업로드
         String imageUrl = null;
@@ -151,8 +149,9 @@ public class MeetsService {
      */
     @Transactional
     public List<UserResponseDto> getAllMeetsMembers(Long meetsId) {
-        Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+        Meets meets = meetsCustomRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE)
+                .orElseThrow(
+                        () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
 
         List<InvitedBoard> invitedMemberList = invitedBoardRepository.findAllByMeetsAndStatus(
                 meets, InviteStatus.ACCEPTED);
@@ -171,8 +170,9 @@ public class MeetsService {
      * @param user
      */
     public void withdrawMember(Long meetsId, Long userId, User user) {
-        Meets meets = meetsRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE).orElseThrow(
-                () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
+        Meets meets = meetsCustomRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE)
+                .orElseThrow(
+                        () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
 
         // 로그인된 유저와 그룹 생성자가 일치하는지 확인
         if (!user.getId().equals(meets.getGroupCreator().getId())) {
@@ -218,7 +218,7 @@ public class MeetsService {
      */
     @Transactional(readOnly = true)
     public List<MeetsResponseDto> getPopularMeets(int limit) {
-        List<Meets> popularMeets = meetsRepository.findTopByOrderByLikesCountDesc(limit);
+        List<Meets> popularMeets = meetsCustomRepository.findTopByOrderByLikesCountDesc(limit);
         return popularMeets.stream()
                 .map(MeetsResponseDto::new)
                 .collect(Collectors.toList());

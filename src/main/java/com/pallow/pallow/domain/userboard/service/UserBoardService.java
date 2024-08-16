@@ -12,11 +12,9 @@ import com.pallow.pallow.domain.userboard.repository.UserBoardRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.s3.service.ImageService;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -40,7 +38,7 @@ public class UserBoardService {
 
     public UserBoardResponseDto createBoard(UserBoardRequestDto requestDto, User user,
             long userId) {
-        User createdBy = userCustomRepository.findById(user.getId());
+        User createdBy = userCustomRepository.findByUserId(user.getId());
         if (isSameIdAndUser(userId, user)) {
             throw new CustomException(ErrorType.USER_MISMATCH_ID);
         }

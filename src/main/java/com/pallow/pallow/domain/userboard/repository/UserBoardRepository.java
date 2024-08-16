@@ -8,7 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserBoardRepository extends JpaRepository<UserBoard, Long> {
+public interface UserBoardRepository extends JpaRepository<UserBoard, Long>,
+        UserBoardCustomRepository {
 
     List<UserBoard> findAllByUserId(long userId);
 
@@ -20,6 +21,7 @@ public interface UserBoardRepository extends JpaRepository<UserBoard, Long> {
             "ORDER BY RAND() " +
             "LIMIT :limit",
             nativeQuery = true)
-    List<UserBoard> findRandomByPosition(@Param("position") String position, @Param("limit") int limit);
+    List<UserBoard> findRandomByPosition(@Param("position") String position,
+            @Param("limit") int limit);
 
 }

@@ -7,9 +7,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Primary
 @Repository
 @RequiredArgsConstructor
 public class MeetsCustomRepositoryImpl implements MeetsCustomRepository {
@@ -37,6 +39,17 @@ public class MeetsCustomRepositoryImpl implements MeetsCustomRepository {
                 .fetchOne();
 
         return Optional.ofNullable(foundMeets);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Meets> findTopByOrderByLikesCountDesc(int limit) {
+        return jpaQueryFactory
+                .selectFrom(qMeets)
+                .where(qMeets.status.eq(CommonStatus.ACTIVE)) // assuming status is an enum or string in your entity
+                .orderBy(qMeets.likesCount.desc()) // order by likes_count descending
+                .limit(limit)
+                .fetch();
     }
 
 }

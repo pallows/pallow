@@ -13,9 +13,7 @@ import com.pallow.pallow.domain.userboardcomment.repository.UserBoardCommentCust
 import com.pallow.pallow.domain.userboardcomment.repository.UserBoardCommentRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
-
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
