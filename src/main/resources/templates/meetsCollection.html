@@ -13,6 +13,40 @@
             font-family: 'Noto Sans KR', sans-serif;
         }
 
+        .relative {
+            padding: inherit;
+        }
+
+        #dropdown-menu {
+            display: none; /* 기본적으로 숨김 상태 */
+        }
+        #dropdown-menu.show {
+            display: block; /* 'show' 클래스를 추가하면 보이도록 설정 */
+        }
+        #dropdown-menu ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        #dropdown-menu li {
+            padding: 0;
+            margin: 0;
+        }
+        #dropdown-menu a {
+            display: block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #333;
+        }
+        #dropdown-menu a:hover {
+            background-color: #f0f0f0;
+        }
+        /* 드롭다운 메뉴의 최대 높이 및 스크롤 설정 */
+        #dropdown-menu {
+            max-height: 15rem; /* 최대 높이 설정 */
+            overflow-y: auto; /* 세로 스크롤 활성화 */
+        }
+
     </style>
     <link rel="icon"
           href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png"
@@ -43,14 +77,15 @@
         <button class="bg-black text-white px-4 py-2 rounded" onclick="openCreateMeet()">모임 생성 하기</button>
     </div>
 
-<!-- 모임 리스트 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div th:each="meet : ${meets}" class="bg-white p-4 rounded shadow-md flex items-center space-x-4 meet-card">
+    <!-- 모임 리스트 -->
+    <div id="meet-container" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div th:each="meet : ${meets}" class="bg-white p-4 rounded shadow-md flex items-center space-x-4 meet-card" th:attr="data-likes=${meet.likesCount}">
             <img th:src="${meet.image}" alt="Profile Image" class="w-24 h-24 rounded-full">
             <div>
                 <h2 class="text-lg font-bold meet-title" th:text="${meet.title}">모임 제목</h2>
                 <p class="text-gray-600" th:text="${meet.content}">모임 설명</p>
                 <p class="text-gray-600 mt-2">인원: <span th:text="${meet.memberCount}"></span>/<span th:text="${meet.maxMemberCount}"></span></p>
+                <p class="text-gray-600 mt-2">좋아요: <span th:text="${meet.likesCount}"></span></p>
                 <div class="mt-4 space-x-2">
                     <a href="javascript:void(0);" class="bg-black text-white px-4 py-2 rounded" th:onclick="'openMeet(' + ${meet.id} + ');'">상세 보기</a>
                 </div>
@@ -58,14 +93,19 @@
         </div>
     </div>
 
-    <div class="mt-8">
-        <div class="relative">
-            <input id="search-input" type="text" placeholder="제목 및 작성자 입력" class="w-full p-4 rounded shadow-md">
-            <button class="absolute right-4 top-1/2 transform -translate-y-1/2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H16M8 8H16M8 12H16M8 16H16M8 20H16"/>
-                </svg>
-            </button>
+    <div class="relative">
+        <input id="search-input" type="text" placeholder="제목 및 작성자 입력" class="w-full p-4 rounded shadow-md">
+        <button id="dropdown-button" class="absolute right-4 top-1/2 transform -translate-y-1/2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H16M8 8H16M8 12H16M8 16H16M8 20H16"/>
+            </svg>
+        </button>
+        <!-- 드롭다운 메뉴 -->
+        <div id="dropdown-menu" class="absolute right-4 top-full mt-2 w-40 bg-white border border-gray-200 rounded shadow-lg hidden max-h-60 overflow-y-auto">
+            <ul>
+                <li><a href="#" data-sort="default" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">기본</a></li>
+                <li><a href="#" data-sort="likes" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">좋아요 순</a></li>
+            </ul>
         </div>
     </div>
 
@@ -97,6 +137,59 @@
                     card.style.display = 'none';
                 }
             });
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownButton = document.getElementById('dropdown-button');
+        const dropdownMenu = document.getElementById('dropdown-menu');
+        const meetContainer = document.getElementById('meet-container');
+        const meetCards = Array.from(document.querySelectorAll('.meet-card'));
+
+        if (!meetContainer) {
+            console.error('Error: meetContainer is null. Please check the ID.');
+            return;
+        }
+
+        dropdownButton.addEventListener('click', function() {
+            dropdownMenu.classList.toggle('show');
+        });
+
+        dropdownMenu.addEventListener('click', function(event) {
+            if (event.target.tagName === 'A') {
+                const sortType = event.target.getAttribute('data-sort');
+                console.log('Selected sort type:', sortType);
+
+                if (sortType === 'likes') {
+                    // 좋아요 순으로 정렬
+                    meetCards.sort(function(a, b) {
+                        const likesA = parseInt(a.getAttribute('data-likes'));
+                        const likesB = parseInt(b.getAttribute('data-likes'));
+                        return likesB - likesA; // 좋아요 수에 따른 내림차순 정렬
+                    });
+                } else {
+                    // 기본 정렬 (이름순 예시)
+                    meetCards.sort(function(a, b) {
+                        const titleA = a.querySelector('.meet-title').textContent.toLowerCase();
+                        const titleB = b.querySelector('.meet-title').textContent.toLowerCase();
+                        return titleA.localeCompare(titleB); // 이름순 정렬
+                    });
+                }
+
+                // 정렬된 요소를 DOM에 다시 추가
+                meetCards.forEach(function(card) {
+                    meetContainer.appendChild(card);
+                });
+
+                dropdownMenu.classList.remove('show');
+            }
+        });
+
+        // 드롭다운 외부 클릭 시 메뉴 닫기
+        document.addEventListener('click', function(event) {
+            if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.classList.remove('show');
+            }
         });
     });
 
