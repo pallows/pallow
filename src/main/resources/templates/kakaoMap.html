@@ -124,9 +124,14 @@
     const image = document.getElementById('image').files.length;
 
     // 입력 필드 검증
-    if (!location || !meetLocation || !title || !content || !maxMembers || image === 0) {
+    if (!location || !meetLocation || !title || !content || image === 0) {
       alert('모든 항목을 입력해 주세요.');
       return; // 필드가 비어있으면 함수 종료
+    }
+
+    if ( !(2 <= maxMembers && maxMembers <= 50)) {
+      alert("최대 인원 수는 2부터 50까지 입니다.");
+      return;
     }
 
     try {

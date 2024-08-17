@@ -17,6 +17,7 @@ public class MeetsRequestDto {
     @NotNull(message = "content cannot be null.")
     private String content;
 
+    @NotNull(message = "image cannot be null")
     private MultipartFile image;
 
     @NotNull(message = "position cannot be null")
