@@ -104,8 +104,8 @@ public class CommonController {
     }
 
     @GetMapping("/public/Profile")
-    public String profilePage(@RequestParam("profileUsername") String username, Model model) {
-        User user = userRepository.findByUsername(username)
+    public String profilePage(@RequestParam("nickname") String nickname, Model model) {
+        User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
         ProfileResponseDto profile = profileService.getProfile(user.getId());
         model.addAttribute("profile", profile);
