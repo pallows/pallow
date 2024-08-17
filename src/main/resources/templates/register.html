@@ -196,6 +196,39 @@
         const gender = document.querySelector('input[name="gender"]:checked').value;
         const isEmailVerified = $("#Confirm").val();
 
+        // 정규식: 영문자와 숫자만 허용
+        const regex = /^[a-zA-Z0-9]+$/;
+
+        // 길이 검사
+        if (username.length < 4 || username.length > 20) {
+            alert('ID는 4자에서 20자 사이여야 합니다.');
+            return;
+        }
+
+        // 정규식 검사: 영문자와 숫자만 포함하는지 확인
+        if (!regex.test(username)) {
+            alert('ID는 영문자와 숫자만 포함할 수 있습니다.');
+            return;
+        }
+
+        // 비밀번호 길이 검사
+        if (password.length < 4 || password.length > 20) {
+            alert('비밀번호는 4자에서 20자 사이여야 합니다.');
+            return;
+        }
+
+        // 비밀번호 정규식 검사
+        if (!regex.test(password)) {
+            alert('비밀번호는 영문자와 숫자만 포함할 수 있습니다.');
+            return;
+        }
+
+        // 비밀번호와 확인 비밀번호 일치 여부 검사
+        if (password !== confirmPassword) {
+            alert('비밀번호가 일치하지 않습니다.');
+            return;
+        }
+
         if (password !== confirmPassword) {
             alert('비밀번호가 일치하지 않습니다.');
             return;
