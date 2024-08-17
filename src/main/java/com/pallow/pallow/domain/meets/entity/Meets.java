@@ -28,6 +28,7 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -51,6 +52,7 @@ public class Meets extends TimeStamp implements Likeable {
     private String position;
 
     @Column
+    @Setter
     private int memberCount;
 
     @Column

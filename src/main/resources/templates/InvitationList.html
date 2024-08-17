@@ -164,6 +164,9 @@
   });
   // 닫기 버튼
   document.getElementById('closeButton').addEventListener('click', function () {
+    if (window.opener) {
+      window.opener.location.reload();
+    }
     window.close(); // 팝업 창 닫기
   });
 </script>

@@ -8,6 +8,10 @@ import com.pallow.pallow.domain.meets.dto.MeetsResponseDto;
 import com.pallow.pallow.domain.meets.entity.Meets;
 import com.pallow.pallow.domain.meets.repository.MeetsCustomRepository;
 import com.pallow.pallow.domain.meets.repository.MeetsRepository;
+import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
+import com.pallow.pallow.domain.profile.entity.Profile;
+import com.pallow.pallow.domain.profile.repository.ProfileRepository;
+import com.pallow.pallow.domain.profile.service.ProfileService;
 import com.pallow.pallow.domain.user.dto.UserResponseDto;
 import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserCustomRepository;
@@ -19,6 +23,7 @@ import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.s3.service.ImageService;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,12 +34,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class MeetsService {
 
     private final MeetsRepository meetsRepository;
-    private final UserRepository userRepository;
     private final LikeService likeService;
     private final ImageService imageService;
     private final InvitedBoardRepository invitedBoardRepository;
     private final UserCustomRepository userCustomRepository;
     private final MeetsCustomRepository meetsCustomRepository;
+    private final ProfileService profileService;
+    private final ProfileRepository profileRepository;
 
     /**
      * 그룹 생성
@@ -172,26 +178,29 @@ public class MeetsService {
      * 맴버 강퇴
      *
      * @param meetsId
-     * @param userId
+     * @param profile_id
      * @param user
      */
-    public void withdrawMember(Long meetsId, Long userId, User user) {
+    public void withdrawMember(Long meetsId, Long profile_id, User user) {
         Meets meets = meetsCustomRepository.findByIdAndStatus(meetsId, CommonStatus.ACTIVE)
                 .orElseThrow(
                         () -> new CustomException(ErrorType.NOT_FOUND_GROUP));
 
-        // 로그인된 유저와 그룹 생성자가 일치하는지 확인
-        if (!user.getId().equals(meets.getGroupCreator().getId())) {
+        Profile profile = profileRepository.findById(profile_id)
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_USER));
+
+        if (!user.getProfile().getId().equals(profile_id) && !user.getId().equals(meets.getGroupCreator().getId())) {
             throw new CustomException(ErrorType.UNAPPROVED_USER);
         }
 
         // 그룹에 맴버가 존재하는지 확인
         InvitedBoard invitedMember = invitedBoardRepository.findByUserIdAndMeetsIdAndStatus(
-                userId, meetsId, InviteStatus.ACCEPTED).orElseThrow(
+                profile.getUser().getId(), meetsId, InviteStatus.ACCEPTED).orElseThrow(
                 () -> new RuntimeException("회원이 존재하지 않습니다.")
         );
-
         invitedBoardRepository.delete(invitedMember);
+        meets.setMemberCount(meets.getMemberCount() - 1);
+        meetsRepository.save(meets);
     }
 
     /**
@@ -227,6 +236,13 @@ public class MeetsService {
         List<Meets> popularMeets = meetsCustomRepository.findTopByOrderByLikesCountDesc(limit);
         return popularMeets.stream()
                 .map(MeetsResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProfileResponseDto> getParticipants(Long meetId) {
+        List<InvitedBoard> participants= invitedBoardRepository.findAllByMeetsIdAndStatus(meetId, InviteStatus.ACCEPTED);
+        return participants.stream()
+                .map(participant -> profileService.getProfile(participant.getUser().getId()))
                 .collect(Collectors.toList());
     }
 }

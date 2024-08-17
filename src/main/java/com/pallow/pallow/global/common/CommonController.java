@@ -2,6 +2,8 @@ package com.pallow.pallow.global.common;
 
 import com.pallow.pallow.domain.invitedboard.entity.InvitedBoard;
 import com.pallow.pallow.domain.invitedboard.repository.InvitedBoardRepository;
+import com.pallow.pallow.domain.meets.entity.Meets;
+import com.pallow.pallow.domain.meets.repository.MeetsRepository;
 import com.pallow.pallow.domain.meets.service.MeetsService;
 import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
 import com.pallow.pallow.domain.profile.service.ProfileService;
@@ -32,6 +34,7 @@ public class CommonController {
     private final ProfileService profileService;
     private final UserRepository userRepository;
     private final InvitedBoardRepository invitedBoardRepository;
+    private final MeetsRepository meetsRepository;
 
     @Value("${kakao.map.app-key}")
     private String kakaoMapAppKey;
@@ -127,5 +130,14 @@ public class CommonController {
     @GetMapping("/public/InvitationList")
     public String InvitationList() {
         return "InvitationList";
+    }
+
+    @GetMapping("/public/GroupParticipants")
+    public String GroupParticipants(@RequestParam("meetId") Long meetId, Model model) {
+        Meets meet = meetsRepository.findById(meetId)
+                .orElseThrow(() -> new IllegalArgumentException("모임 정보를 찾을 수 없습니다."));
+        model.addAttribute("meetId", meetId);
+        model.addAttribute("creator", meet.getGroupCreator().getProfile().getId());
+        return "GroupParticipants";
     }
 }

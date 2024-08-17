@@ -3,6 +3,9 @@ package com.pallow.pallow.domain.meets.controller;
 import com.pallow.pallow.domain.meets.dto.MeetsRequestDto;
 import com.pallow.pallow.domain.meets.dto.MeetsResponseDto;
 import com.pallow.pallow.domain.meets.service.MeetsService;
+import com.pallow.pallow.domain.profile.dto.ProfileResponseDto;
+import com.pallow.pallow.domain.profile.entity.Profile;
+import com.pallow.pallow.domain.profile.repository.ProfileRepository;
 import com.pallow.pallow.global.common.CommonResponseDto;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.security.UserDetailsImpl;
@@ -14,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MeetsController {
 
     private final MeetsService meetsService;
+    private final ProfileRepository profileRepository;
 
     /**
      * 모임 생성
@@ -115,15 +120,14 @@ public class MeetsController {
     /**
      * 회원 강퇴
      * @param meets_id
-     * @param user_id
+     * @param profile_id
      * @param userDetails
      * @return success message
      */
-    @GetMapping("/{meets_id}/withdraw/{user_id}")
-    public ResponseEntity<CommonResponseDto> withdrawMember(@PathVariable Long meets_id,
-                                                            @PathVariable Long user_id,
+    @PatchMapping("/{meets_id}/withdraw/{profile_id}")
+    public ResponseEntity<CommonResponseDto> withdrawMember(@PathVariable Long meets_id, @PathVariable Long profile_id,
                                                             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        meetsService.withdrawMember(meets_id, user_id, userDetails.getUser());
+        meetsService.withdrawMember(meets_id, profile_id, userDetails.getUser());
         return ResponseEntity.ok(
                 new CommonResponseDto(Message.MEET_WITHDRAW_MEMBER_SUCCESS)
         );
@@ -158,5 +162,11 @@ public class MeetsController {
     public ResponseEntity<CommonResponseDto> getPopularMeets() {
         List<MeetsResponseDto> popularMeets = meetsService.getPopularMeets(9);
         return ResponseEntity.ok(new CommonResponseDto(Message.MEET_READ_SUCCESS, popularMeets));
+    }
+
+    @GetMapping("/{meetId}/participants")
+    public ResponseEntity<CommonResponseDto> GroupParticipants(@PathVariable Long meetId) {
+        List<ProfileResponseDto> participants = meetsService.getParticipants(meetId);
+        return ResponseEntity.ok(new CommonResponseDto(Message.MEET_READ_SUCCESS, participants));
     }
 }
