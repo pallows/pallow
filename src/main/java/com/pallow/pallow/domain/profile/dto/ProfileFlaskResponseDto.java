@@ -12,4 +12,5 @@ public class ProfileFlaskResponseDto {
     private String name;
     private Mbti mbti;
     private String image;
+    private String nickname;
 }
