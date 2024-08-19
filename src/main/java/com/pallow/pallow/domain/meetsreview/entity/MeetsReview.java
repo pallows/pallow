@@ -36,7 +36,7 @@ public class MeetsReview extends TimeStamp implements Likeable {
     private int starRating;
 
     @ManyToOne
-    @JoinColumn(name = "user_user_Id")
+    @JoinColumn(name = "user_Id")
     private User user;
 
     @ManyToOne
