@@ -9,7 +9,9 @@ import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.enums.Message;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.security.UserDetailsImpl;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 @RequestMapping("/api/chat")
 @RequiredArgsConstructor
 @RestController
@@ -53,7 +56,7 @@ public class ChatRestController {
 
     @GetMapping("/rooms/{roomId}")
     public ResponseEntity<ApiResponse> enterChatRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-
+        log.info("userDetails 갯 매핑 룸 룸아이디 {} : ", userDetails);
         try {
             ChatRoomResponseDto response = chatService.enterChatRoom(roomId, userDetails.getNickname());
             return ResponseEntity.ok(new ApiResponse(Message.ROOM_ENTER_SUCCESS, response));
@@ -71,7 +74,6 @@ public class ChatRestController {
             messageDto.setSender(userDetails.getNickname());
             ChatMessageDto sendMessage = chatService.sendAndSaveMessage(messageDto, userDetails.getNickname());
             messagingTemplate.convertAndSend("/topic/chat/" + messageDto.getChatRoomId(), sendMessage);
-
 
 
             return ResponseEntity.ok(new ApiResponse(Message.MESSAGE_CREATE_SUCCESS, sendMessage));
@@ -94,7 +96,7 @@ public class ChatRestController {
     }
 
     @PostMapping("/Messages/{MessageId}/react/{reactId}")
-    public  ResponseEntity<ApiResponse> toggleChatRoom(@PathVariable Long MessageId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<ApiResponse> toggleChatRoom(@PathVariable Long MessageId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         try {
             ChatMessageDto updatedMessage = chatService.toggleChatReaction(MessageId,
                     userDetails.getUser().getId());
@@ -103,7 +105,6 @@ public class ChatRestController {
             throw new CustomException(ErrorType.NOT_FOUND_MESSAGE);
         }
     }
-
 
 
     @DeleteMapping("/rooms/{roomId}")
