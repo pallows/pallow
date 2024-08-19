@@ -16,13 +16,11 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
-
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -51,7 +49,6 @@ public class ChatService {
 
     /**
      * 새로운 채팅방생성 (이미 존재하는 경우 기존 방 반환)
-     *
      * @param roomName
      * @param user1Nickname
      * @param user2Nickname
@@ -112,7 +109,6 @@ public class ChatService {
 
     /**
      * 채팅방 입장
-     *
      * @param chatRoomId 채팅방 ID
      * @param nickname   유저의 닉네임
      * @return ChatRoomResponseDto
@@ -157,7 +153,6 @@ public class ChatService {
 
     /**
      * 메시지 보내기 + 저장하기 (db에)
-     *
      * @param messageDto
      * @param nickname
      * @return
@@ -179,7 +174,6 @@ public class ChatService {
 
     /**
      * 유저가 본인이 참여한 채팅방 리스트 조회
-     *
      * @param nickname
      * @return
      */
@@ -199,7 +193,6 @@ public class ChatService {
 
     /**
      * 두 사용자 간의 채팅방을 찾거나 새로 생성
-     *
      * @param userId
      * @param nickname
      * @return
@@ -269,7 +262,6 @@ public class ChatService {
 
     /**
      * chatroom엔티티 dto로 바꾸는 로직
-     *
      * @param chatRoom
      * @return
      */
