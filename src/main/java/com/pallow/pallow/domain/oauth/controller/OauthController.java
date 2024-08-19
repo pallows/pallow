@@ -3,7 +3,9 @@ package com.pallow.pallow.domain.oauth.controller;
 
 import com.pallow.pallow.domain.oauth.service.OauthService;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +29,6 @@ public class OauthController {
     public void oauthLogin(@PathVariable String provider, HttpServletResponse response) {
         log.info("Kakao OAuth login requested");
         oauthService.redirectToProvider(provider, response);
-    }
-
-
-    @GetMapping("/callbackPage")
-    public String oauthCallbackPage() {
-        return "callback"; // templates 폴더 내 callback.html 파일을 반환
     }
 
     // 소셜 로그인 콜벡
