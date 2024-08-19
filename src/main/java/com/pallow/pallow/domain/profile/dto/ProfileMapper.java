@@ -36,7 +36,7 @@ public class ProfileMapper {
                 .name(profile.getUser().getName())
                 .image(profile.getImage())
                 .mbti(profile.getMbti())
-                .nickName(profile.getUser().getNickname())
+                .nickname(profile.getUser().getNickname())
                 .build();
     }
 }
