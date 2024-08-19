@@ -34,5 +34,7 @@ public interface UserAndChatRoomRepository extends JpaRepository<UserAndChatRoom
     Optional<UserAndChatRoom> findByChatRoomAndUser1OrUser2(ChatRoom chatRoom, User user1,
                                                             User user2);
 
-    Optional<UserAndChatRoom> findByChatRoomAndUser1(ChatRoom chatRoom, User user1);
+    Optional<UserAndChatRoom> findByChatRoomAndUser1(ChatRoom chatRoom, User user);
+
+    Optional<UserAndChatRoom> findByChatRoomAndUser2(ChatRoom chatRoom, User user);
 }

@@ -16,11 +16,13 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -49,6 +51,7 @@ public class ChatService {
 
     /**
      * 새로운 채팅방생성 (이미 존재하는 경우 기존 방 반환)
+     *
      * @param roomName
      * @param user1Nickname
      * @param user2Nickname
@@ -109,6 +112,7 @@ public class ChatService {
 
     /**
      * 채팅방 입장
+     *
      * @param chatRoomId 채팅방 ID
      * @param nickname   유저의 닉네임
      * @return ChatRoomResponseDto
@@ -126,16 +130,9 @@ public class ChatService {
         // 사용자가 채팅방의 멤버인지 확인
 //        UserAndChatRoom userAndChatRoom = userAndChatRoomRepository.findByChatRoomAndUser1OrUser2(chatRoom, user, user)
 //                .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_IN_CHATROOM)); // 여기가 문제여
-        try {
-            UserAndChatRoom userAndChatRoom1 = userAndChatRoomRepository.findByChatRoomAndUser1OrUser2(chatRoom, user, user)
-                    .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_IN_CHATROOM));
-            log.info("첫번째 레포지터리 결과물 : {}", userAndChatRoom1);// 로그2
-        } catch (Exception e) {
-            e.printStackTrace(); // 발생한 예외를 기록하거나 처리합니다. }
-        }
-
         UserAndChatRoom userAndChatRoom = userAndChatRoomRepository.findByChatRoomAndUser1(chatRoom, user)
-                .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_IN_CHATROOM)); // 수정본
+                .orElseGet(() -> userAndChatRoomRepository.findByChatRoomAndUser2(chatRoom, user)
+                        .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_IN_CHATROOM)));// 수정본
         log.info("중단 지점 여기냐? 4");
         // 채팅방이 활성 상태인지 확인
         if (!userAndChatRoom.isActive()) {
@@ -153,6 +150,7 @@ public class ChatService {
 
     /**
      * 메시지 보내기 + 저장하기 (db에)
+     *
      * @param messageDto
      * @param nickname
      * @return
@@ -174,6 +172,7 @@ public class ChatService {
 
     /**
      * 유저가 본인이 참여한 채팅방 리스트 조회
+     *
      * @param nickname
      * @return
      */
@@ -193,6 +192,7 @@ public class ChatService {
 
     /**
      * 두 사용자 간의 채팅방을 찾거나 새로 생성
+     *
      * @param userId
      * @param nickname
      * @return
@@ -262,6 +262,7 @@ public class ChatService {
 
     /**
      * chatroom엔티티 dto로 바꾸는 로직
+     *
      * @param chatRoom
      * @return
      */
