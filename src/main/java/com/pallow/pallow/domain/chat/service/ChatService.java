@@ -16,11 +16,13 @@ import com.pallow.pallow.domain.user.entity.User;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
+
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -28,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 
 @Service
@@ -50,6 +51,7 @@ public class ChatService {
 
     /**
      * 새로운 채팅방생성 (이미 존재하는 경우 기존 방 반환)
+     *
      * @param roomName
      * @param user1Nickname
      * @param user2Nickname
@@ -110,30 +112,32 @@ public class ChatService {
 
     /**
      * 채팅방 입장
+     *
      * @param chatRoomId 채팅방 ID
-     * @param nickname 유저의 닉네임
+     * @param nickname   유저의 닉네임
      * @return ChatRoomResponseDto
      */
     public ChatRoomResponseDto enterChatRoom(Long chatRoomId, String nickname) {
         User user = findUserByNickname(nickname);
+        log.info("중단 지점 여기냐? 1");
         if (user == null) {
             throw new CustomException(ErrorType.NOT_FOUND_USER);
         }
-
+        log.info("중단 지점 여기냐? 2");
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_CHATROOM));
-
+        log.info("중단 지점 여기냐? 3");
         // 사용자가 채팅방의 멤버인지 확인
         UserAndChatRoom userAndChatRoom = userAndChatRoomRepository.findByChatRoomAndUser1OrUser2(chatRoom, user, user)
                 .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_IN_CHATROOM));
-
+        log.info("중단 지점 여기냐? 4");
         // 채팅방이 활성 상태인지 확인
         if (!userAndChatRoom.isActive()) {
             throw new CustomException(ErrorType.INACTIVE_CHATROOM);
         }
-
+        log.info("중단 지점 여기냐? 5");
         List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(chatRoomId);
-
+        log.info("중단 지점 여기냐? 6");
         return new ChatRoomResponseDto(
                 convertToChatRoomDto(chatRoom),
                 messages.stream().map(this::convertToChatMessageDto).collect(Collectors.toList())
@@ -143,6 +147,7 @@ public class ChatService {
 
     /**
      * 메시지 보내기 + 저장하기 (db에)
+     *
      * @param messageDto
      * @param nickname
      * @return
@@ -164,6 +169,7 @@ public class ChatService {
 
     /**
      * 유저가 본인이 참여한 채팅방 리스트 조회
+     *
      * @param nickname
      * @return
      */
@@ -183,6 +189,7 @@ public class ChatService {
 
     /**
      * 두 사용자 간의 채팅방을 찾거나 새로 생성
+     *
      * @param userId
      * @param nickname
      * @return
@@ -211,6 +218,7 @@ public class ChatService {
 
     /**
      * 채팅방 나가기
+     *
      * @param chatRoomId
      * @param username
      */
@@ -230,6 +238,7 @@ public class ChatService {
 
     /**
      * 채팅방 삭제
+     *
      * @param roomId
      * @param nickname
      */
@@ -250,6 +259,7 @@ public class ChatService {
 
     /**
      * chatroom엔티티 dto로 바꾸는 로직
+     *
      * @param chatRoom
      * @return
      */
@@ -268,6 +278,7 @@ public class ChatService {
      * 프론트에선 ChatMessageDto의 formattedTime을 활용해 시간 표시 할 수 있음.
      */
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("hh:mm a");
+
     public ChatMessageDto convertToChatMessageDto(ChatMessage message) {
         return convertToChatMessageDto(message, null);
     }
