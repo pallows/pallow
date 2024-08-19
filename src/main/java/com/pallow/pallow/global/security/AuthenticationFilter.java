@@ -4,16 +4,17 @@ import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pallow.pallow.domain.user.dto.LoginRequestDto;
-import com.pallow.pallow.domain.user.service.RefreshTokenService;
 import com.pallow.pallow.global.dtos.UnauthenticatedResponse;
 import com.pallow.pallow.global.enums.CommonStatus;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
+
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,12 +26,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final TokenProvider tokenProvider;
-    private final RefreshTokenService refreshTokenService;
 
-    public AuthenticationFilter(TokenProvider tokenProvider,
-            RefreshTokenService refreshTokenService) {
+
+    public AuthenticationFilter(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
-        this.refreshTokenService = refreshTokenService;
         setFilterProcessesUrl("/users/login");
     }
 
@@ -58,7 +57,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res,
-            FilterChain chain, Authentication authResult) throws IOException {
+                                            FilterChain chain, Authentication authResult) throws IOException {
 
         Long userId = ((UserDetailsImpl) authResult.getPrincipal()).getId();
         res.setStatus(SC_OK);
@@ -87,11 +86,10 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
 
         String accessToken = tokenProvider.createAccessToken(username);
-        String refreshToken = UUID.randomUUID().toString();
+        String refreshToken = tokenProvider.createRefreshToken(username);
 
         res.setHeader(TokenProvider.ACCESS_TOKEN_HEADER, accessToken);
         tokenProvider.saveRefreshTokenToCookie(refreshToken, res);
-        refreshTokenService.save(username, refreshToken);
 
         responseBody.put("accessToken", accessToken);
         responseBody.put("message", "로그인 성공");
@@ -102,7 +100,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     protected void unsuccessfulAuthentication(HttpServletRequest req, HttpServletResponse res,
-            AuthenticationException failed) throws IOException {
+                                              AuthenticationException failed) throws IOException {
         log.error("로그인 실패 : {}", failed.getMessage());
 
         String errorMessage = "로그인 실패: 자격 증명에 실패하였습니다.";

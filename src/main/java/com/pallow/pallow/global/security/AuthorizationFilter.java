@@ -11,8 +11,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,38 +35,42 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
-            FilterChain filterChain) throws ServletException, IOException {
+                                    FilterChain filterChain) throws ServletException, IOException {
         String accessToken = tokenProvider.getAccessToken(req);
         String refreshToken = tokenProvider.getRefreshToken(req);
+        log.info("refreshToken : {} ", refreshToken);
         if (StringUtils.hasText(accessToken)) {
             // 액세스 토큰 검증
-            if (tokenProvider.validateAccessToken(accessToken)) {
+            if (tokenProvider.validateAccessToken(accessToken)) {  // 엑세스토큰 유효성 검사
+                String username = tokenProvider.getUsernameFromAccessToken(accessToken); // 엑세스 서버에서 토큰 검증 및 유저네임 추출
                 log.info("액세스 토큰 검증 성공");
-                setAuthentication(tokenProvider.getUsernameFromAccessToken(accessToken));
+                setAuthentication(username);
             } else if (StringUtils.hasText(refreshToken)) {
                 log.info("액세스 토큰 만료");
                 // 리프레시 토큰 검증
-                if (tokenProvider.validateRefreshToken(refreshToken)) {
+                String username = tokenProvider.getUsernameFromAccessToken(refreshToken);
+                if (username != null && refreshTokenService.refreshTokenValidation(username, refreshToken)) {
                     log.info("리프레시 토큰 검증 성공");
-                    String username = tokenProvider.getUsernameFromRefreshToken(
-                            refreshToken); // error
 
                     log.info("새로운 액세스 토큰, 리프레시 토큰 발급 (RTR)");
+                    String newRefreshToken = tokenProvider.createRefreshToken(username);
                     String newAccessToken = tokenProvider.createAccessToken(username);
-                    String newRefreshToken = UUID.randomUUID().toString();
 
                     log.info("리프레시 토큰 쿠키에 저장");
                     tokenProvider.saveRefreshTokenToCookie(newRefreshToken, res);
+
+                    verifiedRefreshTokenHandler(res, newAccessToken);
 
                     log.info("액세스 토큰 응답");
                     res.addHeader(TokenProvider.ACCESS_TOKEN_HEADER, newAccessToken);
                     setAuthentication(username);
                 } else {
                     log.error("리프레시 토큰 검증 실패");
-                    refreshTokenService.delete(refreshToken);
+                    // 리프레시 토큰이 유효하지 않다면 삭제할 필요가 없음
+                    // 검증 실패 처리
                     unverifiedRefreshTokenHandler(res);
-                    return;
                 }
+                return;
             }
         }
         filterChain.doFilter(req, res);

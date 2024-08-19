@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -151,7 +150,7 @@ public class OauthService {
         String newAccessToken = tokenProvider.createAccessToken(user.getUsername());
         String refreshToken = UUID.randomUUID().toString();
         tokenProvider.saveRefreshTokenToCookie(refreshToken, response);
-        refreshTokenService.save(user.getUsername(), refreshToken); // TODO 리프레시 토큰 생성
+        tokenProvider.createRefreshToken(user.getUsername());
 
         response.setHeader(TokenProvider.ACCESS_TOKEN_HEADER, newAccessToken);
 
