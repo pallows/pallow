@@ -271,9 +271,6 @@
             const container = document.getElementById(containerId);
             const dotsContainer = document.getElementById(dotsId);
 
-            const response = await fetchWithAuth(apiEndpoint);
-            console.log('Response:', response);
-
             try {
                 console.log(`Fetching data from: ${apiEndpoint}`);
                 const response = await fetchWithAuth(apiEndpoint);
@@ -306,7 +303,8 @@
                     card.style.width = '300px';
                     card.style.height = '200px';
 
-                    const profileUrl = urlPattern.replace('{id}', item.id);
+                    // Generate the profile URL using the URL pattern
+                    const profileUrl = urlPattern.replace('{id}', item.nickname); // Replace `{id}` with `nickname`
 
                     // Create the anchor element wrapping the card content
                     const link = document.createElement('a');
@@ -375,6 +373,8 @@
                 console.error('Error fetching data:', error);
             }
         }
+
+
 
         async function createCarouselForMeet(containerId, dotsId, apiEndpoint, urlPattern) {
             const container = document.getElementById(containerId);
@@ -488,8 +488,10 @@
             }
         }
 
+
+
         // Initialize carousels
-        createCarouselForUser('carousel1', 'dots1', '/profiles/todays-friends', '/profiles/{id}');
+        createCarouselForUser('carousel1', 'dots1', '/profiles/todays-friends', '/public/Profile?nickname={id}');
         createCarouselForMeet('carousel2', 'dots2', '/api/meets/popular', '/public/meets/{id}');
         createCarouselForMeet('carousel3', 'dots3', '/api/meets/nearby', '/public/meets/{id}');
 
