@@ -317,9 +317,8 @@
                     card.className = 'carousel-item bg-white p-4 shadow mr-4';
                     card.style.width = '300px';
                     card.style.height = '200px';
-
                     // Generate the profile URL using the URL pattern
-                    const profileUrl = urlPattern.replace('{id}', item.nickname); // Replace `{id}` with `nickname`
+                    const profileUrl = urlPattern.replace('{id}', item.nickName); // Replace `{id}` with `nickname`
 
                     // Create the anchor element wrapping the card content
                     const link = document.createElement('a');
@@ -328,9 +327,10 @@
                     // Set the inner HTML of the card
                     link.innerHTML = `
                 <img src="${item.image || 'https://via.placeholder.com/280x120'}" alt="Thumbnail" class="mb-2 w-full h-24 object-cover">
-                <h3 class="font-bold">${item.name}</h3>
+                <h3 class="font-bold">${item.nickName}</h3>
                 <p class="text-sm">${item.mbti}</p>
             `;
+                    //    위에 h3 태그의 item.name 이 아니라 nickname이 되어야합니다.
                     link.addEventListener('click', (event) => {
                         event.preventDefault();
                         const width = 800;
@@ -388,7 +388,6 @@
                 console.error('Error fetching data:', error);
             }
         }
-
 
 
         async function createCarouselForMeet(containerId, dotsId, apiEndpoint, urlPattern) {
@@ -502,7 +501,6 @@
                 console.error('Error fetching data:', error);
             }
         }
-
 
 
         // Initialize carousels
