@@ -5,7 +5,9 @@ import com.pallow.pallow.global.security.AuthenticationFilter;
 import com.pallow.pallow.global.security.AuthorizationFilter;
 import com.pallow.pallow.global.security.TokenProvider;
 import com.pallow.pallow.global.security.UserDetailsServiceImpl;
+
 import java.util.Arrays;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -50,7 +52,7 @@ public class WebSecurityConfig {
 
     @Bean
     public AuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        AuthenticationFilter filter = new AuthenticationFilter(tokenProvider, refreshTokenService);
+        AuthenticationFilter filter = new AuthenticationFilter(tokenProvider);
         filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
         return filter;
     }
