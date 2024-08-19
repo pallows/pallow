@@ -93,7 +93,7 @@ public class ReviewController {
      * @return 삭제 성공 메시지
      */
     @DeleteMapping("/meets/{meets_id}/review/{review_id}")
-    public ResponseEntity<CommonResponseDto> updateReview(@PathVariable Long meets_id,
+    public ResponseEntity<CommonResponseDto> deleteReview(@PathVariable Long meets_id,
             @PathVariable Long review_id,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         reviewService.delete(meets_id, review_id, userDetails.getUser());
