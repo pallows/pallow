@@ -4,7 +4,6 @@ import com.pallow.pallow.domain.user.dto.SignupRequestDto;
 import com.pallow.pallow.domain.user.dto.UserRequestDto;
 import com.pallow.pallow.domain.user.dto.UserResponseDto;
 import com.pallow.pallow.domain.user.entity.User;
-import com.pallow.pallow.domain.user.repository.RefreshTokenRepository;
 import com.pallow.pallow.domain.user.repository.UserCustomRepository;
 import com.pallow.pallow.domain.user.repository.UserRepository;
 import com.pallow.pallow.global.enums.CommonStatus;
@@ -13,8 +12,10 @@ import com.pallow.pallow.global.enums.Gender;
 import com.pallow.pallow.global.enums.Role;
 import com.pallow.pallow.global.exception.CustomException;
 import jakarta.transaction.Transactional;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final UserCustomRepository userCustomRepository;
+    private final RefreshTokenService refreshTokenService;
 
     /**
      * 이용자 회원가입
@@ -64,7 +65,7 @@ public class UserService {
      */
     @Transactional
     public void logout(User user) { //TODO 쿠키 유효성 제거
-        refreshTokenRepository.deleteById(user.getUsername());
+        refreshTokenService.deleteRefreshToken(user.getUsername());
     }
 
 

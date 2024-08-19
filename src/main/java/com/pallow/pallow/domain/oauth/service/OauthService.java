@@ -7,10 +7,12 @@ import com.pallow.pallow.global.enums.ErrorType;
 import com.pallow.pallow.global.exception.CustomException;
 import com.pallow.pallow.global.security.TokenProvider;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -149,7 +151,7 @@ public class OauthService {
         String newAccessToken = tokenProvider.createAccessToken(user.getUsername());
         String refreshToken = UUID.randomUUID().toString();
         tokenProvider.saveRefreshTokenToCookie(refreshToken, response);
-        refreshTokenService.save(user.getUsername(), refreshToken);
+        tokenProvider.createRefreshToken(user.getUsername());
 
         response.setHeader(TokenProvider.ACCESS_TOKEN_HEADER, newAccessToken);
 

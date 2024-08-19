@@ -32,7 +32,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
             padding: 0;
         }
@@ -43,7 +43,7 @@
         }
 
         #chatBtn svg {
-            width: 40px;  /* 아이콘 크기를 키워 더 잘 보이게 함 */
+            width: 40px; /* 아이콘 크기를 키워 더 잘 보이게 함 */
             height: 40px;
             fill: white;
         }
@@ -125,10 +125,12 @@
             padding: 20px;
             border-top: 1px solid #E9ECEF;
         }
+
         .footer a {
             color: #007BFF;
             text-decoration: none;
         }
+
         .footer a:hover {
             text-decoration: underline;
         }
@@ -212,7 +214,8 @@
     <div class="container mx-auto">
 
         <a href="https://www.notion.so" target="_blank" class="inline-block">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Notion" class="w-6 h-6 mx-auto mb-2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Notion"
+                 class="w-6 h-6 mx-auto mb-2">
         </a>
         <p>&copy; 2024, Pallow. All rights reserved</p>
         <p>Team Email: pallow.company@gmail.com</p>
@@ -228,7 +231,8 @@
 <div class="chat-container">
     <button id="chatBtn">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M2.965 12.695a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2m-.8 3.108.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125M8 5.993c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132"/>
+            <path fill-rule="evenodd"
+                  d="M2.965 12.695a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2m-.8 3.108.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125M8 5.993c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132"/>
         </svg>
     </button>
     <span class="chat-text">채팅하기</span>
@@ -246,12 +250,23 @@
         }
 
         function fetchWithAuth(url, options = {}) {
+            const accessToken = localStorage.getItem('Authorization');
+
             options.headers = {
                 ...options.headers,
                 'Authorization': accessToken,
                 'Content-Type': 'application/json'
             };
-            return fetch(url, options);
+
+            return fetch(url, options).then(response => {
+                // 새로운 액세스 토큰이 반환되었는지 확인
+                const newAccessToken = response.headers.get('Authorization');
+                if (newAccessToken) {
+                    // 새로운 액세스 토큰이 있으면 로컬 스토리지에 저장
+                    localStorage.setItem('Authorization', newAccessToken);
+                }
+                return response;
+            });
         }
 
         document.getElementById('chatBtn').addEventListener('click', async () => {
