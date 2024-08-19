@@ -59,6 +59,8 @@ public class ChatRestController {
         log.info("userDetails 갯 매핑 룸 룸아이디 {} : ", userDetails);
         try {
             ChatRoomResponseDto response = chatService.enterChatRoom(roomId, userDetails.getNickname());
+            log.info("채팅룸 response {} : ", response);
+
             return ResponseEntity.ok(new ApiResponse(Message.ROOM_ENTER_SUCCESS, response));
         } catch (Exception e) {
             throw new CustomException(ErrorType.NOT_FOUND_CHATROOM);
