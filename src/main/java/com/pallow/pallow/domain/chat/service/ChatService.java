@@ -128,8 +128,18 @@ public class ChatService {
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_CHATROOM));
         log.info("중단 지점 여기냐? 3");
         // 사용자가 채팅방의 멤버인지 확인
-        UserAndChatRoom userAndChatRoom = userAndChatRoomRepository.findByChatRoomAndUser1OrUser2(chatRoom, user, user)
-                .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_IN_CHATROOM));
+//        UserAndChatRoom userAndChatRoom = userAndChatRoomRepository.findByChatRoomAndUser1OrUser2(chatRoom, user, user)
+//                .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_IN_CHATROOM)); // 여기가 문제여
+        try {
+            UserAndChatRoom userAndChatRoom1 = userAndChatRoomRepository.findByChatRoomAndUser1OrUser2(chatRoom, user, user)
+                    .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_IN_CHATROOM));
+            log.info("첫번째 레포지터리 결과물 : {}", userAndChatRoom1);// 로그2
+        } catch (Exception e) {
+            e.printStackTrace(); // 발생한 예외를 기록하거나 처리합니다. }
+        }
+
+        UserAndChatRoom userAndChatRoom = userAndChatRoomRepository.findByChatRoomAndUser1(chatRoom, user)
+                .orElseThrow(() -> new CustomException(ErrorType.USER_NOT_IN_CHATROOM)); // 수정본
         log.info("중단 지점 여기냐? 4");
         // 채팅방이 활성 상태인지 확인
         if (!userAndChatRoom.isActive()) {
