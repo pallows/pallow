@@ -2,7 +2,7 @@
 
 # 🌟 프로젝트 이름 🌟
 
-<img src="https://via.placeholder.com/200" alt="프로젝트 로고" width="200px"/>
+<img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" alt="프로젝트 로고" width="200px"/>
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/username/repo?style=for-the-badge&logo=github&color=blue)](https://github.com/username/repo/releases)
 [![GitHub last commit](https://img.shields.io/github/last-commit/username/repo?style=for-the-badge&logo=git&color=green)](https://github.com/username/repo/commits/main)
