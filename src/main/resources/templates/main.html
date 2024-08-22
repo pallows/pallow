@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="/js/auth.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pallow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #chatBtn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        #chatBtn:hover {
+            background-color: #45a049;
+            transform: scale(1.1);
+        }
+
+        #chatBtn svg {
+            width: 40px; /* 아이콘 크기를 키워 더 잘 보이게 함 */
+            height: 40px;
+            fill: white;
+        }
+
+        .chat-text {
+            margin-top: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+            }
+        }
+
+
+        .carousel {
+            display: flex;
+            overflow: visible;
+        }
+
+        .carousel-item {
+            min-width: 33.33%;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: gray;
+            cursor: pointer;
+        }
+
+        .carousel-dot.active {
+            background-color: black;
+        }
+
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .carousel-arrow.left {
+            left: 10px;
+        }
+
+        .carousel-arrow.right {
+            right: 10px;
+        }
+
+        .footer {
+            background-color: #F8F9FA;
+            padding: 20px;
+            border-top: 1px solid #E9ECEF;
+        }
+
+        .footer a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+    <link rel="icon"
+          th:href="@{https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96}"
+          type="image/x-icon">
+</head>
+<body class="bg-gray-100 text-black">
+<header class="flex justify-between items-center p-4 bg-white shadow">
+    <div class="flex items-center">
+        <a href="/public/main">
+            <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70"
+                 height="70" alt="Logo" class="mr-4">
+        </a>
+        <nav>
+            <a href="/public/main" class="mr-4">홈</a>
+            <a href="/public/profileCollection" class="mr-4">오늘의 동친</a>
+            <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
+            <a href="/public/MyPage" class="mr-4">MyPage</a>
+            <a href="/public/userboardCollection" class="mr-4">내 게시물 작성하기</a>
+        </nav>
+    </div>
+    <div class="flex items-center">
+        <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
+    </div>
+</header>
+
+<main class="p-4">
+    <!-- 오늘의 동친 섹션 -->
+    <section class="mb-8">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">오늘의 동친</h2>
+            <a href="/public/profileCollection" class="text-blue-500">더보기</a>
+        </div>
+        <div class="relative">
+            <div class="carousel" id="carousel1"></div>
+            <div class="carousel-arrow left">❮</div>
+            <div class="carousel-arrow right">❯</div>
+        </div>
+        <div class="carousel-dots mt-4" id="dots1"></div>
+    </section>
+
+    <section class="mb-8">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">인기 급 상승 모임</h2>
+            <!-- 추후에 좋아요 수 필터 적용된 meetscollection.html페이지로 이동하게끔 수정해주어야 함-->
+            <a href="/public/meetsCollection" class="text-blue-500">더보기</a>
+        </div>
+        <div class="relative">
+            <div class="carousel" id="carousel2"></div>
+            <div class="carousel-arrow left">❮</div>
+            <div class="carousel-arrow right">❯</div>
+        </div>
+        <div class="carousel-dots mt-4" id="dots2"></div>
+    </section>
+
+    <section class="mb-20">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">내 주변 모임</h2>
+            <a href="/public/meetsCollection" class="text-blue-500">더보기</a>
+        </div>
+        <div class="relative">
+            <div class="carousel" id="carousel3"></div>
+            <div class="carousel-arrow left">❮</div>
+            <div class="carousel-arrow right">❯</div>
+        </div>
+        <div class="carousel-dots mt-4" id="dots3"></div>
+    </section>
+
+    <!--  <section class="bg-blue-100 p-4 rounded shadow">-->
+    <!--    <h2 class="text-xl font-bold mb-4">유료결제만 해도 받는 엘리트 멤버십 혜택</h2>-->
+    <!--    <p class="mb-4">결제만 했다면 멤버십 할인가로 예약할 수 있어요.</p>-->
+    <!--    <a href="/payments" class="bg-blue-500 text-white px-4 py-2 rounded">결제 창</a>-->
+    <!--    <a href="/benefits" class="bg-gray-200 text-gray-700 px-4 py-2 rounded">혜택 자세히 보기</a>-->
+    <!--  </section>-->
+</main>
+
+<footer class="footer text-center mt-8">
+    <div class="container mx-auto">
+
+        <a href="https://www.notion.so" target="_blank" class="inline-block">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Notion"
+                 class="w-6 h-6 mx-auto mb-2">
+        </a>
+        <p>&copy; 2024, Pallow. All rights reserved</p>
+        <p>Team Email: pallow.company@gmail.com</p>
+        <p>Created by: Team Palworld</p>
+        <p>Company Address: 1234 Street Name, City, Country</p>
+        <p class="mt-2">
+            <a href="#">Terms of Service</a> |
+            <a href="#">Privacy Policy</a>
+        </p>
+    </div>
+</footer>
+
+<div class="chat-container">
+    <button id="chatBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+                  d="M2.965 12.695a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2m-.8 3.108.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125M8 5.993c1.664-1.711 5.825 1.283 0 5.132-5.825-3.85-1.664-6.843 0-5.132"/>
+        </svg>
+    </button>
+    <span class="chat-text">채팅하기</span>
+</div>
+
+<input TYPE="hidden" data-testParameter-id="1">
+<script type="module">
+    document.getElementById('chatBtn').style.display = 'block';
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const accessToken = localStorage.getItem('Authorization');
+        if (!accessToken) {
+            window.location.href = '/login';
+            return;
+        }
+
+        function fetchWithAuth(url, options = {}) {
+            const accessToken = localStorage.getItem('Authorization');
+
+            options.headers = {
+                ...options.headers,
+                'Authorization': accessToken,
+                'Content-Type': 'application/json'
+            };
+
+            return fetch(url, options).then(response => {
+                // 새로운 액세스 토큰이 반환되었는지 확인
+                const newAccessToken = response.headers.get('Authorization');
+                if (newAccessToken) {
+                    // 새로운 액세스 토큰이 있으면 로컬 스토리지에 저장
+                    localStorage.setItem('Authorization', newAccessToken);
+                }
+                return response;
+            });
+        }
+
+        document.getElementById('chatBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetchWithAuth('/chat.html');
+                if (response.ok) {
+                    window.location.href = '/chat.html'; //
+                } else {
+                    console.error('Failed to load chat.html');
+                }
+            } catch (error) {
+                console.error('Error loading chat.html:', error);
+            }
+        });
+
+        async function createCarouselForUser(containerId, dotsId, apiEndpoint, urlPattern) {
+            const container = document.getElementById(containerId);
+            const dotsContainer = document.getElementById(dotsId);
+
+            try {
+                console.log(`Fetching data from: ${apiEndpoint}`);
+                const response = await fetchWithAuth(apiEndpoint);
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Received data:', data);
+
+                if (!data || !Array.isArray(data.data)) {
+                    console.error('Invalid data format:', data);
+                    throw new Error('Invalid data format received');
+                }
+
+                const items = data.data;
+
+                // Clear existing content
+                container.innerHTML = '';
+                dotsContainer.innerHTML = '';
+
+                // Create cards
+                items.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'carousel-item bg-white p-4 shadow mr-4';
+                    card.style.width = '300px';
+                    card.style.height = '200px';
+                    // Generate the profile URL using the URL pattern
+                    const profileUrl = urlPattern.replace('{id}', item.nickname); // Replace `{id}` with `nickname`
+
+                    // Create the anchor element wrapping the card content
+                    const link = document.createElement('a');
+                    link.href = "javascript:void(0);"; // Disable the default link behavior
+
+                    // Set the inner HTML of the card
+                    link.innerHTML = `
+                <img src="${item.image || 'https://via.placeholder.com/280x120'}" alt="Thumbnail" class="mb-2 w-full h-24 object-cover">
+                <h3 class="font-bold">${item.nickname}</h3>
+                <p class="text-sm">${item.mbti}</p>
+            `;
+                    //    위에 h3 태그의 item.name 이 아니라 nickname이 되어야합니다.
+                    link.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        const width = 800;
+                        const height = 1000;
+                        const left = (screen.width - width) / 2;
+                        const top = (screen.height - height) / 2;
+                        console.log("받아오는 아이템 확인 : ", item);
+                        window.open(profileUrl, '_blank', `width=${width},height=${height},top=${top},left=${left}`);
+                    });
+                    // Append the link to the card
+                    card.appendChild(link);
+                    container.appendChild(card);
+                });
+
+                // Create dots
+                const numDots = Math.ceil(items.length / 3);
+                for (let i = 0; i < numDots; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                    dotsContainer.appendChild(dot);
+                }
+
+                let currentIndex = 0;
+
+                function updateCarousel() {
+                    container.style.transform = `translateX(-${currentIndex * 33.3}%)`;
+                    Array.from(dotsContainer.children).forEach((dot, index) => {
+                        dot.classList.toggle('active', index === Math.floor(currentIndex / 3));
+                    });
+                }
+
+                // Arrow click handlers
+                container.parentElement.querySelector('.carousel-arrow.left').addEventListener('click',
+                    () => {
+                        currentIndex = Math.max(currentIndex - 1, 0);
+                        updateCarousel();
+                    });
+
+                container.parentElement.querySelector('.carousel-arrow.right').addEventListener('click',
+                    () => {
+                        currentIndex = Math.min(currentIndex + 1, items.length - 3);
+                        updateCarousel();
+                    });
+
+                // Dot click handlers
+                Array.from(dotsContainer.children).forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        currentIndex = index * 3;
+                        updateCarousel();
+                    });
+                });
+
+                updateCarousel(); // Initialize carousel position
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+
+        async function createCarouselForMeet(containerId, dotsId, apiEndpoint, urlPattern) {
+            const container = document.getElementById(containerId);
+            const dotsContainer = document.getElementById(dotsId);
+
+            const response = await fetchWithAuth(apiEndpoint);
+            console.log('Response:', response);
+
+            try {
+                console.log(`Fetching data from: ${apiEndpoint}`);
+                const response = await fetchWithAuth(apiEndpoint);
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Received data:', data);
+
+                if (!data || !Array.isArray(data.data)) {
+                    console.error('Invalid data format:', data);
+                    throw new Error('Invalid data format received');
+                }
+
+                const items = data.data;
+
+                // Clear existing content
+                container.innerHTML = '';
+                dotsContainer.innerHTML = '';
+
+                // Create cards
+                items.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'carousel-item bg-white p-4 shadow mr-4';
+                    card.style.width = '300px';
+                    card.style.height = '200px';
+
+                    const profileUrl = urlPattern.replace('{id}', item.id);
+
+                    // Create the anchor element wrapping the card content
+                    const link = document.createElement('a');
+                    link.href = "javascript:void(0);"; // Disable the default link behavior
+
+// Set the inner HTML of the card
+                    link.innerHTML = `
+    <img src="${item.image || 'https://via.placeholder.com/280x120'}" alt="Thumbnail" class="mb-2 w-full h-24 object-cover">
+    <h3 class="font-bold">${item.title}</h3>
+    <p class="text-sm">${item.content}</p>
+`;
+
+// Add click event listener to open new window with specified size and position
+                    link.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        const width = 800;
+                        const height = 600;
+                        const left = (screen.width - width) / 2;
+                        const top = (screen.height - height) / 2;
+                        window.open(profileUrl, '_blank', `width=${width},height=${height},top=${top},left=${left}`);
+                    });
+
+                    // Append the link to the card
+                    card.appendChild(link);
+                    container.appendChild(card);
+                });
+
+                // Create dots
+                const numDots = Math.ceil(items.length / 3);
+                for (let i = 0; i < numDots; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                    dotsContainer.appendChild(dot);
+                }
+
+                let currentIndex = 0;
+
+                function updateCarousel() {
+                    container.style.transform = `translateX(-${currentIndex * 33.3}%)`;
+                    Array.from(dotsContainer.children).forEach((dot, index) => {
+                        dot.classList.toggle('active', index === Math.floor(currentIndex / 3));
+                    });
+                }
+
+                // Arrow click handlers
+                container.parentElement.querySelector('.carousel-arrow.left').addEventListener('click',
+                    () => {
+                        currentIndex = Math.max(currentIndex - 1, 0);
+                        updateCarousel();
+                    });
+
+                container.parentElement.querySelector('.carousel-arrow.right').addEventListener('click',
+                    () => {
+                        currentIndex = Math.min(currentIndex + 1, items.length - 3);
+                        updateCarousel();
+                    });
+
+                // Dot click handlers
+                Array.from(dotsContainer.children).forEach((dot, index) => {
+                    dot.addEventListener('click', () => {
+                        currentIndex = index * 3;
+                        updateCarousel();
+                    });
+                });
+
+                updateCarousel(); // Initialize carousel position
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+
+        // Initialize carousels
+        createCarouselForUser('carousel1', 'dots1', '/profiles/todays-friends', '/public/Profile?nickname={id}');
+        createCarouselForMeet('carousel2', 'dots2', '/api/meets/popular', '/public/meets/{id}');
+        createCarouselForMeet('carousel3', 'dots3', '/api/meets/nearby', '/public/meets/{id}');
+
+        // document.getElementById('profileBtn').addEventListener('click', () => {
+        //     window.location.href = '/public/MyPage';
+        // });
+
+
+    });
+</script>
+
+</body>
+</html>

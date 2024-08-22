@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모임 참가자</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+        rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+  </style>
+  <link rel="icon"
+        href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png"
+        type="image/x-icon">
+</head>
+<body class="bg-gray-100 p-6">
+<div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+  <h1 class="text-2xl font-bold mb-4">모임 참가자</h1>
+
+  <div id="GroupParticipants" class="space-y-4"></div>
+
+  <div class="mt-6 text-center">
+    <button id="closeButton" class="bg-black text-white px-6 py-2 rounded">닫기</button>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  const creator = [[${creator}]];
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const meetId = urlParams.get('meetId');
+    const accessToken = localStorage.getItem("Authorization");
+
+    fetch('/profiles/getProfileId', {
+      method: 'GET',
+      headers: {
+        'Authorization': accessToken,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => response.json())
+    .then(profileResponse => {
+      const profileId = profileResponse.data.id;
+
+      return fetch(`/api/meets/${meetId}/participants`, {
+        method: 'GET',
+        headers: {
+          'Authorization': accessToken,
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json()).then(responseData => ({
+        profileId: profileId,
+        participants: responseData.data
+      }));
+    })
+    .then(data => {
+      const { profileId, participants } = data;
+      const GroupParticipants = document.getElementById('GroupParticipants');
+
+      participants.forEach(participant => {
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'flex items-center bg-gray-200 p-4 rounded-lg shadow';
+
+        const img = document.createElement('img');
+        img.src = participant.image;
+        img.className = 'w-12 h-12 rounded-full mr-4';
+
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'flex-1';
+
+        const nameP = document.createElement('p');
+        nameP.className = 'text-blue-600 font-bold';
+        nameP.textContent = participant.nickname;
+
+        infoDiv.appendChild(nameP);
+
+        const buttonDiv = document.createElement('div');
+        buttonDiv.className = 'flex space-x-2';
+
+        const withdrawBtn = document.createElement('button');
+        withdrawBtn.className = 'bg-black text-white px-4 py-2 rounded';
+        withdrawBtn.textContent = '모임 퇴장';
+
+        if (profileId === creator) {
+          if (participant.id === profileId) {
+            withdrawBtn.style.display = 'none';
+          }
+        } else {
+          if (participant.id !== profileId) {
+            withdrawBtn.style.display = 'none';
+          }
+        }
+
+        if (withdrawBtn.style.display !== 'none') {
+          withdrawBtn.addEventListener('click', function () {
+            fetch(`/api/meets/${meetId}/withdraw/${participant.id}`, {
+              method: 'PATCH',
+              headers: {
+                'Authorization': accessToken,
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(response => response.json())
+            .then(responseData => {
+              if (responseData.message === "회원을 성공적으로 퇴장시켰습니다.") {
+                alert('회원이 퇴장되었습니다.');
+                entryDiv.remove();
+              } else {
+                alert('회원 퇴장 중 오류가 발생했습니다.');
+              }
+            })
+            .catch(error => {
+              console.error('Error withdrawing from meeting:', error);
+            });
+          });
+        }
+
+        buttonDiv.appendChild(withdrawBtn);
+        entryDiv.appendChild(img);
+        entryDiv.appendChild(infoDiv);
+        entryDiv.appendChild(buttonDiv);
+        GroupParticipants.appendChild(entryDiv);
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching participants or profile:', error);
+    });
+
+    document.getElementById('closeButton').addEventListener('click', function () {
+      if (window.opener) {
+        window.opener.location.reload();
+      }
+      window.close();
+    });
+  });
+</script>
+</body>
+</html>

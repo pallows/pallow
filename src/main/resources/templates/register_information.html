@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Registration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoMapAppKey} + '&libraries=services'"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .profile-pic {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .profile-pic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+  <link rel="icon"
+        href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png"
+        type="image/x-icon">
+</head>
+<body class="bg-gray-100 p-6">
+<div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg">
+  <h1 class="text-2xl font-bold mb-4">추가 정보 입력란</h1>
+  <form id="profileForm" method="POST" enctype="multipart/form-data">
+    <div class="mb-4">
+      <label for="location" class="block text-gray-700">현재 위치</label>
+      <div class="flex items-center">
+        <input type="text" id="location" name="position"
+               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+               readonly>
+        <button type="button" id="manualEntryBtn"
+                class="ml-4 px-4 py-2 w-32 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
+          수동 입력
+        </button>
+      </div>
+    </div>
+
+    <div id="manualEntry" class="mb-4 hidden">
+      <label for="region1" class="block text-gray-700">시/도</label>
+      <select id="region1" name="region1"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+      </select>
+
+      <label for="region2" class="block text-gray-700 mt-4">시/군/구</label>
+      <select id="region2" name="region2"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+      </select>
+    </div>
+    <div class="mb-4">
+      <label for="hobby" class="block text-gray-700">취미</label>
+      <input type="text" id="hobby" name="hobby" placeholder="취미를 입력하세요"
+             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+    </div>
+
+    <div class="mb-4">
+      <label for="birthday" class="block text-gray-700">생일</label>
+      <input type="date" id="birthday" name="birth"
+             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+    </div>
+    <div class="mb-4">
+      <label for="mbti" class="block text-gray-700">MBTI</label>
+      <select id="mbti" name="mbti"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" required>
+        <option value="">선택해주세요.</option>
+        <option value="INTJ">INTJ</option>
+        <option value="INTP">INTP</option>
+        <option value="ENTJ">ENTJ</option>
+        <option value="ENTP">ENTP</option>
+        <option value="INFJ">INFJ</option>
+        <option value="INFP">INFP</option>
+        <option value="ENFJ">ENFJ</option>
+        <option value="ENFP">ENFP</option>
+        <option value="ISTJ">ISTJ</option>
+        <option value="ISFJ">ISFJ</option>
+        <option value="ESTJ">ESTJ</option>
+        <option value="ESFJ">ESFJ</option>
+        <option value="ISTP">ISTP</option>
+        <option value="ISFP">ISFP</option>
+        <option value="ESTP">ESTP</option>
+        <option value="ESFP">ESFP</option>
+      </select>
+    </div>
+    <div class="mb-4">
+      <label for="introduction" class="block text-gray-700">본인 소개글</label>
+      <textarea id="introduction" name="content" rows="4"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"></textarea>
+    </div>
+    <div class="mb-4">
+      <label class="block text-gray-700">사진 선택</label>
+      <div class="flex items-center">
+        <div class="profile-pic mr-4" id="profilePic">
+          <img src="https://github.com/user-attachments/assets/bce3db08-6dfc-4ccb-b3dd-38d75a465955" alt="Default Profile Image">
+        </div>
+        <input type="file" id="photoInput" name="image"
+               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">관심사</label>
+      <div id="interestButtons" class="flex flex-wrap" >
+      </div>
+      <input type="hidden" id="selectedInterests" name="interest">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">이상형</label>
+      <div id="idealButtons" class="flex flex-wrap">
+      </div>
+      <input type="hidden" id="selectedIdeals" name="ideal">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">음주 여부</label>
+      <div id="alcoholButtons" class="flex flex-wrap">
+      </div>
+      <input type="hidden" id="selectedAlcohol" name="alcohol">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">학력</label>
+      <div id="educationButtons" class="flex flex-wrap">
+      </div>
+      <input type="hidden" id="selectedEducation" name="education">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">직업</label>
+      <div id="jobButtons" class="flex flex-wrap">
+      </div>
+      <input type="hidden" id="selectedJob" name="jobs">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">성격</label>
+      <div id="personalityButtons" class="flex flex-wrap"></div>
+      <input type="hidden" id="selectedPersonality" name="personality">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">장점</label>
+      <div id="prosButtons" class="flex flex-wrap"></div>
+      <input type="hidden" id="selectedPros" name="pros">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">관계</label>
+      <div id="relationshipButtons" class="flex flex-wrap"></div>
+      <input type="hidden" id="selectedRelationship" name="relationship">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">종교</label>
+      <div id="religionButtons" class="flex flex-wrap"></div>
+      <input type="hidden" id="selectedReligion" name="religion">
+    </div>
+
+    <div class="mb-4">
+      <label class="block text-gray-700">흡연 여부</label>
+      <div id="smokingButtons" class="flex flex-wrap"></div>
+      <input type="hidden" id="selectedSmoking" name="smoking">
+    </div>
+
+
+    <button type="submit"
+            class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
+      추가 정보 입력 완료!
+    </button>
+  </form>
+</div>
+
+<script type="module">
+  import { regionData, interests, ideals, alcoholPreferences, educationLevels, jobTypes, personalities,
+    pros, relationships, religions, smokings} from "/js/predefinedData.js";
+
+  const buttonGroups = [
+    { divId: 'interestButtons', inputId: 'selectedInterests', data: interests, multiple: true },
+    { divId: 'idealButtons', inputId: 'selectedIdeals', data: ideals, multiple: true },
+    { divId: 'alcoholButtons', inputId: 'selectedAlcohol', data: alcoholPreferences, multiple: false },
+    { divId: 'educationButtons', inputId: 'selectedEducation', data: educationLevels, multiple: false },
+    { divId: 'jobButtons', inputId: 'selectedJob', data: jobTypes, multiple: false },
+    { divId: 'personalityButtons', inputId: 'selectedPersonality', data: personalities, multiple: false },
+    { divId: 'prosButtons', inputId: 'selectedPros', data: pros, multiple: false },
+    { divId: 'relationshipButtons', inputId: 'selectedRelationship', data: relationships, multiple: false },
+    { divId: 'religionButtons', inputId: 'selectedReligion', data: religions, multiple: false },
+    { divId: 'smokingButtons', inputId: 'selectedSmoking', data: smokings, multiple: false }
+  ];
+
+  buttonGroups.forEach(group => createButtons(group));
+
+  function createButtons({ divId, inputId, data, multiple }) {
+    const buttonsDiv = document.getElementById(divId);
+    const hiddenInput = document.getElementById(inputId);
+
+    for (const key in data) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = data[key];
+      button.className = 'm-2 px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500';
+      button.dataset.value = key;
+      button.addEventListener('click', function () {
+        if (!multiple) {
+          document.querySelectorAll(`#${divId} button.bg-indigo-600`).forEach(btn => {
+            btn.classList.remove('bg-indigo-600', 'text-white');
+            btn.classList.add('bg-gray-200');
+          });
+        } else {
+          const selectedButtons = document.querySelectorAll(`#${divId} button.bg-indigo-600`);
+          if (selectedButtons.length >= 3 && !button.classList.contains('bg-indigo-600')) {
+            alert('최대 3개까지 선택가능합니다');
+            return;
+          }
+        }
+        button.classList.toggle('bg-indigo-600');
+        button.classList.toggle('text-white');
+        updateSelected(hiddenInput, divId);
+      });
+      buttonsDiv.appendChild(button);
+    }
+  }
+
+  function updateSelected(hiddenInput, divId) {
+    const selected = [];
+    document.querySelectorAll(`#${divId} button.bg-indigo-600`).forEach(button => {
+      selected.push(button.dataset.value);
+    });
+    hiddenInput.value = selected.join(',');
+  }
+
+  document.getElementById('photoInput').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        const profilePic = document.getElementById('profilePic');
+        profilePic.innerHTML = '';
+        profilePic.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  document.getElementById('profileForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const requiredFields = ['selectedInterests', 'selectedIdeals', 'selectedAlcohol',
+      'selectedPersonality', 'selectedJob', 'selectedSmoking',
+      'selectedReligion', 'selectedPros', 'selectedEducation'];
+
+    const missingFields = requiredFields.filter(id => !document.getElementById(id).value);
+
+    if (missingFields.length > 0) {
+      alert('선택되지 않은 항목이 있습니다. 당신을 더 알려주세요!');
+      return;
+    }
+
+    const form = document.getElementById('profileForm');
+    const formData = new FormData(form);
+    let username = localStorage.getItem('username');
+    formData.append('username', username);
+    localStorage.removeItem("username")
+    formData.delete('region1');
+    formData.delete('region2');
+
+    const photoInput = document.getElementById('photoInput');
+    if (photoInput.files.length === 0) {
+      const emptyFile = new File([], 'empty.png', { type: 'image/png' });
+      formData.set('image', emptyFile);
+      formData.append('defaultImage',
+          'https://github.com/user-attachments/assets/bce3db08-6dfc-4ccb-b3dd-38d75a465955');
+    }
+
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const curUserId = urlParams.get('userId');
+      let response;
+      if (curUserId != null) {
+         response = await fetch(`/profiles?userId=${curUserId}`, {
+          method: 'POST',
+          body: formData,
+        });
+      } else {
+         response = await fetch('/profiles', {
+          method: 'POST',
+          body: formData,
+        });
+      }
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      alert('프로필 생성이 완료되었습니다.');
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error:', error);
+      alert('프로필 생성에 실패했습니다.');
+    }
+  });
+
+  function getAddr(lat, lng) {
+    let geocoder = new kakao.maps.services.Geocoder();
+    let coord = new kakao.maps.LatLng(lat, lng);
+    let callback = function (result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        let locationString;
+
+        locationString = result[0].address.region_1depth_name + " "
+            + result[0].address.region_2depth_name;
+        document.getElementById('location').value = locationString;
+      }
+    }
+    geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+  }
+
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        getAddr(position.coords.latitude, position.coords.longitude);
+      }, function (error) {
+        console.error(error);
+        alert('위치 정보를 가져오는 데 실패했습니다.');
+      }, {
+        enableHighAccuracy: false,
+        maximumAge: 0,
+        timeout: Infinity
+      });
+    } else {
+      alert('현재 브라우저에서는 geolocation을 지원하지 않습니다');
+    }
+  }
+
+  document.getElementById('manualEntryBtn').addEventListener('click', function () {
+    document.getElementById('manualEntry').classList.toggle('hidden');
+  });
+
+  const region1Select = document.getElementById('region1');
+  const region2Select = document.getElementById('region2');
+
+  region1Select.innerHTML = '<option value="">선택하세요</option>';
+  region2Select.innerHTML = '<option value="">선택하세요</option>';
+
+  for (const region1 in regionData) {
+    const option = document.createElement('option');
+    option.value = region1;
+    option.textContent = region1;
+    region1Select.appendChild(option);
+  }
+
+  region1Select.addEventListener('change', function () {
+    region2Select.innerHTML = '<option value="">선택하세요</option>';
+    const selectedRegion1 = region1Select.value;
+
+    if (regionData[selectedRegion1]) {
+      regionData[selectedRegion1].forEach(region2 => {
+        const option = document.createElement('option');
+        option.value = region2;
+        option.textContent = region2;
+        region2Select.appendChild(option);
+      });
+    }
+  });
+
+  function updateLocationInput() {
+    const region1 = document.getElementById('region1').value;
+    const region2 = document.getElementById('region2').value;
+    const locationInput = `${region1} ${region2}`;
+    document.getElementById('location').value = locationInput;
+  }
+
+  region1Select.addEventListener('change', updateLocationInput);
+  region2Select.addEventListener('change', updateLocationInput);
+
+  document.addEventListener('DOMContentLoaded', function () {
+    getLocation();
+    updateLocationInput();
+  });
+</script>
+
+<!--<script type="text/javascript"-->
+<!--        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f4c83d9a4b318776896b44ad0eaf0ff8&libraries=services"></script>-->
+<!--<script type="text/javascript" th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoMapAppKey} + '&libraries=services'"></script>-->
+
+</body>
+</html>

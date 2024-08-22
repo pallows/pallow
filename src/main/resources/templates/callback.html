@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Callback</title>
+</head>
+<body>
+<h1>Processing OAuth Callback...</h1>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log("Current path:", window.location.pathname);
+
+        if (window.location.pathname === '/callback.html') {  // 올바른 경로
+            console.log("Authorization callback path detected.");
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+
+            if (code) {
+                console.log("Authorization code found:", code);
+                fetch(`/oauth/callback?code=${code}`, {  // callback API 호출
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        console.log("Fetch response received:", response);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Response data received:", data);
+                        if (data.redirectUrl) {
+                            // Redirect to the URL provided by the server
+                            alert("회원 가입이 필요합니다.")
+                            console.log("Redirecting to:", data.redirectUrl);
+                            window.location.href = data.redirectUrl;
+                        }
+                        const accessToken = data.accessToken;
+                        if (accessToken) {
+                            console.log("Access token:", accessToken);
+                            try {
+                                localStorage.setItem('Authorization', accessToken);
+                                console.log('Access token saved to localStorage:', localStorage.getItem('Authorization'));
+                                window.location.href = '/public/main';  // 메인 페이지로 리다이렉트
+                            } catch (error) {
+                                console.error('Error setting localStorage:', error);
+                            }
+                        } else {
+                            console.error('Access token not found in response data.');
+                            alert('Login failed: Access token not found.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        alert('Login failed: ' + error.message);
+                    });
+            } else {
+                console.error('Authorization code not found in URL.');
+            }
+        }
+    });
+</script>
+</body>
+</html>

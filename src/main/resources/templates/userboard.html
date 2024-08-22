@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="/js/auth.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Post</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+
+        .like-button {
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .slider {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+
+        .slides {
+            display: flex;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .slide {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .slider-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .slider-nav button {
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+    </style>
+    <link rel="icon"
+          href="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FoXBYw%2FbtsIPXrDjTc%2FpLzzFxLchTAtiBSFLAfEX1%2Fimg.png"
+          type="image/x-icon">
+</head>
+<body class="bg-gray-100">
+<header class="flex justify-between items-center p-4 bg-white shadow">
+    <div class="flex items-center">
+        <a href="/public/main">
+            <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" width="70"
+                 height="70" alt="Logo" class="mr-4">
+        </a>
+        <nav>
+            <a th:href="@{/public/main}" class="mr-4">홈</a>
+            <a href="/public/profileCollection" class="mr-4">오늘의 동친</a>
+            <a href="/public/meetsCollection" class="mr-4">내 주변 모임</a>
+            <a href="/public/MyPage" class="mr-4">MyPage</a>
+        </nav>
+    </div>
+    <div class="flex items-center">
+        <button id="logoutBtn" class="bg-black text-white px-4 py-2 rounded">로그아웃</button>
+    </div>
+</header>
+
+<div class="max-w-6xl mx-auto p-4 bg-white shadow-md rounded-lg">
+    <div class="flex justify-between items-center mb-4">
+        <div class="text-gray-500 flex items-center space-x-2">
+            <a id="BoardProfileLink" class="w-8 h-8 rounded-full overflow-hidden">
+                <!--TODO href="profile.html" 클릭시 프로필로 가지게끔 하이퍼링크를 추가해줘야합니다.-->
+                <img id="profileImage" alt="Profile">
+            </a>
+            <span id="username"></span>
+        </div>
+
+    </div>
+    <div class="flex">
+        <div class="w-2/3 p-4">
+            <img id="boardImg" alt="Image 1" className="w-full h-96 object-cover"/>
+            <div id="boardTitle" class="BoardTitle"></div>
+            <div class="text-lg font-bold mb-2 mt-4"></div>
+            <div id="boardContent" class="p-4 bg-gray-100 rounded-lg mb-4">
+            </div>
+            <div id="boardDate" class="text-blue-500 text-sm">
+            </div>
+            <div id="post-actions" class="flex space-x-2 mt-4"> <!-- TODO : 메인페이지에서는 수정,삭제 버튼을 그룹화된 아이디로 관리 -->
+                <button id="edit-button" class="edit-button bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        onclick="editPost()">수정
+                </button>
+                <button id="delete-button"
+                        class="delete-button bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
+                        onclick="deletePost()">삭제
+                </button>
+                <button id="boardLikeButton" class="like-button bg-blue-500 text-white px-4 py-2 rounded ml-4">
+                    Like <span id="boardLikeCount">0</span></button>
+            </div>
+        </div>
+        <!-- 수정 폼 -->
+        <form id="editForm" class="hidden" enctype="multipart/form-data" onsubmit="submitEditForm(event)">
+            <div>
+                <label for="editTitle">제목:</label>
+                <input type="text" id="editTitle" name="title" class="w-full p-2 border rounded-lg" required>
+            </div>
+            <div>
+                <label for="editContent">내용:</label>
+                <textarea id="editContent" name="content" class="w-full p-2 border rounded-lg" rows="3"
+                          required></textarea>
+            </div>
+            <div>
+                <label for="editImage">이미지:</label>
+                <input type="file" id="editImage" name="image" class="w-full p-2 border rounded-lg">
+            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">저장</button>
+            <button type="button" onclick="toggleEditForm()"
+                    class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700">취소
+            </button>
+        </form>
+
+        <!-- TODO BoardComment 입니다 -->
+        <div class="w-1/3 p-4 bg-gray-200 rounded-lg relative">
+            <div class="space-y-4" id="comments">
+            </div>
+            <div class="mt-4">
+                    <textarea id="newComment" class="w-full p-2 border rounded-lg" rows="3"
+                              placeholder="댓글을 작성하세요"></textarea>
+                <button onclick="addComment()"
+                        class="mt-2 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-700">댓글 작성
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const token = localStorage.getItem("Authorization")
+
+    function fetchWithAuth(url, options = {}) {
+        options.headers = {
+            ...options.headers,
+            'Authorization': token,
+            'Content-Type': 'application/json'
+        };
+        return fetch(url, options);
+    }
+
+    //BOARD 를 생성하면 BOARD 컬렉션에 BOARD 가 올라가고 거기서 클릭을햇을때, 해당하는 BOARD 로 이동하게된다. 이동할때 해당하는 BOARD 의 ID를 넘겨줘야 한다.
+    const urlParams = new URLSearchParams(window.location.search);
+    const userBoardId = urlParams.get('id');  //TODO 숫자 1 대신에 받아온 BoardId 들어가야 정상 작동 됩니다.
+    let userId;
+    let isAuthor;
+    let originalImgSrc;
+
+    // board를 조회합니다. -> board의 작성자 ID를 가져와서 -> 작성자 아이이디로 프로필을 조회합니다. -> 조회한값에서 이미지를 가져온다음 -> 사용
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const likeButton = document.getElementById('boardLikeButton');
+        const likeCountElement = document.getElementById('boardLikeCount');
+
+        //TODO: Board 및 해당 User 의 정보를 불러옵니다.
+        fetchWithAuth(`/users/only`)
+        .then(response => response.json())
+        .then(el => {
+            return el
+        }).then((elData) => {
+            fetchWithAuth(`/users/0/userboards/${userBoardId}`) //TODO 중간에 숫자 0 이 들어간 이유는 컨트롤러 맵핑을 저렇게 하고 있어서
+            .then(response => response.json())              //TODO 사용처가 없음에도 불구하고 0을 넣어줬습니다.
+            .then(data => {
+                userId = data.data.boardUserId;
+                document.getElementById('username').textContent = data.data.userNickName;
+                document.getElementById('profileImage').src = data.data.userProfileImage;
+                document.getElementById('boardTitle').textContent = data.data.title;
+                document.getElementById('boardContent').textContent = data.data.content;
+                document.getElementById('boardImg').src = data.data.image;
+                document.getElementById('boardDate').textContent = new Date(data.data.createdAt).toLocaleDateString('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+                document.getElementById('boardLikeCount').textContent = data.data.likesCount;
+                originalImgSrc = data.data.image;
+
+                initializeLikeStatus();
+            })
+            .then(() => {
+                    if (elData.data.id !== userId) { // elData.data.id 접속한 유저의 id // board를 작성한 유저
+                        document.getElementById('edit-button').style.display = 'none';
+                        document.getElementById('delete-button').style.display = 'none';
+                    }
+                }
+            )
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+            });
+
+
+        })
+
+
+        // TODO COMMENT 페이지가 로드 되었을때 구현
+        {
+            fetchWithAuth(`/users/only`)
+            .then(response => response.json())
+            .then(el => {
+                return el
+            }).then((currentUserId) => {
+                return currentUserId.data.id // 현재 접속한 유저의 ID
+            }).then((currentUserId) => {
+                fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}/comments`)
+                //해당 board에 접속한 유저의 id로 접근
+                .then(response => response.json())
+                .then(data => {
+                    data.data.forEach((el) => {
+                        if (currentUserId !== el.commentUserId) {
+                            isAuthor = false;
+                        }
+                        if (currentUserId === el.commentUserId) {
+                            isAuthor = true;
+                        }
+                        addCommentToDOM(el, isAuthor)
+                    })
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error);
+                });
+            })
+        }
+
+        //TODO : board LIKE
+        async function toggleBoardLike() {
+            try {
+                const response = await fetchWithAuth(`/userboards/${userBoardId}/like`, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // 좋아요 수를 업데이트하기 위해 게시물 정보를 다시 가져옵니다.
+                const updatedResponse = await fetchWithAuth(`/users/0/userboards/${userBoardId}`);
+                if (updatedResponse.ok) {
+                    const data = await updatedResponse.json();
+                    const {likesCount} = data.data;
+                    likeCountElement.innerText = likesCount;
+                }
+            } catch (error) {
+                console.error('Error toggling like:', error);
+                alert('좋아요 상태를 업데이트하는 중 오류가 발생했습니다.');
+            }
+        }
+
+
+        likeButton.addEventListener('click', toggleBoardLike);
+
+        // 페이지 로드 시 좋아요 상태 초기화
+        async function initializeLikeStatus() {
+            try {
+                const response = await fetchWithAuth(`/users/0/userboards/${userBoardId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const {likesCount} = data.data;
+                    likeCountElement.innerText = likesCount;
+                }
+            } catch (error) {
+                console.error('Error fetching like status:', error);
+            }
+        }
+
+
+        // TODO -----
+
+    });
+
+    function addCommentToDOM(comment, isAuthor) {
+        const commentsContainer = document.getElementById('comments');
+
+        const commentElement = document.createElement('div');
+        commentElement.className = 'comment flex items-start p-4 bg-white rounded-lg shadow';
+        commentElement.id = `comment-${comment.id}`;
+
+        const formattedDate = new Date(comment.createdAt).toLocaleDateString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        });
+        commentElement.innerHTML = `
+      <!--TODO 아래 a태그에  href 작성 필요 : 프로필 클릭시 해당 유저 프로필로 이동 -->
+                <a class="w-10 h-10 rounded-full overflow-hidden mr-4" >
+                    <img src="${comment.commentUserPhoto}" alt="Profile">
+                </a>
+                <div class="flex-grow">
+                    <div class="font-bold">${comment.commentUserNickName}</div>
+                    <div class="text-gray-600">${comment.content}</div>
+                    <div class="text-gray-400 text-sm">${formattedDate}</div>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <button class="like-button" data-comment-id="${comment.id}" onclick="toggleCommentLike(this)">
+                좋아요♡
+                </button><span class="comment-like-count">${comment.likesCount}</span>
+                   ${isAuthor ? `<button class="delete-button text-red-500 hover:text-red-700" onclick="deleteComment(${comment.id})">삭제</button>` : ''}
+                   ${isAuthor ? `<button class="edit-button text-blue-500 hover:text-blue-700" onclick="editComment(${comment.id})">수정</button>` : ''}
+                </div>
+            `;
+        commentsContainer.appendChild(commentElement);
+        initializeCommentLikeStatus(comment.id, commentElement);
+    }
+
+    function toggleCommentLike(button) {
+        const commentElement = button.closest('.comment'); // 올바른 상위 요소를 찾기
+        if (!commentElement) {
+            console.error('Comment element not found.');
+            return;
+        }
+
+        const commentId = button.dataset.commentId;
+        button.classList.toggle('liked');
+
+        fetchWithAuth(`/userboardscomment/${commentId}/like`, {
+            method: 'POST'
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            initializeCommentLikeStatus(commentId, commentElement)
+            // 서버에서 제공된 좋아요 수를 그대로 사용
+        })
+        .catch(error => {
+            console.error('Error toggling comment like:', error);
+            alert('댓글 좋아요 상태를 업데이트하는 중 오류가 발생했습니다.');
+        });
+    }
+
+    async function initializeCommentLikeStatus(commentId, commentElement) {
+        const response = await fetchWithAuth(`/users/0/userboards/${userBoardId}/comments`);
+        const data = await response.json();
+        console.log("data : ", data);
+        const comments = data.data; // 댓글 배열
+        const comment = comments.find(c => c.id === parseInt(commentId));
+        const likeCountElement = commentElement.querySelector('.comment-like-count');
+        likeCountElement.innerText = comment.likesCount; // 서버에서 제공된 좋아요 수를 그대로 사용
+        console.log("Updated like count: ", comment.likesCount);
+    }
+
+    function addComment() {
+        const newComment = document.getElementById('newComment').value;
+        if (newComment.trim() === '') {
+            alert('댓글 내용을 입력하세요.');
+            return;
+        }
+        fetchWithAuth(`/users/only`)
+        .then(response => response.json())
+        .then(el => {
+            return el
+        }).then((elData) => {
+            // TODO : 커맨트 작성   elData.data.id는 현재 접속한 유저의 ID
+            const url = `/users/${elData.data.id}/userboards/${userBoardId}/comments`;
+            fetchWithAuth(url, {
+                method: 'POST',
+                body: JSON.stringify({content: newComment})
+            })
+            .then(response => response.json())
+            .then(data => {
+                addCommentToDOM(data.data, true);
+                document.getElementById('newComment').value = ''; // 댓글 작성란 비우기
+            })
+            .catch(error => {
+                console.error('Error adding comment:', error);
+            });
+        })
+    }
+
+    function deleteComment(commentId) {
+        const url = `/users/0/userboards/${userBoardId}/comments/${commentId}`; //TODO 중간에 숫자 0 이 들어간 이유는 컨트롤러 맵핑을 저렇게 하고 있어서 사용처가 없음에도 불구하고 0을 넣어줬습니다.
+        fetchWithAuth(url, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === "댓글을 삭제하였습니다.") {
+                const commentElement = document.getElementById(`comment-${commentId}`);
+                if (commentElement) {
+                    commentElement.remove();
+                }
+            } else {
+                console.error('Failed to delete comment:', data.message);
+            }
+        })
+        .catch(error => console.error('Error deleting comment:', error));
+    }
+
+    function editComment(commentId) {
+        const commentElement = document.getElementById(`comment-${commentId}`);
+        const contentElement = commentElement.querySelector('.text-gray-600');
+        const originalContent = contentElement.textContent;
+        const likeCountEl = commentElement.querySelector('.comment-like-count');
+        const likeCount = likeCountEl.textContent;
+        const editButton = commentElement.querySelector('.edit-button');
+        if (editButton) {
+            editButton.style.display = 'none';
+        }
+        contentElement.innerHTML = `
+            <textarea id="editCommentTextarea-${commentId}" class="w-full p-2 border rounded-lg">${originalContent}</textarea>
+            <button onclick="saveComment(${commentId})" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700">저장</button>
+            <button onclick="cancelEdit(${commentId}, '${originalContent}',${likeCount})" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700">취소</button>
+        `;
+    }
+
+    function saveComment(commentId) {
+        const newContent = document.getElementById(`editCommentTextarea-${commentId}`).value;
+        fetchWithAuth(`/users/only`)
+        .then(response => response.json())
+        .then(el => {
+            return el
+        }).then((currentUserId) => {
+            return currentUserId.data.id // 현재 접속한 유저의 ID
+        }).then((currentUserId) => {
+            fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}/comments/${commentId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({content: newContent}),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(text || 'Unknown error');
+                    });
+                }
+                return response.json();
+                //   response.json()
+            })
+            .then(data => {
+                const commentElement = document.getElementById(`comment-${commentId}`);
+                const contentElement = commentElement.querySelector('.text-gray-600');
+                contentElement.textContent = newContent;
+
+                // 수정 버튼과 삭제 버튼을 다시 추가
+                const actionsElement = commentElement.querySelector('.flex.items-center.space-x-2');
+                actionsElement.innerHTML = `
+                <button class="like-button" onclick="toggleCommentLike(this, ${commentId})">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15a7 7 0 0114 0c0 7-7 7-7 7s-7 0-7-7z"/>
+                </svg> Like <span class="comment-like-count"> ${data.data.likesCount}</span>
+                </button>
+                <button class="delete-button text-red-500 hover:text-red-700" onclick="deleteComment(${commentId})">삭제</button>
+                <button class="edit-button text-blue-500 hover:text-blue-700" onclick="editComment(${commentId})">수정</button>
+            `
+            })
+            .catch(error => {
+                console.error('Error saving comment:', error);
+            })
+        })
+    }
+
+    //////// 수정
+    // Show or hide edit form
+    function toggleEditForm() {
+        const editForm = document.getElementById('editForm');
+        const editButton = document.getElementById('edit-button');
+        editForm.classList.toggle('hidden');
+        editButton.classList.toggle('hidden');
+    }
+
+    // Edit button handler
+    function editPost() {
+        toggleEditForm(); // Show the edit form
+    }
+
+    // Submit the edit form
+    function submitEditForm(event) {
+        event.preventDefault();
+
+        const formData = new FormData(document.getElementById('editForm'));
+
+        fetch(`/users/${userId}/userboards/${userBoardId}`, {
+            method: 'PATCH',
+            body: formData,
+            headers: {
+                'Authorization': `${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("data", data)
+            if (data.statusCode === 200) {
+                alert('게시물이 수정되었습니다.');
+                location.reload(); // Refresh the page to show updated data
+            } else {
+                alert('수정에 실패했습니다.');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function deletePost() {
+        const confirmDelete = confirm("정말로 이 게시글을 삭제하시겠습니까?");
+        if (confirmDelete) {
+            fetchWithAuth(`/users/only`)
+            .then(response => response.json())
+            .then(el => el.data.id) // 현재 접속한 유저의 ID
+            .then(currentUserId => {
+                fetchWithAuth(`/users/${currentUserId}/userboards/${userBoardId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.statusCode === 200) {
+                        alert('게시글이 삭제되었습니다.');
+                        window.location.href = '/public/main'; // 메인 페이지로 리다이렉트
+                    } else {
+                        alert('게시글 삭제에 실패했습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting post:', error);
+                });
+            });
+        }
+    }
+
+
+    //TODO 추후 Photo 를 여러장 관리할 수 있으면, 그 때 슬라이드를 사용
+    // <div className="slider">
+    //     <div className="slides">
+    //         <div className="slide">
+    //             <img src="./images/F1zfb1718452618.png" alt="Image 1" className="w-full h-96 object-cover"/>
+    //         </div>
+    //         <div className="slide">
+    //             <img src="./images/1000008238.png" alt="Image 2" className="w-full h-96 object-cover"/>
+    //         </div>
+    //         <div className="slide">
+    //             <img src="./images/1000010181.png" alt="Image 3" className="w-full h-96 object-cover"/>
+    //         </div>
+    //     </div>
+    //     <div className="slider-nav">
+    //         <button onClick="prevSlide()">&#10094;</button>
+    //         <button onClick="nextSlide()">&#10095;</button>
+    //     </div>
+    // </div>
+    // TODO 슬라이드 기능
+    let currentSlide = 0;
+
+    function showSlide(index) {
+        const slides = document.querySelectorAll('.slide');
+        if (index >= slides.length) {
+            currentSlide = 0;
+        } else if (index < 0) {
+            currentSlide = slides.length - 1;
+        } else {
+            currentSlide = index;
+        }
+        const newTransformValue = `-${currentSlide * 100}%`;
+        document.querySelector('.slides').style.transform = `translateX(${newTransformValue})`;
+    }
+
+    // TODO 슬라이드 기능
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+
+    // TODO 슬라이드 기능
+    function prevSlide() {
+        showSlide(currentSlide - 1);
+    }
+
+
+</script>
+</body>
+</html>
