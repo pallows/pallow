@@ -1,12 +1,12 @@
 <div align="center">
 
-# 🌟 프로젝트 이름 🌟
+# 🌟 PALLOW 🌟
 
 <img src="https://github.com/user-attachments/assets/38c43d3b-dce7-422c-b89a-572308799e96" alt="프로젝트 로고" width="200px"/>
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/username/repo?style=for-the-badge&logo=github&color=blue)](https://github.com/username/repo/releases)
 [![GitHub last commit](https://img.shields.io/github/last-commit/username/repo?style=for-the-badge&logo=git&color=green)](https://github.com/username/repo/commits/main)
-[![GitHub issues](https://img.shields.io/github/issues/username/repo?style=for-the-badge&logo=github&color=yellow)](https://github.com/username/repo/issues)
+[![GitHub issues](https://img.shields.io/github/issues/username/repo?style=for-the-badge&logo=github&color=yellow)](https://github.com/pallows/pallow/issues)
 [![GitHub license](https://img.shields.io/github/license/username/repo?style=for-the-badge&logo=legal&color=purple)](https://github.com/username/repo/blob/main/LICENSE)
 
 ### 🚀 혁신적인 솔루션을 제공하는 놀라운 프로젝트! 🚀
@@ -65,7 +65,7 @@
 
 1. 저장소를 클론합니다:
    ```sh
-   git clone https://github.com/username/repo.git
+   git clone https://github.com/pallows/pallow.git
    ```
 2. 프로젝트 디렉토리로 이동:
    ```sh
