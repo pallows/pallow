@@ -51,7 +51,7 @@
 
 ---
 
-## 🎬 데모
+## 🎬 데모 
 
 <div align="center">
   <img src="https://via.placeholder.com/500x300" alt="데모 GIF"/>
@@ -87,7 +87,7 @@
 
 ---
 
-## 📘 사용법
+## 📘 사용법 
 
 프로젝트를 시작하려면:
 
@@ -133,10 +133,10 @@ project.doAwesomeThing();
 
 <div align="center">
 
-| <img src="https://via.placeholder.com/100" width="100px;"/> | <img src="https://via.placeholder.com/100" width="100px;"/> |
-| :----------------------------------------------------------: | :----------------------------------------------------------: |
-|              [개발자 1](https://github.com/dev1)              |              [개발자 2](https://github.com/dev2)              |
-|                      프로젝트 리더 👑                       |                      주요 기여자 🌟                       |
+| <img src="https://via.placeholder.com/100" width="100px;"/> | <img src="https://via.placeholder.com/100" width="100px;"/> | <img src="https://via.placeholder.com/100" width="100px;"/> | <img src="https://via.placeholder.com/100" width="100px;"/> | <img src="https://via.placeholder.com/100" width="100px;"/> |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |:----------------------------------------------------------: |:----------------------------------------------------------: |:----------------------------------------------------------: |
+|              [김지환](https://github.com/atimevil)              |              [유지영](https://github.com/bbackbbacke)              |              [김도훈](https://github.com/mianhe89)              |              [서보민](https://github.com/Bomin-Seo)              |              [황태경](https://github.com/HwangTaeGyeong)              |
+|                      프로젝트 리더 👑                       |                      프로젝트 부리더 🌟                       |                      프로젝트 팀원                       |                      프로젝트 팀원                       |                      프로젝트 팀원                       |
 
 </div>
 
