@@ -9,7 +9,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/username/repo?style=for-the-badge&logo=github&color=yellow)](https://github.com/pallows/pallow/issues)
 [![GitHub license](https://img.shields.io/github/license/username/repo?style=for-the-badge&logo=legal&color=purple)](https://github.com/username/repo/blob/main/LICENSE)
 
-### 🚀 혁신적인 솔루션을 제공하는 놀라운 프로젝트! 🚀
+### 🚀 똑같은 일상을 다채롭게 만들어 줄 모임 🚀
 
 <p align="center">
   <a href="#demo">View Demo</a> •
@@ -29,7 +29,7 @@
 이 프로젝트는 [주요 문제/과제]를 해결하기 위해 설계되었습니다. [핵심 가치 제안]을 통해 사용자에게 [주요 이점]을 제공합니다.
 
 <div align="center">
-  <img src="https://via.placeholder.com/700x300" alt="프로젝트 스크린샷"/>
+  <img src="https://github.com/user-attachments/assets/8858587c-6115-4e5f-a5e0-0c6cf46fa071" alt="프로젝트 스크린샷"/>
 </div>
 
 ---
@@ -57,7 +57,7 @@
   <img src="https://via.placeholder.com/500x300" alt="데모 GIF"/>
 </div>
 
-> 💡 [여기를 클릭하여 라이브 데모 보기](https://example.com)
+> 💡 [여기를 클릭하여 라이브 데모 보기](https://www.youtube.com/watch?v=JRgHbHjaVBU)
 
 ---
 
