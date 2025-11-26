@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: pallow-app
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_URL=jdbc:mysql://db:3306/pallow?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=UTC
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-password}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-thisisasecretkeyfortestpurposesonlydonotuseinproduction}
+      - ACCESS_TOKEN_TTL=${ACCESS_TOKEN_TTL:-3600000}
+      - REFRESH_TOKEN_TTL=${REFRESH_TOKEN_TTL:-86400000}
+      - CLIENT_ID=${CLIENT_ID}
+      - REDIRECT_URI=${REDIRECT_URI}
+      - KAKAO_MAP_APP_KEY=${KAKAO_MAP_APP_KEY}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      - FLASK_URL=${FLASK_URL}
+    depends_on:
+      - db
+      - redis
+    networks:
+      - pallow-net
+    restart: always
+
+  db:
+    image: mysql:8.0
+    container_name: pallow-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-password}
+      - MYSQL_DATABASE=pallow
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - pallow-net
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: always
+
+  redis:
+    image: redis:alpine
+    container_name: pallow-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - pallow-net
+    restart: always
+
+networks:
+  pallow-net:
+    driver: bridge
+
+volumes:
+  db_data:
